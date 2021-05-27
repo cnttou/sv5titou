@@ -13,7 +13,7 @@ export default function AdminLogin() {
             .auth()
             .signInWithEmailAndPassword(email, password)
             .then(() => {
-                history.push('/');
+                history.push('/admin');
             })
             .catch((error) => {
                 var errorMessage = error.message;
