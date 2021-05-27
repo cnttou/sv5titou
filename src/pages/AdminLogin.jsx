@@ -2,6 +2,7 @@ import firebase from '../api/firebase';
 import { useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import { ToastContainer, toast } from 'react-toastify';
+// import 'react-bootstrap';
 
 export default function AdminLogin() {
     const [email, setEmail] = useState('');
@@ -17,26 +18,27 @@ export default function AdminLogin() {
             })
             .catch((error) => {
                 var errorMessage = error.message;
-                toast('Thông tin đăng nhấp sai');
+                toast('Thông tin đăng nhập không đúng');
                 console.log(errorMessage);
             });
     };
     return (
         <div>
             <ToastContainer />
-            <div className="container">
-                <h2>LOGIN</h2>
+            <div className="container AdminLogin">
+                <h2 className="text-center">ĐĂNG NHẬP</h2>
+                <hr />
                 <form>
                     <div className="mb-3">
                         <label
                             htmlFor="exampleInputEmail1"
-                            className="form-label"
+                            className="form-label require"
                         >
-                            Email address
+                            Email
                         </label>
                         <input
                             type="text"
-                            placeholder="Enter your email"
+                            placeholder="1234567890abc@ou.edu.vn"
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
                             className="form-control"
@@ -47,25 +49,26 @@ export default function AdminLogin() {
                     <div className="mb-3">
                         <label
                             htmlFor="exampleInputPassword1"
-                            className="form-label"
+                            className="form-label require"
                         >
-                            Password
+                            Mật khẩu
                         </label>
                         <input
                             type="password"
-                            placeholder="Enter your password."
+                            placeholder="Enter your password..."
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
                             className="form-control"
                             id="exampleInputPassword1"
                         />
                     </div>
+                    <hr />
                     <button
                         type="submit"
                         className="btn btn-primary"
                         onClick={(e) => handleLogin(e)}
                     >
-                        Submit
+                        Đăng nhập
                     </button>
                 </form>
             </div>
