@@ -27,7 +27,7 @@ export default function User() {
                             activeClassName="active"
                         >
                             <img
-                                src="../../public/logo.png"
+                                src="/logo.png"
                                 alt="Logo image"
                                 width="30"
                                 height="30"

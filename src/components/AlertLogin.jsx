@@ -1,8 +1,6 @@
-import { useState } from 'react';
 import { Link } from 'react-router-dom';
 
 export default function AlertLogin({ show = 'flase', setShow }) {
-    // const [show, setShow] = useState(isShow);
     return (
         <div>
             <div style={{ display: show ? 'block' : 'none' }} tabIndex="-1">

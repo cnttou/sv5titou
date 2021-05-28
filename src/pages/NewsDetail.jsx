@@ -14,9 +14,7 @@ export default function NewsDetail() {
         }
     }, [id]);
     const handleRegister = async () => {
-        if (await checkLogin()) registerActivity({
-            registerList: [id, 'ahihi']
-        });
+        if (await checkLogin()) registerActivity(id);
         else setShow(true);
     };
     return (

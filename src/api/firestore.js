@@ -2,30 +2,59 @@ import { toast } from 'react-toastify';
 import firebase from './firebase';
 
 const db = firebase.firestore();
-
 /*
  * Manage News *
  */
-export const registerActivity = (
-    data = {},
-    collection = 'register_ativity'
-) => {
-    let doc = firebase.auth().currentUser.uid;
+export const updateConfirmActivity = (acId, proof) => {
+    let uId = firebase.auth().currentUser.uid;
     return db
-        .collection(collection)
-        .doc(doc)
-        .update(data)
+        .collection('register_activity')
+        .doc(uId)
+        .collection('activitis')
+        .doc(acId)
+        .update({
+            proof,
+        })
+        .then(() => {
+            toast('Cập nhật thành công.');
+        })
+        .catch(() => {
+            toast('Cập nhật thất bại, vui lòng thử lại.');
+        });
+};
+export const removeRegisterActivity = (acId) => {
+    let uId = firebase.auth().currentUser.uid;
+    return db
+        .collection('register_activity')
+        .doc(uId)
+        .collection('activitis')
+        .doc(acId)
+        .delete()
+        .then(() => {
+            toast('Đã hủy đăng kí.');
+        })
+        .catch(() => {
+            toast('Hủy đăng kí thất bại, vui lòng thử lại.');
+        });
+};
+export const registerActivity = (acId) => {
+    let uId = firebase.auth().currentUser.uid;
+    let data = { confirm: false, proof: false };
+    return db
+        .collection('register_activity')
+        .doc(uId)
+        .collection('activitis')
+        .doc(acId)
+        .set(data)
         .then(() => {
             toast('Đăng kí thành công.');
         })
-        .catch((error) => {
-            addData(collection, data, doc).catch(() => {
-                toast(
-                    'Đăng kí không thành công, vui lòng đăng nhập lại và thử lại.'
-                );
-            });
+        .catch((e) => {
+            console.log(e);
+            toast('Đăng kí không thành công, vui lòng thử lại.');
         });
 };
+
 export const getDocument = (collection = 'news', doc = '') => {
     return db
         .collection(collection)
