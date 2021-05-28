@@ -2,6 +2,7 @@ import Admin from '../pages/Admin';
 import User from '../pages/User';
 import Login from '../pages/Login';
 import PageNotFound from '../pages/PageNotFound';
+import NewsDetail from '../pages/NewsDetail';
 
 const routes = [
     {
@@ -20,7 +21,12 @@ const routes = [
         path: '/',
         component: User,
         exact: true,
-        private: true,
+        private: false,
+    },
+    {
+        path: '/:id',
+        component: NewsDetail,
+        private: false,
     },
     {
         path: '*',

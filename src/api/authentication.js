@@ -1,5 +1,11 @@
 import { toast } from 'react-toastify';
 import firebase from './firebase';
+import { addData } from './firestore';
+
+export const checkLogin = () => {
+    if (firebase.auth()?.currentUser?.email) return true;
+    else return false;
+};
 
 export const logout = (history) => {
     firebase
@@ -25,9 +31,10 @@ export const loginByGoogle = async (history) => {
         .auth()
         .getRedirectResult()
         .then(() => {
-            if (firebase.auth().currentUser.email.slice(-9) === 'ou.edu.vn')
+            if (firebase.auth().currentUser.email.slice(-9) === 'ou.edu.vn') {
+                createUserProfile();
                 history.replace('/');
-            else if (firebase.auth().currentUser.email) {
+            } else if (firebase.auth().currentUser.email) {
                 toast(
                     'Đăng nhập không thành công. Vui lòng đăng nhập bằng mail trường Đại học Mở'
                 );
@@ -44,6 +51,7 @@ export const loginWithEmailPassword = (history, location, email, password) => {
         .auth()
         .signInWithEmailAndPassword(email, password)
         .then(() => {
+            createUserProfile();
             let { from } = location.state || { from: { pathname: '/admin' } };
             history.replace(from);
         })
@@ -52,4 +60,12 @@ export const loginWithEmailPassword = (history, location, email, password) => {
             toast('Thông tin đăng nhập không đúng');
             console.log(errorMessage);
         });
+};
+
+const createUserProfile = () => {
+    addData(
+        'register_activity',
+        { registerList: [] },
+        firebase.auth().currentUser.uid
+    );
 };
