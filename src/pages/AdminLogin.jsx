@@ -1,6 +1,6 @@
 import firebase from '../api/firebase';
 import { useState } from 'react';
-import { useHistory } from 'react-router-dom';
+import { useHistory, useLocation } from 'react-router-dom';
 import { ToastContainer, toast } from 'react-toastify';
 // import 'react-bootstrap';
 
@@ -8,13 +8,15 @@ export default function AdminLogin() {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     let history = useHistory();
+    let location = useLocation();
     const handleLogin = (e) => {
         e.preventDefault();
         firebase
             .auth()
             .signInWithEmailAndPassword(email, password)
             .then(() => {
-                history.push('/admin');
+                let { from } = location.state || { from: { pathname: '/admin' } };
+                history.replace(from);
             })
             .catch((error) => {
                 var errorMessage = error.message;
