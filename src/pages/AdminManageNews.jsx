@@ -1,20 +1,25 @@
 import { useEffect, useState } from 'react';
 import NewsRowTable from '../components/NewsRowTable';
 import ModelNews from '../components/ModelNews';
-import { getData, deleteData } from '../api/firestore';
+import { deleteData } from '../api/firestore';
+import { useSelector, useDispatch } from 'react-redux';
+import { fetchNews } from '../store/reducers/NewsSlide';
 
 export default function AdminManageNews({ toast }) {
-    const [listNews, setListNews] = useState([]);
+    const listNews = useSelector((state) => state.news.value);
+    const dispatch = useDispatch();
     const [newsEdit, setNewsEdit] = useState({});
+    
     useEffect(() => {
-        if (listNews.length == 0)
-            getData('news', 10).then((data) => {
-                setListNews(data);
-            });
+        if (listNews.length == 0) {
+            dispatch(fetchNews(10));
+        }
     }, []);
+    
     const handleEdit = (index) => {
         setNewsEdit(listNews[index]);
     };
+    
     const handleDelete = (index) => {
         deleteData('news', listNews[index].id).then(() => {
             toast('Xóa thành công tin tức');

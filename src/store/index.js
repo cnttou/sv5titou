@@ -1,8 +1,10 @@
 import { configureStore } from '@reduxjs/toolkit';
-import counterReducer from './reducers/slide';
+import newsReducer from './reducers/NewsSlide';
+import registerActivityReducer from './reducers/ManageRegisterActivity';
 
 export default configureStore({
     reducer: {
-        counter: counterReducer,
+        news: newsReducer,
+        registerActivity: registerActivityReducer
     },
 });

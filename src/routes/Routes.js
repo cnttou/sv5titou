@@ -3,6 +3,8 @@ import User from '../pages/User';
 import Login from '../pages/Login';
 import PageNotFound from '../pages/PageNotFound';
 import NewsDetail from '../pages/NewsDetail';
+import ManageActivityRegister from '../pages/ManageActivityRegister';
+import { UserLayout } from '../layouts/UserLayout';
 
 const routes = [
     {
@@ -19,7 +21,13 @@ const routes = [
     },
     {
         path: '/',
-        component: User,
+        component: UserLayout(User),
+        exact: true,
+        private: false,
+    },
+    {
+        path: '/register-activity',
+        component: UserLayout(ManageActivityRegister),
         exact: true,
         private: false,
     },
