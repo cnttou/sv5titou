@@ -2,13 +2,12 @@ import { useState } from 'react';
 import HeaderAdmin from '../components/HeaderAdmin';
 import AdminManageNews from './AdminManageNews';
 import AdminManageUser from './AdminManageUser';
-import { ToastContainer, toast } from 'react-toastify';
+import { toast } from 'react-toastify';
 
 export default function Admin() {
     const [page, setPage] = useState(0);
     return (
         <div className="app">
-            <ToastContainer />
             <div className="container h-100">
                 <div className="row header">
                     <HeaderAdmin setPage={setPage} page={page} />

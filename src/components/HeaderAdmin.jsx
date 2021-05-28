@@ -1,6 +1,6 @@
 import { useHistory } from 'react-router';
 import firebase from '../api/firebase';
-import { ToastContainer, toast } from 'react-toastify';
+import { toast } from 'react-toastify';
 import ButtonSwtich from '../components/ButtonSwtich';
 
 const buttonListBar = ['Manage News', 'Manage User'];
@@ -12,7 +12,7 @@ export default function HeaderAdmin({ setPage, page }) {
             .auth()
             .signOut()
             .then(() => {
-                history.push('/admin/login');
+                history.push('/login');
             })
             .catch((error) => {
                 toast('Hiện tại không đăng xuất được vui lòng thử lại');
@@ -20,7 +20,6 @@ export default function HeaderAdmin({ setPage, page }) {
     };
     return (
         <nav className="navbar navbar-light bg-light">
-            <ToastContainer />
             <div className="container-fluid">
                 {buttonListBar.map((c, i) => (
                     <ButtonSwtich

@@ -1,60 +1,23 @@
-import firebase from '../api/firebase';
 import { useState } from 'react';
 import { useHistory, useLocation } from 'react-router-dom';
-import { ToastContainer, toast } from 'react-toastify';
-// import 'react-bootstrap';
+import { loginByGoogle, loginWithEmailPassword } from '../api/authentication';
 
-export default function AdminLogin() {
+export default function Login() {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     let history = useHistory();
     let location = useLocation();
     const handleLogin = (e) => {
         e.preventDefault();
-        firebase
-            .auth()
-            .signInWithEmailAndPassword(email, password)
-            .then(() => {
-                let { from } = location.state || { from: { pathname: '/admin' } };
-                history.replace(from);
-            })
-            .catch((error) => {
-                var errorMessage = error.message;
-                toast('Thông tin đăng nhập không đúng');
-                console.log(errorMessage);
-            });
+        loginWithEmailPassword(history, location, email, password);
     };
 
     const handleLoginWithGmail = (e) => {
-        var provider = new firebase.auth.GoogleAuthProvider();
-        provider.addScope('https://www.googleapis.com/auth/contacts.readonly');
-        provider.setCustomParameters({
-            'login_hint': '1234567890abc@ou.edu.vn'
-        });
-
-        firebase.auth().signInWithRedirect(provider);
-        firebase.auth()
-        .getRedirectResult()
-        .then((result) => {
-            if (result.credential) {
-            /** @type {firebase.auth.OAuthCredential} */
-            var credential = result.credential;
-
-            // This gives you a Google Access Token. You can use it to access the Google API.
-            var token = credential.accessToken;
-            // ...
-            }
-            // The signed-in user info.
-            var user = result.user;
-            history.push('/user');
-        }).catch((error) => {
-            console.log(error);
-        });
-    }
+        loginByGoogle(history);
+    };
 
     return (
         <div>
-            <ToastContainer />
             <div className="container AdminLogin">
                 <h2 className="text-center">ĐĂNG NHẬP</h2>
                 <hr />
@@ -107,7 +70,8 @@ export default function AdminLogin() {
                         className="btn btn-danger form-control"
                         onClick={(e) => handleLoginWithGmail(e)}
                     >
-                        <i className="fab fa-google-plus-g"></i> | Đăng nhập bằng Gmail
+                        <i className="fab fa-google-plus-g"></i> | Đăng nhập
+                        bằng Gmail
                     </button>
                 </form>
             </div>

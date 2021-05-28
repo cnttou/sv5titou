@@ -1,22 +1,31 @@
 import Admin from '../pages/Admin';
 import User from '../pages/User';
-import AdminLogin from '../pages/AdminLogin';
+import Login from '../pages/Login';
+import PageNotFound from '../pages/PageNotFound';
 
 const routes = [
     {
-        path: '/admin/login',
-        component: AdminLogin,
+        path: '/login',
+        component: Login,
+        exact: true,
         private: false,
     },
     {
         path: '/admin',
         component: Admin,
+        exact: true,
         private: true,
     },
     {
         path: '/',
         component: User,
-        private: true
+        exact: true,
+        private: true,
+    },
+    {
+        path: '*',
+        component: PageNotFound,
+        private: false,
     },
 ];
 
