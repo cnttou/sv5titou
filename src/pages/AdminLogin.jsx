@@ -22,6 +22,34 @@ export default function AdminLogin() {
                 console.log(errorMessage);
             });
     };
+
+    const handleLoginWithGmail = (e) => {
+        var provider = new firebase.auth.GoogleAuthProvider();
+        provider.addScope('https://www.googleapis.com/auth/contacts.readonly');
+        provider.setCustomParameters({
+            'login_hint': '1234567890abc@ou.edu.vn'
+        });
+
+        firebase.auth().signInWithRedirect(provider);
+        firebase.auth()
+        .getRedirectResult()
+        .then((result) => {
+            if (result.credential) {
+            /** @type {firebase.auth.OAuthCredential} */
+            var credential = result.credential;
+
+            // This gives you a Google Access Token. You can use it to access the Google API.
+            var token = credential.accessToken;
+            // ...
+            }
+            // The signed-in user info.
+            var user = result.user;
+            history.push('/user');
+        }).catch((error) => {
+            console.log(error);
+        });
+    }
+
     return (
         <div>
             <ToastContainer />
@@ -65,10 +93,19 @@ export default function AdminLogin() {
                     <hr />
                     <button
                         type="submit"
-                        className="btn btn-primary"
+                        className="btn btn-primary form-control"
                         onClick={(e) => handleLogin(e)}
                     >
                         Đăng nhập
+                    </button>
+                    <p className="text-center pt-1 m-0">--- hoặc ---</p>
+
+                    <button
+                        type="button"
+                        className="btn btn-danger form-control"
+                        onClick={(e) => handleLoginWithGmail(e)}
+                    >
+                        <i className="fab fa-google-plus-g"></i> | Đăng nhập bằng Gmail
                     </button>
                 </form>
             </div>

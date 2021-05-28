@@ -2,6 +2,9 @@ import firebase from './firebase';
 
 const db = firebase.firestore();
 
+/*
+    * Manage News *
+*/
 export const getData = (collection = 'news', limit = 10000) => {
     return db
         .collection(collection)

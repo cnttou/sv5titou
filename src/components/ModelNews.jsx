@@ -47,8 +47,9 @@ export default function ModelNews({ toast, item, setItem }) {
                 toast('Thêm thành công');
                 setDoc('');
             })
-            .catch(() => {
+            .catch((err) => {
                 toast('Thêm thất bại vui lòng thử lại');
+                console.log(err);
             });
     };
     const resetData = (

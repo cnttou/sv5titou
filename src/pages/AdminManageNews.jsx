@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import { useState } from 'react';
-import ItemList from '../components/ItemList';
+import NewsList from '../components/NewsList';
 import ModelNews from '../components/ModelNews';
 import { getData, deleteData } from '../api/firestore';
 
@@ -36,7 +36,7 @@ export default function AdminManageNews({ toast }) {
                 </thead>
                 <tbody>
                     {listNews.map((c, i) => (
-                        <ItemList
+                        <NewsList
                             handleEdit={handleEdit}
                             handleDelete={handleDelete}
                             {...c}

@@ -1,4 +1,4 @@
-export default function ItemList({
+export default function NewsList({
     name,
     target,
     numPeople,
