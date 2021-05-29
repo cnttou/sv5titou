@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import NewsRowTable from '../components/NewsRowTable';
 import { useSelector, useDispatch } from 'react-redux';
-import { fetchNews } from '../store/reducers/NewsSlide';
+import { fetchNewsThunk } from '../store/reducers/NewsSlide';
 
 function User() {
     const listNews = useSelector((state) => state.news.value);
@@ -9,7 +9,7 @@ function User() {
 
     useEffect(() => {
         if (listNews.length == 0) {
-            dispatch(fetchNews(10));
+            dispatch(fetchNewsThunk(10));
         }
     }, []);
     return (

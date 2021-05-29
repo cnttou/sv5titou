@@ -14,7 +14,8 @@ export default function NewsDetail() {
         }
     }, [id]);
     const handleRegister = async () => {
-        if (await checkLogin()) registerActivity(id);
+        if (await checkLogin()) 
+            registerActivity(id, news.name, news.date, news.location);
         else setShow(true);
     };
     return (

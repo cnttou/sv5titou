@@ -1,12 +1,7 @@
-import { useHistory } from "react-router";
 import { Link, NavLink } from "react-router-dom";
-import { logout } from "../api/authentication";
+import LoginLogoutButton from "./LoginLogoutButton";
 
 export default function HeaderUser() {
-    let history = useHistory();
-    const handleLogout = () => {
-        logout(history);
-    };
     return (
         <>
             <nav className="navbar navbar-expand-lg navbar-light bg-light">
@@ -57,13 +52,7 @@ export default function HeaderUser() {
                                 </NavLink>
                             </li>
                         </ul>
-                        <button
-                            type="button"
-                            className="btn btn-outline-primary"
-                            onClick={handleLogout}
-                        >
-                            Logout
-                        </button>
+                        <LoginLogoutButton />
                     </div>
                 </div>
             </nav>

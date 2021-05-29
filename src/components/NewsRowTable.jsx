@@ -10,17 +10,18 @@ export default function NewsRowTable({
     handleEdit,
     handleDelete,
     index,
-    id
+    id,
+    buttons
 }) {
     return (
         <tr>
-            <th scope="row">
+            <th>
                 <Link to={id}>{name}</Link>
             </th>
-            <td>{target}</td>
-            <td>{date}</td>
-            <td>{location}</td>
-            <td>{numPeople}</td>
+            {target && <td>{target}</td>}
+            {date && <td>{date}</td>}
+            {location && <td>{location}</td>}
+            {numPeople && <td>{numPeople}</td>}
             {handleDelete && handleEdit && (
                 <td>
                     <div
@@ -42,6 +43,28 @@ export default function NewsRowTable({
                         >
                             Delete
                         </button>
+                    </div>
+                </td>
+            )}
+            {buttons?.length && (
+                <td>
+                    <div
+                        class="btn-group"
+                        role="group"
+                        aria-label="Basic example"
+                    >
+                        {buttons.map((c, i) => (
+                            <button
+                                key={i}
+                                type="button"
+                                className={
+                                    c?.color ? 'btn btn-' + c.color : 'btn'
+                                }
+                                onClick={() => c.handle(id)}
+                            >
+                                {c.text}
+                            </button>
+                        ))}
                     </div>
                 </td>
             )}

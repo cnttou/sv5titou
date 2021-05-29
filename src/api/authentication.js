@@ -1,17 +1,19 @@
 import { toast } from 'react-toastify';
+import { logoutAction } from '../store/reducers/action';
 import firebase from './firebase';
-import { addData } from './firestore';
 
 export const checkLogin = () => {
     if (firebase.auth()?.currentUser?.email) return true;
     else return false;
 };
+export const currentUser = () => firebase.auth()?.currentUser;
 
-export const logout = (history) => {
+export const logout = (history, dispath) => {
     firebase
         .auth()
         .signOut()
         .then(() => {
+            dispath(logoutAction());
             history.push('/login');
         })
         .catch((error) => {
@@ -32,7 +34,6 @@ export const loginByGoogle = async (history) => {
         .getRedirectResult()
         .then(() => {
             if (firebase.auth().currentUser.email.slice(-9) === 'ou.edu.vn') {
-                createUserProfile();
                 history.replace('/');
             } else if (firebase.auth().currentUser.email) {
                 toast(
@@ -51,7 +52,6 @@ export const loginWithEmailPassword = (history, location, email, password) => {
         .auth()
         .signInWithEmailAndPassword(email, password)
         .then(() => {
-            createUserProfile();
             let { from } = location.state || { from: { pathname: '/admin' } };
             history.replace(from);
         })
@@ -60,12 +60,4 @@ export const loginWithEmailPassword = (history, location, email, password) => {
             toast('Thông tin đăng nhập không đúng');
             console.log(errorMessage);
         });
-};
-
-const createUserProfile = () => {
-    addData(
-        'register_activity',
-        { registerList: [] },
-        firebase.auth().currentUser.uid
-    );
 };

@@ -1,10 +1,10 @@
 import { useState } from 'react';
 import Input from './Input';
 import Select from './Select';
-import firebase from '../api/firebase';
-import { addData, updateData } from '../api/firestore';
 import { useRef } from 'react';
 import { useEffect } from 'react';
+import { addNewsThunk } from '../store/reducers/NewsSlide';
+import { useDispatch } from 'react-redux';
 
 const listSelect = [
     {
@@ -29,28 +29,21 @@ const listSelect = [
     },
 ];
 
-export default function ModelNews({ toast, item, setItem }) {
+export default function ModelNews({ item, setItem }) {
     const [name, setName] = useState('');
     const [target, setTarget] = useState('hoc-tap');
     const [numPeople, setNumPeople] = useState('');
     const [date, setDate] = useState('');
     const [location, setLocation] = useState('');
     const [summary, setSummary] = useState('');
-    const [doc, setDoc] = useState('');
+    const [docId, setDocId] = useState('');
+
     const ref = useRef(null);
-    
+    const dispatch = useDispatch();
 
     const handleSubmit = () => {
         let data = { name, target, numPeople, date, location, summary };
-        addData('news', data, doc)
-            .then(() => {
-                toast('Thêm thành công');
-                setDoc('');
-            })
-            .catch((err) => {
-                toast('Thêm thất bại vui lòng thử lại');
-                console.log(err);
-            });
+        dispatch(addNewsThunk({data, docId}));
     };
     const resetData = (
         d = '',
@@ -68,7 +61,7 @@ export default function ModelNews({ toast, item, setItem }) {
         setTarget(t);
     };
     useEffect(() => {
-        if (ref != null && item?.name) {
+        if (ref != null && item?.id) {
             var myModal = new bootstrap.Modal(ref.current);
             resetData(
                 item.date,
@@ -78,7 +71,7 @@ export default function ModelNews({ toast, item, setItem }) {
                 item.summary,
                 item.target
             );
-            setDoc(item.id);
+            setDocId(item.id);
             myModal.show();
             setItem({});
         }

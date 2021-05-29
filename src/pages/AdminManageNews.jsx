@@ -1,32 +1,41 @@
 import { useEffect, useState } from 'react';
 import NewsRowTable from '../components/NewsRowTable';
 import ModelNews from '../components/ModelNews';
-import { deleteData } from '../api/firestore';
 import { useSelector, useDispatch } from 'react-redux';
-import { fetchNews } from '../store/reducers/NewsSlide';
+import { deleteNewsThunk, fetchNewsThunk } from '../store/reducers/NewsSlide';
 
-export default function AdminManageNews({ toast }) {
+export default function AdminManageNews() {
     const listNews = useSelector((state) => state.news.value);
     const dispatch = useDispatch();
     const [newsEdit, setNewsEdit] = useState({});
-    
+
     useEffect(() => {
         if (listNews.length == 0) {
-            dispatch(fetchNews(10));
+            dispatch(fetchNewsThunk(10));
         }
     }, []);
-    
+
     const handleEdit = (index) => {
         setNewsEdit(listNews[index]);
     };
-    
+
     const handleDelete = (index) => {
-        deleteData('news', listNews[index].id).then(() => {
-            toast('Xóa thành công tin tức');
-        });
+        dispatch(deleteNewsThunk(listNews[index].id));
+    };
+    const handleRefresh = () => {
+        dispatch(fetchNewsThunk(10));
     };
     return (
         <div>
+            <div>
+                <button
+                    type="button"
+                    className="btn btn-outline-primary"
+                    onClick={handleRefresh}
+                >
+                    Làm mới
+                </button>
+            </div>
             <table className="table table-striped table-hover">
                 <thead>
                     <tr>
@@ -39,15 +48,16 @@ export default function AdminManageNews({ toast }) {
                     </tr>
                 </thead>
                 <tbody>
-                    {listNews.map((c, i) => (
-                        <NewsRowTable
-                            handleEdit={handleEdit}
-                            handleDelete={handleDelete}
-                            {...c}
-                            index={i}
-                            key={i}
-                        />
-                    ))}
+                    {listNews?.length &&
+                        listNews.map((c, i) => (
+                            <NewsRowTable
+                                handleEdit={handleEdit}
+                                handleDelete={handleDelete}
+                                {...c}
+                                index={i}
+                                key={i}
+                            />
+                        ))}
                 </tbody>
             </table>
             <div className="d-grid">
@@ -60,7 +70,7 @@ export default function AdminManageNews({ toast }) {
                     Add new item
                 </button>
             </div>
-            <ModelNews item={newsEdit} toast={toast} setItem={setNewsEdit} />
+            <ModelNews item={newsEdit} setItem={setNewsEdit} />
         </div>
     );
 }
