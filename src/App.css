@@ -21,3 +21,16 @@
     max-width: 500px;
     border-radius: 10px;
 }
+.image-proof__content{
+    position: relative;
+}
+.image-proof__content >button{
+    position: absolute;
+    top: 0;
+    right: 0;
+    background-color: wheat;
+}
+.image-proof{
+    object-fit: contain;
+    width: 100%;
+}

@@ -11,7 +11,7 @@ export default function NewsRowTable({
     handleDelete,
     index,
     id,
-    buttons
+    buttons,
 }) {
     return (
         <tr>
@@ -49,21 +49,16 @@ export default function NewsRowTable({
             {buttons?.length && (
                 <td>
                     <div
-                        class="btn-group"
+                        className="btn-group"
                         role="group"
                         aria-label="Basic example"
                     >
-                        {buttons.map((c, i) => (
-                            <button
+                        {buttons.map(({ handle, ...rest }, i) => (
+                            <input
                                 key={i}
-                                type="button"
-                                className={
-                                    c?.color ? 'btn btn-' + c.color : 'btn'
-                                }
-                                onClick={() => c.handle(id)}
-                            >
-                                {c.text}
-                            </button>
+                                onClick={() => handle(index)}
+                                {...rest}
+                            />
                         ))}
                     </div>
                 </td>

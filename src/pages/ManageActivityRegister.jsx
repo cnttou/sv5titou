@@ -4,11 +4,14 @@ import { checkLogin } from '../api/authentication';
 import AlertLogin from '../components/AlertLogin';
 import { fetchRegisterActivityThunk, removeRegisterActivityThunk } from '../store/reducers/ActivitySlide';
 import NewsRowTable from '../components/NewsRowTable';
+import ModelBrowseFile from '../components/ModelBrowseFile';
 
 function ManageActivityRegister() {
     const listActivity = useSelector((state) => state.activitis.value);
     const dispatch = useDispatch();
+    const [activity, setActivity] = useState('')
     const [show, setShow] = useState(false);
+    const [showBrowseFile, setShowBrowseFile] = useState(false);
 
     useEffect(async () => {
         if ((await checkLogin()) == false) {
@@ -17,21 +20,26 @@ function ManageActivityRegister() {
         }
         dispatch(fetchRegisterActivityThunk());
     }, []);
-    const handleRemoveActivity = (id) => {
-        dispatch(removeRegisterActivityThunk(id));
+    const handleRemoveActivity = (index) => {
+        dispatch(removeRegisterActivityThunk(listActivity[index].id));
     };
-    const handleAddProof = () => {};
+    const handleAddProof = (index) => {
+        setActivity(listActivity[index]);
+        setShowBrowseFile(true);
+    };
 
     const buttons = [
         {
             handle: handleAddProof,
-            text: 'Minh chứng',
-            color: 'primary',
+            type: 'button',
+            value: 'Minh chứng',
+            className: 'btn btn-primary',
         },
         {
             handle: handleRemoveActivity,
-            text: 'Hủy đăng kí',
-            color: 'danger',
+            type: 'button',
+            value: 'Hủy đăng kí',
+            className: 'btn btn-danger',
         },
     ];
     return (
@@ -63,6 +71,10 @@ function ManageActivityRegister() {
             ) : (
                 'Loading'
             )}
+            <ModelBrowseFile
+                show={showBrowseFile}
+                setShow={setShowBrowseFile}
+                activity={activity} />
             <AlertLogin show={show} setShow={setShow} />
         </div>
     );

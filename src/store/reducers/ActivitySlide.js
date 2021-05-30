@@ -1,5 +1,13 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
-import {getRegisterActivity, registerActivity, removeRegisterActivity} from '../../api/firestore'
+import { deleteFile, upFile } from '../../api/firebaseStorage';
+import {
+    getRegisterActivity,
+    registerActivity,
+    removeRegisterActivity,
+    addImage,
+    deleteImage,
+} from '../../api/firestore';
+import { logoutAction } from './action';
 
 export const fetchRegisterActivityThunk = createAsyncThunk(
     'registerActivity/fetchRegisterActivity',
@@ -22,6 +30,25 @@ export const removeRegisterActivityThunk = createAsyncThunk(
     }
 );
 
+export const addImageThunk = createAsyncThunk(
+    'registerActivity/updateImage',
+    async ({ file, acId }, thunkAPI) => {
+        await upFile(acId, file).then((fileName) => {
+            addImage(fileName, acId);
+        });
+        return { fileName: file.name, acId };
+    }
+);
+export const deleteImageThunk = createAsyncThunk(
+    'registerActivity/deleteImage',
+    async ({ fileName, acId }, thunkAPI) => {
+        await deleteFile(acId, fileName).then((fileName) => {
+            deleteImage(fileName, acId);
+        });
+        return { fileName, acId };
+    }
+);
+
 export const activitySlice = createSlice({
     name: 'activity',
     initialState: {
@@ -36,9 +63,35 @@ export const activitySlice = createSlice({
             state.value.push(action.payload);
         },
         [removeRegisterActivityThunk.fulfilled]: (state, action) => {
-            state.value = state.value.filter(c=> c.id != action.payload);
+            state.value = state.value.filter((c) => c.id != action.payload);
         },
+        [addImageThunk.fulfilled]: (state, action) => {
+            const { fileName, acId } = action.payload;
+            state.value = state.value.map((c) => {
+                if (c.id == acId) {
+                    let images = c.images || [];
+                    images.push(fileName);
+                    return { ...c, images };
+                }
+                return c;
+            });
+        },
+        [deleteImageThunk.fulfilled]: (state, action) => {
+            const { fileName, acId } = action.payload;
+            state.value = state.value.map((c) => {
+                if (c.id == acId) {
+                    let images = c.images;
+                    images.splice(images.indexOf(fileName), 1);
+                    return { ...c, images };
+                }
+                return c;
+            });
+        },
+        [logoutAction]: (state)=>{
+            state.value = []
+        }
     },
 });
 
+export const {addImageAction}= activitySlice.actions;
 export default activitySlice.reducer;

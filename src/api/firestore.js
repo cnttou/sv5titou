@@ -3,6 +3,29 @@ import firebase from './firebase';
 
 const db = firebase.firestore();
 
+export const addImage = (fileName, acId = '') => {
+    let uId = firebase.auth().currentUser.uid;
+    return db
+        .collection('register_activity')
+        .doc(uId)
+        .collection('activitis')
+        .doc(acId)
+        .update({
+            images: firebase.firestore.FieldValue.arrayUnion(fileName),
+        });
+};
+export const deleteImage = (fileName, acId = '') => {
+    let uId = firebase.auth().currentUser.uid;
+    return db
+        .collection('register_activity')
+        .doc(uId)
+        .collection('activitis')
+        .doc(acId)
+        .update({
+            images: firebase.firestore.FieldValue.arrayRemove(fileName),
+        });
+};
+
 export const getRegisterActivity = () => {
     let uId = firebase.auth().currentUser.uid;
     return db
@@ -56,7 +79,14 @@ export const removeRegisterActivity = (acId) => {
 };
 export const registerActivity = (acId, name, date, location) => {
     let uId = firebase.auth().currentUser.uid;
-    let data = { confirm: false, proof: false, name, date, location };
+    let data = {
+        confirm: false,
+        proof: false,
+        name,
+        date,
+        location,
+        images: [],
+    };
     return db
         .collection('register_activity')
         .doc(uId)
@@ -65,7 +95,7 @@ export const registerActivity = (acId, name, date, location) => {
         .set(data)
         .then(() => {
             toast('Đăng kí thành công.');
-            return {...data, id: acId}
+            return { ...data, id: acId };
         })
         .catch((e) => {
             console.log(e);
@@ -103,7 +133,7 @@ export const getData = (collection = 'news', limit = 10000) => {
         });
 };
 /**
- * 
+ *
  * @param {String} collection the collection of database
  * @param {String} docId the id for this document
  * @returns if it done return docId deleted
