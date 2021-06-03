@@ -13,7 +13,7 @@ export default function ModelBrowseFile({ show, setShow, activity }) {
     useEffect(async () => {
         let arr = [];
         activity?.images?.forEach((imageName) =>
-            getUrlImage(activity.id, imageName)
+            getUrlImage(activity.id, imageName, activity?.userId)
                 .then((url) => {
                     arr.push(url);
                     setListImage(arr);
@@ -49,6 +49,7 @@ export default function ModelBrowseFile({ show, setShow, activity }) {
         <div>
             <div
                 className="modal-dialog  modal-dialog-scrollable"
+                id="dialog"
                 style={{ display: show ? 'block' : 'none' }}
             >
                 <div className="modal-dialog">

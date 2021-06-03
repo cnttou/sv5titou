@@ -48,16 +48,20 @@ export default function AdminManageNews() {
                     </tr>
                 </thead>
                 <tbody>
-                    {listNews?.length &&
-                        listNews.map((c, i) => (
-                            <NewsRowTable
-                                handleEdit={handleEdit}
-                                handleDelete={handleDelete}
-                                {...c}
-                                index={i}
-                                key={i}
-                            />
-                        ))}
+                    {listNews?.map((c, i) => (
+                        <NewsRowTable
+                            handleEdit={handleEdit}
+                            handleDelete={handleDelete}
+                            name={c.name}
+                            target={c.target}
+                            date={c.date}
+                            location={c.location}
+                            numPeople={c.numPeople}
+                            id={c.id}
+                            index={i}
+                            key={i}
+                        />
+                    ))}
                 </tbody>
             </table>
             <div className="d-grid">

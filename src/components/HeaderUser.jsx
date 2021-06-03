@@ -1,4 +1,5 @@
 import { Link, NavLink } from "react-router-dom";
+import { currentUser } from "../api/authentication";
 import LoginLogoutButton from "./LoginLogoutButton";
 
 export default function HeaderUser() {
@@ -52,7 +53,30 @@ export default function HeaderUser() {
                                 </NavLink>
                             </li>
                         </ul>
-                        <LoginLogoutButton />
+                        <div className="btn-group">
+                            <button
+                                type="button"
+                                className="btn btn-secondary dropdown-toggle"
+                                data-bs-toggle="dropdown"
+                                data-bs-display="static"
+                                aria-expanded="false"
+                            >
+                                {currentUser()?.displayName}
+                            </button>
+                            <ul className="dropdown-menu dropdown-menu-lg-end">
+                                <li>
+                                    <button
+                                        className="dropdown-item"
+                                        type="button"
+                                    >
+                                        Edit profile
+                                    </button>
+                                </li>
+                                <li>
+                                    <LoginLogoutButton />
+                                </li>
+                            </ul>
+                        </div>
                     </div>
                 </div>
             </nav>

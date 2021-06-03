@@ -14,7 +14,7 @@ export default function LoginLogoutButton() {
             {currentUser()?.email ? (
                 <button
                     type="button"
-                    className="btn btn-outline-primary"
+                    className="btn btn-outline-primary w-100"
                     onClick={handleLogout}
                 >
                     Logout
@@ -22,7 +22,7 @@ export default function LoginLogoutButton() {
             ) : (
                 <Link
                     type="button"
-                    className="btn btn-outline-primary"
+                    className="btn btn-outline-primary w-100"
                     to={'/login'}
                 >
                     Login

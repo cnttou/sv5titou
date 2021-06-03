@@ -40,7 +40,8 @@ export const deleteFile = (acId, fileName) => {
         });
 };
 
-export const getUrlImage=(acId, fileName)=>{
-    let fileProofRef = imagesRef.child(currentUser().uid).child(acId);
+export const getUrlImage=(acId, fileName, userId)=>{
+    let uid = userId || currentUser().uid;
+    let fileProofRef = imagesRef.child(uid).child(acId);
     return fileProofRef.child(`/${fileName}`).getDownloadURL().then(url=>url);
 }

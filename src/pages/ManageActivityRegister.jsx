@@ -71,11 +71,11 @@ function ManageActivityRegister() {
             ) : (
                 'Loading'
             )}
-            <ModelBrowseFile
+            {showBrowseFile && <ModelBrowseFile
                 show={showBrowseFile}
                 setShow={setShowBrowseFile}
-                activity={activity} />
-            <AlertLogin show={show} setShow={setShow} />
+                activity={activity} />}
+            {show && <AlertLogin show={show} setShow={setShow} />}
         </div>
     );
 }

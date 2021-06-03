@@ -26,8 +26,8 @@ export const deleteImage = (fileName, acId = '') => {
         });
 };
 
-export const getRegisterActivity = () => {
-    let uId = firebase.auth().currentUser.uid;
+export const getRegisterActivity = (userId) => {
+    let uId = userId || firebase.auth().currentUser.uid;
     return db
         .collection('register_activity')
         .doc(uId)
@@ -181,4 +181,79 @@ export const addData = (collection = 'news', data, docId = '') => {
 };
 export const updateData = (collection = 'news', data, docId = '') => {
     return db.collection(collection).doc(docId).update(data);
+};
+export const addUserDetail = (email, userId) => {
+    db.collection('register_activity')
+        .doc(userId)
+        .set({
+            email,
+            userId,
+        })
+        .then(() => {
+            console.log('add user detail success');
+        })
+        .catch((err) => {
+            console.log(err);
+        });
+};
+
+export const getUserActivity = () => {
+    return db
+        .collection('register_activity')
+        .get()
+        .then((querySnapshot) => {
+            let list = [];
+            querySnapshot.forEach((doc) => {
+                list.push(doc.data());
+            });
+            return list;
+        })
+        .then(async (rs) => {
+            let list = [];
+
+            for (const c of rs) {
+                await getRegisterActivity(c.userId).then((data) => {
+                    let temp = data.map((d) => ({
+                        ...d,
+                        email: c.email,
+                        userId: c.userId,
+                    }));
+                    list = list.concat(temp);
+                });
+            }
+
+            return list;
+        });
+};
+export const confirmProof = (uid, acId) => {
+    return db
+        .collection('register_activity')
+        .doc(uid)
+        .collection('activitis')
+        .doc(acId)
+        .update({ confirm: true })
+        .then(() => {
+            toast('Xác nhận thành công.');
+            return { uid, acId, confirm: true };
+        })
+        .catch((e) => {
+            console.log(e);
+            toast('Xác nhận không thành công, vui lòng thử lại.');
+        });
+};
+export const cancelConfirmProof = (uid, acId) => {
+  return db
+      .collection('register_activity')
+      .doc(uid)
+      .collection('activitis')
+      .doc(acId)
+      .update({ confirm: false })
+      .then(() => {
+          toast('Hủy xác nhận thành công.');
+          return { uid, acId, confirm: false };
+      })
+      .catch((e) => {
+          console.log(e);
+          toast('Hủy xác nhận không thành công, vui lòng thử lại.');
+      });
 };

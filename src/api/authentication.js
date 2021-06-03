@@ -1,6 +1,7 @@
 import { toast } from 'react-toastify';
 import { logoutAction } from '../store/reducers/action';
 import firebase from './firebase';
+import { addUserDetail } from './firestore';
 
 export const checkLogin = () => {
     if (firebase.auth()?.currentUser?.email) return true;
@@ -34,6 +35,8 @@ export const loginByGoogle = async (history) => {
         .getRedirectResult()
         .then(() => {
             if (firebase.auth().currentUser.email.slice(-9) === 'ou.edu.vn') {
+                const {email, uid} = firebase.auth().currentUser;
+                addUserDetail(email, uid);
                 history.replace('/');
             } else if (firebase.auth().currentUser.email) {
                 toast(
@@ -52,6 +55,8 @@ export const loginWithEmailPassword = (history, location, email, password) => {
         .auth()
         .signInWithEmailAndPassword(email, password)
         .then(() => {
+            const { email, uid } = firebase.auth().currentUser;
+            addUserDetail(email, uid);
             let { from } = location.state || { from: { pathname: '/admin' } };
             history.replace(from);
         })
