@@ -7,11 +7,7 @@ export default function HeaderUser() {
         <>
             <nav className="navbar navbar-expand-lg navbar-light bg-light">
                 <div className="container-fluid">
-                    <NavLink
-                        className="navbar-brand"
-                        to="/"
-                        activeClassName="active"
-                    >
+                    <Link className="navbar-brand" to="/">
                         <img
                             src="/logo.png"
                             alt="Logo image"
@@ -20,7 +16,7 @@ export default function HeaderUser() {
                             className="d-inline-block align-text-top"
                         />
                         SV5T
-                    </NavLink>
+                    </Link>
                     <button
                         className="navbar-toggler"
                         type="button"
@@ -35,18 +31,20 @@ export default function HeaderUser() {
                     <div className="collapse navbar-collapse" id="navbarNav">
                         <ul className="navbar-nav container-fluid">
                             <li className="nav-item">
-                                <Link
-                                    className="nav-link active"
-                                    aria-current="page"
+                                <NavLink
+                                    className="nav-link"
+                                    activeClassName="active"
+                                    exact
                                     to="/"
                                 >
                                     News
-                                </Link>
+                                </NavLink>
                             </li>
                             <li className="nav-item">
                                 <NavLink
                                     className="nav-link"
                                     activeClassName="active"
+                                    exact
                                     to="/register-activity"
                                 >
                                     Register activity

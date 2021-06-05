@@ -1,10 +1,14 @@
-import Admin from '../pages/Admin';
-import User from '../pages/User';
-import Login from '../pages/Login';
-import PageNotFound from '../pages/PageNotFound';
-import NewsDetail from '../pages/NewsDetail';
-import ManageActivityRegister from '../pages/ManageActivityRegister';
-import { UserLayout } from '../layouts/UserLayout';
+import { lazy } from 'react';
+import UserLayout from '../layouts/UserLayout';
+
+const Admin = lazy(() => import('../pages/Admin'));
+const User = lazy(() => import('../pages/User'));
+const Login = lazy(() => import('../pages/Login'));
+const PageNotFound = lazy(() => import('../pages/PageNotFound'));
+const NewsDetail = lazy(() => import('../pages/NewsDetail'));
+const ManageActivityRegister = lazy(() =>
+    import('../pages/ManageActivityRegister')
+);
 
 const routes = [
     {

@@ -8,7 +8,7 @@ export default function Admin() {
     return (
         <div className="app">
             <div className="container h-100">
-                <div className="row header">
+                <div className="row">
                     <HeaderAdmin setPage={setPage} page={page} />
                 </div>
                 <div className="row">

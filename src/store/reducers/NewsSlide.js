@@ -1,5 +1,11 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { getData, deleteData, addData } from '../../api/firestore';
+import {
+    compareNumber,
+    compareStringName,
+    compareStringDate,
+    compareStringTarget,
+} from '../../utils/compareFunction';
 import { logoutAction } from './action';
 
 export const fetchNewsThunk = createAsyncThunk(
@@ -28,7 +34,28 @@ export const newsSlice = createSlice({
     initialState: {
         value: [],
     },
-    reducers: {},
+    reducers: {
+        sortByName: (state, action) => {
+            let { typeSort, orderBy } = action.payload;
+
+            if (orderBy === 'name')
+                if (typeSort)
+                    state.value.sort((a, b) => compareStringName(a, b));
+                else state.value.sort((a, b) => compareStringName(b, a));
+            else if (orderBy === 'target')
+                if (typeSort)
+                    state.value.sort((a, b) => compareStringTarget(a, b));
+                else state.value.sort((a, b) => compareStringTarget(b, a));
+            else if (orderBy === 'date')
+                if (typeSort)
+                    state.value.sort((a, b) => compareStringDate(a, b));
+                else state.value.sort((a, b) => compareStringDate(b, a));
+            else {
+                if (typeSort) state.value.sort((a, b) => compareNumber(a, b));
+                else state.value.sort((a, b) => compareNumber(b, a));
+            }
+        },
+    },
     extraReducers: {
         [fetchNewsThunk.fulfilled]: (state, action) => {
             state.value = action.payload;
@@ -44,5 +71,5 @@ export const newsSlice = createSlice({
         },
     },
 });
-
+export const { sortByName } = newsSlice.actions;
 export default newsSlice.reducer;

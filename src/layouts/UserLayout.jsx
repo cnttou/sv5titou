@@ -1,14 +1,13 @@
 import HeaderUser from '../components/HeaderUser';
 
-export const UserLayout =
+const UserLayout =
     (Component) =>
     ({ ...rest }) => {
         return (
-            <>
-                <div className="container">
-                    <HeaderUser />
-                    <Component {...rest} />
-                </div>
-            </>
+            <div className="container-xl">
+                <HeaderUser />
+                <Component {...rest} />
+            </div>
         );
     };
+export default UserLayout;
