@@ -1,7 +1,6 @@
 export const compareStringName = (a, b) => {
-    return a.name.localeCompare(b.name);
-    // if (a.name > b.name) return 1;
-    // else return -1;
+    if (a.name > b.name) return 1;
+    else return -1;
 };
 export const compareStringTarget = (a, b) => {
     if (a.target >= b.target) return 1;

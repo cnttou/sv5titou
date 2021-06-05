@@ -3,9 +3,9 @@ import { useDispatch } from 'react-redux';
 import { fetchNewsThunk, sortByName } from '../store/reducers/NewsSlide';
 
 export default function SortItem() {
-    const [typeSort, setTypeSort] = useState(true);
     const [orderBy, setOrderBy] = useState('name');
     const [keyword, setKeyword] = useState('');
+    const [typeSort, setTypeSort] = useState(true);
     const dispatch = useDispatch();
 
     const handleRefresh = () => {
@@ -16,18 +16,13 @@ export default function SortItem() {
     };
     const handleOrderBy = (e) => {
         setOrderBy(e.target.value);
-        dispatch(
-            sortByName({
-                typeSort,
-                orderBy,
-            })
-        );
+        dispatch(sortByName({ typeSort, orderBy: e.target.value }));
     };
     const handleTypeSort = (e) => {
         setTypeSort(e.target.value);
         dispatch(
             sortByName({
-                typeSort,
+                typeSort: e.target.value,
                 orderBy,
             })
         );
@@ -59,7 +54,6 @@ export default function SortItem() {
                 <option value="date">Thời gian</option>
                 <option value="numPeople">Số người</option>
             </select>
-
             <select
                 className="form-select"
                 aria-label="Default select example"

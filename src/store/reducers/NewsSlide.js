@@ -39,19 +39,20 @@ export const newsSlice = createSlice({
             let { typeSort, orderBy } = action.payload;
 
             if (orderBy === 'name')
-                if (typeSort)
+                if (typeSort == 'true')
                     state.value.sort((a, b) => compareStringName(a, b));
                 else state.value.sort((a, b) => compareStringName(b, a));
             else if (orderBy === 'target')
-                if (typeSort)
+                if (typeSort == 'true')
                     state.value.sort((a, b) => compareStringTarget(a, b));
                 else state.value.sort((a, b) => compareStringTarget(b, a));
             else if (orderBy === 'date')
-                if (typeSort)
+                if (typeSort == 'true')
                     state.value.sort((a, b) => compareStringDate(a, b));
                 else state.value.sort((a, b) => compareStringDate(b, a));
             else {
-                if (typeSort) state.value.sort((a, b) => compareNumber(a, b));
+                if (typeSort == 'true')
+                    state.value.sort((a, b) => compareNumber(a, b));
                 else state.value.sort((a, b) => compareNumber(b, a));
             }
         },
