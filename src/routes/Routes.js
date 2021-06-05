@@ -24,7 +24,7 @@ const routes = [
         private: true,
     },
     {
-        path: '/',
+        path: '/news',
         component: UserLayout(User),
         exact: true,
         private: false,

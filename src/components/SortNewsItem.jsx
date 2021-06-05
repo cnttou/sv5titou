@@ -4,16 +4,16 @@ import { fetchNewsThunk, sortByName } from '../store/reducers/NewsSlide';
 
 export default function SortItem() {
     const [orderBy, setOrderBy] = useState('name');
-    const [keyword, setKeyword] = useState('');
+    // const [keyword, setKeyword] = useState('');
     const [typeSort, setTypeSort] = useState(true);
     const dispatch = useDispatch();
 
     const handleRefresh = () => {
         dispatch(fetchNewsThunk(10));
     };
-    const handleSearch = (e) => {
-        setKeyword(e.target.value);
-    };
+    // const handleSearch = (e) => {
+    //     setKeyword(e.target.value);
+    // };
     const handleOrderBy = (e) => {
         setOrderBy(e.target.value);
         dispatch(sortByName({ typeSort, orderBy: e.target.value }));
@@ -63,7 +63,7 @@ export default function SortItem() {
                 <option value={true}>Tăng dần</option>
                 <option value={false}>Giảm dần</option>
             </select>
-            <span className="input-group-text" id="basic-addon1">
+            {/* <span className="input-group-text" id="basic-addon1">
                 Tìm kiếm:
             </span>
             <input
@@ -74,7 +74,7 @@ export default function SortItem() {
                 placeholder="Username"
                 aria-label="Username"
                 aria-describedby="basic-addon1"
-            />
+            /> */}
         </div>
     );
 }

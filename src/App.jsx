@@ -1,6 +1,11 @@
 import './App.css';
 import 'react-toastify/dist/ReactToastify.css';
-import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
+import {
+    BrowserRouter as Router,
+    Switch,
+    Route,
+    Redirect,
+} from 'react-router-dom';
 import pages from './routes/Routes';
 import PrivateRoute from './routes/PrivateRoute';
 import { ToastContainer } from 'react-toastify';
@@ -27,6 +32,7 @@ function App() {
                 <ToastContainer />
                 <Suspense fallback={<Loading />}>
                     <Switch>{showPage(pages)}</Switch>
+                    {/* <Redirect from="/" to="/news" exact /> */}
                 </Suspense>
             </Router>
         </>

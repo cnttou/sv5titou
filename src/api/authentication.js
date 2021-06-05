@@ -37,7 +37,7 @@ export const loginByGoogle = async (history) => {
             if (firebase.auth().currentUser.email.slice(-9) === 'ou.edu.vn') {
                 const {email, uid} = firebase.auth().currentUser;
                 addUserDetail(email, uid);
-                history.replace('/');
+                history.replace('/news');
             } else if (firebase.auth().currentUser.email) {
                 toast(
                     'Đăng nhập không thành công. Vui lòng đăng nhập bằng mail trường Đại học Mở'

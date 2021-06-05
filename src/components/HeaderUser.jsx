@@ -7,7 +7,7 @@ export default function HeaderUser() {
         <>
             <nav className="navbar navbar-expand-lg navbar-light bg-light">
                 <div className="container-fluid">
-                    <Link className="navbar-brand" to="/">
+                    <Link className="navbar-brand" to="/news">
                         <img
                             src="/logo.png"
                             alt="Logo image"
@@ -35,7 +35,7 @@ export default function HeaderUser() {
                                     className="nav-link"
                                     activeClassName="active"
                                     exact
-                                    to="/"
+                                    to="/news"
                                 >
                                     News
                                 </NavLink>
