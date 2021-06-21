@@ -1,15 +1,17 @@
-export default function ButtonSwtich({ text, active = false, handleClick, id }) {
-    const classlist = 'btn ';
+function ButtonSwtich({ text, active = false, handleClick, id }) {
+    const onClick = () => {
+        handleClick(id);
+    };
+
     return (
-        <>
-            <button
-                onClick={() => handleClick(id)}
-                type="button"
-                className={active ? `${classlist} btn-primary` : classlist}
-                aria-current="true"
-            >
-                {text}
-            </button>
-        </>
+        <button
+            onClick={onClick}
+            type="button"
+            className={active ? 'btn btn-primary' : 'btn'}
+            aria-current="true"
+        >
+            {text}
+        </button>
     );
 }
+export default ButtonSwtich;

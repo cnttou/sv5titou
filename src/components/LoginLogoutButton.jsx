@@ -1,33 +1,35 @@
-import { useDispatch } from "react-redux";
-import { useHistory } from "react-router";
-import { Link } from "react-router-dom";
-import { currentUser, logout } from "../api/authentication";
+import { useDispatch } from 'react-redux';
+import { useHistory } from 'react-router';
+import { Link } from 'react-router-dom';
+import { currentUser, logout } from '../api/authentication';
 
 export default function LoginLogoutButton() {
     let history = useHistory();
     const dispatch = useDispatch();
+
     const handleLogout = () => {
         logout(history, dispatch);
     };
-    return (
-        <div>
-            {currentUser()?.email ? (
-                <button
-                    type="button"
-                    className="btn btn-outline-primary w-100"
-                    onClick={handleLogout}
-                >
-                    Logout
-                </button>
-            ) : (
-                <Link
-                    type="button"
-                    className="btn btn-outline-primary w-100"
-                    to={'/login'}
-                >
-                    Login
-                </Link>
-            )}
-        </div>
-    );
+
+    if (currentUser()?.email)
+        return (
+            <button
+                type="button"
+                className="btn btn-outline-primary w-100"
+                onClick={handleLogout}
+            >
+                Logout
+            </button>
+        );
+        
+    else
+        return (
+            <Link
+                type="button"
+                className="btn btn-outline-primary w-100"
+                to={'/login'}
+            >
+                Login
+            </Link>
+        );
 }

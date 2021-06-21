@@ -21,23 +21,52 @@
     max-width: 500px;
     border-radius: 10px;
 }
-.image-proof__content{
+.image-proof__content {
     position: relative;
 }
-.image-proof__content >button{
+.image-proof__content > button {
     position: absolute;
     top: 0;
     right: 0;
     background-color: wheat;
 }
-.image-proof{
+.image-proof {
     object-fit: contain;
     width: 100%;
 }
-#dialog{
+/* #dialog {
     top: 50%;
     left: 50%;
     width: 500px;
     transform: translate(-50%, -50%);
     position: fixed;
+} */
+
+@media screen and (max-width: 500px) {
+    .AdminLogin {
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%, -70%);
+        box-shadow: none;
+        padding: 15px;
+        max-width: 500px;
+        border-radius: none;
+    }
+    .table-news thead th:nth-child(n+4){
+        display: none;
+    }
+    .table-news tbody td:nth-child(n+4){
+        display: none;
+    }
+    .table-register-activity th:nth-child(3){
+        display: none;
+    }
+    .table-register-activity td:nth-child(3){
+        display: none;
+    }
+    .btn-group{
+        flex-direction: column;
+        border-radius: none;
+    }
 }

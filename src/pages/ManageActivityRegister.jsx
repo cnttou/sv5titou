@@ -38,6 +38,8 @@ function ManageActivityRegister() {
             type: 'button',
             value: 'Minh chứng',
             className: 'btn btn-primary',
+            'data-bs-toggle': 'modal',
+            'data-bs-target': '#dialog-browse-file',
         },
         {
             handle: handleRemoveActivity,
@@ -47,7 +49,7 @@ function ManageActivityRegister() {
         },
     ];
     const loadTable = (listActivity = []) => (
-        <table className="table table-bordered table-hover">
+        <table className="table table-register-activity table-bordered table-hover">
             <thead>
                 <tr className="bg-info">
                     <th scope="col">Tên</th>
@@ -72,9 +74,9 @@ function ManageActivityRegister() {
         </table>
     );
     return (
-        <div className="container">
+        <div>
             {listActivity?.length ? loadTable(listActivity) : <Loading />}
-            {showBrowseFile && (
+            {(
                 <ModelBrowseFile
                     show={showBrowseFile}
                     setShow={setShowBrowseFile}

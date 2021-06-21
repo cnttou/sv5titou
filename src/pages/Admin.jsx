@@ -5,15 +5,23 @@ import AdminManageUser from './AdminManageUser';
 
 export default function Admin() {
     const [page, setPage] = useState(0);
+
+    const showContainer = () => {
+        if (page === 0) return <AdminManageNews />;
+        else return <AdminManageUser />;
+    };
+
+    const handlePage = (page) => {
+        setPage(page);
+    };
+
     return (
         <div className="app">
-            <div className="container h-100">
+            <div className="container-xl h-100">
                 <div className="row">
-                    <HeaderAdmin setPage={setPage} page={page} />
+                    <HeaderAdmin setPage={handlePage} page={page} />
                 </div>
-                <div className="row">
-                    {page === 0 ? <AdminManageNews /> : <AdminManageUser />}
-                </div>
+                <div className="row">{showContainer()}</div>
             </div>
         </div>
     );

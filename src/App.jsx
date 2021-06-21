@@ -31,8 +31,10 @@ function App() {
             <Router>
                 <ToastContainer />
                 <Suspense fallback={<Loading />}>
-                    <Switch>{showPage(pages)}</Switch>
-                    {/* <Redirect from="/" to="/news" exact /> */}
+                    <Switch>
+                        <Redirect from="/" to="/news" exact />
+                        {showPage(pages)}
+                    </Switch>
                 </Suspense>
             </Router>
         </>

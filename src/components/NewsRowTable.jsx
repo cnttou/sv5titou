@@ -71,7 +71,7 @@ export default function NewsRowTable({
             {buttons?.length && (
                 <td>
                     <div
-                        className="btn-group"
+                        className="btn-group btn-group-sm"
                         role="group"
                         aria-label="Basic example"
                     >
@@ -96,7 +96,7 @@ export default function NewsRowTable({
                             type="button"
                             className="btn btn-primary"
                             onClick={() => handleProof(index)}
-                            disabled={proof || images.length ? false : true }
+                            disabled={proof || images.length ? false : true}
                         >
                             {'Xem minh chứng'}
                         </button>
@@ -105,7 +105,7 @@ export default function NewsRowTable({
                             className="btn btn-success"
                             onClick={() => handleConfirm(index, !confirm)}
                         >
-                            {!confirm ? 'Xác nhận': 'Hủy XN'}
+                            {!confirm ? 'Xác nhận' : 'Hủy XN'}
                         </button>
                     </div>
                 </td>

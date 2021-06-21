@@ -15,7 +15,7 @@ function User() {
         }
     }, []);
     const loadTable = (listNews = []) => (
-        <table className="table table-bordered table-hover mt-3">
+        <table className="table table-news table-bordered table-hover mt-3">
             <thead>
                 <tr className="bg-info">
                     <th scope="col">Tên</th>

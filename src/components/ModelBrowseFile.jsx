@@ -6,7 +6,7 @@ import {
     deleteImageThunk,
 } from '../store/reducers/ActivitySlide';
 
-export default function ModelBrowseFile({ show, setShow, activity }) {
+export default function ModelBrowseFile({ activity }) {
     const dispatch = useDispatch();
     const [listImage, setListImage] = useState([]);
 
@@ -42,17 +42,13 @@ export default function ModelBrowseFile({ show, setShow, activity }) {
         setListImage(images);
     };
     const handleHide = () => {
-        setShow(false);
+        // setShow(false);
         setListImage([]);
     };
     return (
         <div>
-            <div
-                className="modal-dialog  modal-dialog-scrollable"
-                id="dialog"
-                style={{ display: show ? 'block' : 'none' }}
-            >
-                <div className="modal-dialog">
+            <div className="modal fade" id="dialog-browse-file">
+                <div className="modal-dialog modal-xl modal-fullscreen-lg-down modal-dialog-scrollable">
                     <div className="modal-content">
                         <div className="modal-header">
                             <h5
