@@ -1,5 +1,5 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
-import { getData, deleteData, addData } from '../../api/firestore';
+import { getNews, deleteData, addData } from '../../api/firestore';
 import {
     compareNumber,
     compareStringName,
@@ -11,7 +11,7 @@ import { logoutAction } from './action';
 export const fetchNewsThunk = createAsyncThunk(
     'news/fetchNews',
     async (limit) => {
-        return await getData('news', limit);
+        return await getNews(limit);
     }
 );
 

@@ -12,7 +12,7 @@ export default function AdminManageNews() {
     const [newsEdit, setNewsEdit] = useState({});
 
     useEffect(() => {
-        if (listNews.length == 0) {
+        if (listNews.length === 0) {
             dispatch(fetchNewsThunk(10));
         }
     }, []);
@@ -24,6 +24,20 @@ export default function AdminManageNews() {
     const handleDelete = (index) => {
         dispatch(deleteNewsThunk(listNews[index].id));
     };
+    const buttons = [
+        {
+            handle: handleEdit,
+            type: 'button',
+            value: 'Edit',
+            className: 'btn btn-success',
+        },
+        {
+            handle: handleDelete,
+            type: 'button',
+            value: 'Delete',
+            className: 'btn btn-danger',
+        },
+    ];
     const loadTable = (listNews = []) => (
         <table className="table table-bordered table-hover mt-3">
             <thead>
@@ -39,8 +53,7 @@ export default function AdminManageNews() {
             <tbody>
                 {listNews.map((c, i) => (
                     <NewsRowTable
-                        handleEdit={handleEdit}
-                        handleDelete={handleDelete}
+                        buttons={buttons}
                         name={c.name}
                         target={c.target}
                         date={c.date}

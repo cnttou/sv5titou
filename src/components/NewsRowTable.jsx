@@ -7,10 +7,9 @@ export default function NewsRowTable({
     date,
     location,
     summary,
-    handleEdit,
-    handleDelete,
     handleConfirm,
     handleCancelConfirm,
+    checkRegister,
     handleProof,
     index,
     id,
@@ -26,6 +25,7 @@ export default function NewsRowTable({
             {name && (
                 <th>
                     <Link to={id}>{name}</Link>
+                    {checkRegister && checkRegister(id)}
                 </th>
             )}
             {email && <td>{email}</td>}
@@ -44,30 +44,6 @@ export default function NewsRowTable({
             {date && <td>{date}</td>}
             {location && <td>{location}</td>}
             {numPeople && <td>{numPeople}</td>}
-            {handleDelete && handleEdit && (
-                <td>
-                    <div
-                        className="btn-group"
-                        role="group"
-                        aria-label="Basic mixed styles example"
-                    >
-                        <button
-                            type="button"
-                            className="btn btn-success"
-                            onClick={() => handleEdit(index)}
-                        >
-                            Edit
-                        </button>
-                        <button
-                            type="button"
-                            className="btn btn-danger"
-                            onClick={() => handleDelete(index)}
-                        >
-                            Delete
-                        </button>
-                    </div>
-                </td>
-            )}
             {buttons?.length && (
                 <td>
                     <div
@@ -88,7 +64,7 @@ export default function NewsRowTable({
             {handleConfirm && handleProof && (
                 <td>
                     <div
-                        className="btn-group"
+                        className="btn-group btn-group-sm"
                         role="group"
                         aria-label="Basic mixed styles example"
                     >
@@ -97,12 +73,16 @@ export default function NewsRowTable({
                             className="btn btn-primary"
                             onClick={() => handleProof(index)}
                             disabled={proof || images.length ? false : true}
+                            data-bs-toggle="modal"
+                            data-bs-target="#dialog-browse-file"
                         >
                             {'Xem minh chứng'}
                         </button>
                         <button
                             type="button"
-                            className="btn btn-success"
+                            className={
+                                !confirm ? 'btn btn-success' : 'btn btn-danger'
+                            }
                             onClick={() => handleConfirm(index, !confirm)}
                         >
                             {!confirm ? 'Xác nhận' : 'Hủy XN'}
@@ -113,3 +93,16 @@ export default function NewsRowTable({
         </tr>
     );
 }
+
+// const colorItemPass = (date = '2021-09-10') => {
+//     let now = new Date();
+//     let d = new Date(date);
+
+//     if (now.getTime() > d.getTime()) {
+//         return {
+//             backgroundColor: '#A9A9A9',
+//             opacity: '0.6',
+//         };
+//     }
+//     return { backgroundColor: 'transparent' };
+// };

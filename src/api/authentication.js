@@ -18,7 +18,7 @@ export const logout = (history, dispath) => {
             history.push('/login');
         })
         .catch((error) => {
-            toast('Hiện tại không đăng xuất được vui lòng thử lại');
+            toast.warn('Hiện tại không đăng xuất được vui lòng thử lại');
             console.log(error);
         });
 };
@@ -39,11 +39,11 @@ export const loginByGoogle = async (history) => {
                 addUserDetail(email, uid);
                 history.replace('/news');
             } else if (firebase.auth().currentUser.email) {
-                toast(
+                toast.warn(
                     'Đăng nhập không thành công. Vui lòng đăng nhập bằng mail trường Đại học Mở'
                 );
                 firebase.auth().signOut();
-            } else toast('Đăng nhập không thành công vui lòng thử lại');
+            } else toast.warn('Đăng nhập không thành công vui lòng thử lại');
         })
         .catch((error) => {
             console.log(error);
@@ -62,7 +62,7 @@ export const loginWithEmailPassword = (history, location, email, password) => {
         })
         .catch((error) => {
             var errorMessage = error.message;
-            toast('Thông tin đăng nhập không đúng');
+            toast.warn('Thông tin đăng nhập không đúng');
             console.log(errorMessage);
         });
 };

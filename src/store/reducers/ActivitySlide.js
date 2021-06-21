@@ -53,11 +53,16 @@ export const activitySlice = createSlice({
     name: 'activity',
     initialState: {
         value: [],
+        loading: 0,
     },
     reducers: {},
     extraReducers: {
         [fetchRegisterActivityThunk.fulfilled]: (state, action) => {
             state.value = action.payload;
+            state.loading = state.loading - 1;
+        },
+        [fetchRegisterActivityThunk.pending]: (state, action) => {
+            state.loading = state.loading + 1;
         },
         [registerActivityThunk.fulfilled]: (state, action) => {
             state.value.push(action.payload);
@@ -87,11 +92,11 @@ export const activitySlice = createSlice({
                 return c;
             });
         },
-        [logoutAction]: (state)=>{
-            state.value = []
-        }
+        [logoutAction]: (state) => {
+            state.value = [];
+        },
     },
 });
 
-export const {addImageAction}= activitySlice.actions;
+export const { addImageAction } = activitySlice.actions;
 export default activitySlice.reducer;

@@ -29,7 +29,7 @@ function App() {
     return (
         <>
             <Router>
-                <ToastContainer />
+                <ToastContainer autoClose={1000} hideProgressBar />
                 <Suspense fallback={<Loading />}>
                     <Switch>
                         <Redirect from="/" to="/news" exact />

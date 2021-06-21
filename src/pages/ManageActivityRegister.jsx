@@ -12,24 +12,23 @@ import Loading from '../components/Loading';
 
 function ManageActivityRegister() {
     const listActivity = useSelector((state) => state.activitis.value);
+    const loading = useSelector((state) => state.activitis.loading);
+
     const dispatch = useDispatch();
     const [activity, setActivity] = useState('');
-    const [show, setShow] = useState(false);
-    const [showBrowseFile, setShowBrowseFile] = useState(false);
+    const [showAlert, setShowAlert] = useState(false);
 
     useEffect(async () => {
         if ((await checkLogin()) == false) {
-            setShow(true);
+            setShowAlert(true);
             return;
-        }
-        dispatch(fetchRegisterActivityThunk());
+        } else dispatch(fetchRegisterActivityThunk());
     }, []);
     const handleRemoveActivity = (index) => {
         dispatch(removeRegisterActivityThunk(listActivity[index].id));
     };
     const handleAddProof = (index) => {
         setActivity(listActivity[index]);
-        setShowBrowseFile(true);
     };
 
     const buttons = [
@@ -75,15 +74,15 @@ function ManageActivityRegister() {
     );
     return (
         <div>
-            {listActivity?.length ? loadTable(listActivity) : <Loading />}
-            {(
-                <ModelBrowseFile
-                    show={showBrowseFile}
-                    setShow={setShowBrowseFile}
-                    activity={activity}
-                />
+            {loading !== 0 && listActivity?.length === 0 && <Loading />}
+            {listActivity?.length !== 0
+                ? loadTable(listActivity)
+                : 'Bạn chưa đăng kí họat động nào'}
+
+            <ModelBrowseFile activity={activity} />
+            {showAlert && (
+                <AlertLogin show={showAlert} setShow={setShowAlert} />
             )}
-            {show && <AlertLogin show={show} setShow={setShow} />}
         </div>
     );
 }

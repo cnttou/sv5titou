@@ -3,8 +3,8 @@ import { useDispatch } from 'react-redux';
 import { fetchNewsThunk, sortByName } from '../store/reducers/NewsSlide';
 
 export default function SortItem() {
-    const [orderBy, setOrderBy] = useState('name');
-    const [typeSort, setTypeSort] = useState(true);
+    const [orderBy, setOrderBy] = useState('date');
+    const [typeSort, setTypeSort] = useState(false);
     const dispatch = useDispatch();
 
     const handleRefresh = () => {

@@ -11,17 +11,21 @@ export default function ModelBrowseFile({ activity }) {
     const [listImage, setListImage] = useState([]);
 
     useEffect(async () => {
+        console.log('change activity');
         let arr = [];
-        activity?.images?.forEach((imageName) =>
-            getUrlImage(activity.id, imageName, activity?.userId)
-                .then((url) => {
-                    arr.push(url);
-                    setListImage(arr);
+        if (activity?.images?.length) {
+            Promise.all(
+                activity.images.map((imageName) =>
+                    getUrlImage(activity.id, imageName, activity?.userId)
+                )
+            )
+                .then((res) => {
+                    setListImage(res);
                 })
                 .catch((err) => {
                     console.log('ERROR BROWSE FILE: ', err);
-                })
-        );
+                });
+        }
     }, [activity]);
 
     const handleSubmit = (e) => {
@@ -41,10 +45,7 @@ export default function ModelBrowseFile({ activity }) {
         images.splice(index, 1);
         setListImage(images);
     };
-    const handleHide = () => {
-        // setShow(false);
-        setListImage([]);
-    };
+   
     return (
         <div>
             <div className="modal fade" id="dialog-browse-file">
@@ -59,10 +60,7 @@ export default function ModelBrowseFile({ activity }) {
                             </h5>
                         </div>
                         <div className="modal-body">
-                            <form
-                                id="form-browse-file"
-                                onSubmit={(e) => handleSubmit(e)}
-                            >
+                            <form id="form-browse-file" onSubmit={handleSubmit}>
                                 <div className="input-group mb-3">
                                     <label
                                         className="input-group-text"
@@ -103,15 +101,14 @@ export default function ModelBrowseFile({ activity }) {
                                 type="button"
                                 className="btn btn-secondary"
                                 data-bs-dismiss="modal"
-                                onClick={handleHide}
                             >
-                                Hủy
+                                Đóng
                             </button>
                             <input
                                 type="submit"
                                 className="btn btn-primary"
                                 form="form-browse-file"
-                                value={'Lưu'}
+                                value="Lưu"
                             />
                         </div>
                     </div>

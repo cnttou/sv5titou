@@ -17,11 +17,11 @@ export const upFile = (acId, file) => {
         .child(`/${file.name}`)
         .put(file, metadata)
         .then((snapshot) => {
-            toast('Đã tải ảnh lên.');
+            toast.success('Đã tải ảnh lên.');
             return file.name;
         }).catch((error)=>{
             console.log(error)
-            toast('Đã tải ảnh lên thất bại.');
+            toast.warn('Đã tải ảnh lên thất bại.');
         });
 };
 
@@ -31,12 +31,12 @@ export const deleteFile = (acId, fileName) => {
         .child(`/${fileName}`)
         .delete()
         .then((snapshot) => {
-            toast('Đã xóa ảnh.');
+            toast.success('Đã xóa ảnh.');
             return fileName;
         })
         .catch((error) => {
             console.log(error);
-            toast('Xóa ảnh thất bại.');
+            toast.warn('Xóa ảnh thất bại.');
         });
 };
 
