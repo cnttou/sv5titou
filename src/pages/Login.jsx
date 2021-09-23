@@ -70,8 +70,7 @@ export default function Login() {
                         className="btn btn-danger form-control"
                         onClick={handleLoginWithGmail}
                     >
-                        <i className="fab fa-google-plus-g"></i> | Đăng nhập
-                        bằng Gmail
+                        <i className="fab fa-google-plus-g"></i> | Đăng nhập Gmail @ou.edu.vn
                     </button>
                 </form>
             </div>

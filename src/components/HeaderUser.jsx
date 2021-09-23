@@ -9,13 +9,12 @@ export default function HeaderUser() {
                 <div className="container-fluid">
                     <Link className="navbar-brand" to="/news">
                         <img
-                            src="/logo.png"
-                            alt="Logo image"
-                            width="30"
-                            height="30"
+                            src="/logo-top.png"
+                            alt="Logo SV5T Khoa CNTT"
+                            width=""
+                            height="85"
                             className="d-inline-block align-text-top"
                         />
-                        SV5T
                     </Link>
                     <button
                         className="navbar-toggler"
@@ -47,7 +46,7 @@ export default function HeaderUser() {
                                     exact
                                     to="/register-activity"
                                 >
-                                    Register activity
+                                    Hoạt động của tôi
                                 </NavLink>
                             </li>
                         </ul>
@@ -67,7 +66,7 @@ export default function HeaderUser() {
                                         className="dropdown-item"
                                         type="button"
                                     >
-                                        Edit profile
+                                        Hồ sơ
                                     </button>
                                 </li>
                                 <li>

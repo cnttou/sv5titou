@@ -98,8 +98,8 @@ export default function ModelNews({ item, setItem }) {
                     </div>
                     <div className="modal-body">
                         <Input
-                            title="Tên chương trình"
-                            placeholder="Nhập tên"
+                            title="Tên hoạt động"
+                            placeholder="Nhập tên hoạt động ..."
                             onChange={setName}
                             value={name}
                         />
@@ -131,7 +131,7 @@ export default function ModelNews({ item, setItem }) {
                         />
                         <div className="input-group">
                             <span className="input-group-text">
-                                Thông tin chi tiết <br /> chương trình
+                                Chi tiết hoạt động
                             </span>
                             <textarea
                                 className="form-control"

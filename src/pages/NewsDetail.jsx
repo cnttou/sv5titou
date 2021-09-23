@@ -29,7 +29,7 @@ export default function NewsDetail() {
             {news?.name ? (
                 <div className="mt-3 border rounded p-3 shadow bg-light">
                     <h3 className="text-center mb-5 fs-2">
-                        Chương trình: {news?.name}
+                        Hoạt động: {news?.name}
                     </h3>
                     <p>
                         <span className="fw-bold fs-5">Thời gian: </span>
@@ -71,7 +71,7 @@ export default function NewsDetail() {
                         className="btn btn-primary ms-3"
                         onClick={handleRegister}
                     >
-                        Register activity
+                        Đăng ký hoạt động
                     </button>
                     <AlertLogin show={show} setShow={setShow} />
                 </div>

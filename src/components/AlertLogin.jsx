@@ -11,8 +11,7 @@ export default function AlertLogin({ show = 'flase', setShow }) {
                         </div>
                         <div className="modal-body">
                             <p>
-                                Bạn phải đăng nhập bằng mail trường để có thể sử
-                                dụng được tính năng này.
+                                Không phải email trường cấp!
                             </p>
                         </div>
                         <div className="modal-footer">

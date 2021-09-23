@@ -10,6 +10,10 @@
     color: red;
 }
 
+a {
+    text-decoration: none;
+}
+
 /* Admin Login CSS */
 .AdminLogin {
     position: absolute;

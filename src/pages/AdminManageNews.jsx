@@ -28,13 +28,13 @@ export default function AdminManageNews() {
         {
             handle: handleEdit,
             type: 'button',
-            value: 'Edit',
-            className: 'btn btn-success',
+            value: 'Sửa',
+            className: 'btn btn-warning',
         },
         {
             handle: handleDelete,
             type: 'button',
-            value: 'Delete',
+            value: 'Xóa',
             className: 'btn btn-danger',
         },
     ];
@@ -74,11 +74,11 @@ export default function AdminManageNews() {
             <div className="d-grid">
                 <button
                     type="button"
-                    className="btn btn-danger"
+                    className="btn btn-primary"
                     data-bs-toggle="modal"
                     data-bs-target="#exampleModal"
                 >
-                    Add new item
+                    Hoạt động mới
                 </button>
             </div>
             <ModelNews item={newsEdit} setItem={setNewsEdit} />

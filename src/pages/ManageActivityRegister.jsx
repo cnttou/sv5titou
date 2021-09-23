@@ -77,7 +77,7 @@ function ManageActivityRegister() {
             {loading !== 0 && listActivity?.length === 0 && <Loading />}
             {listActivity?.length !== 0
                 ? loadTable(listActivity)
-                : 'Bạn chưa đăng kí họat động nào'}
+                : 'Bạn chưa đăng ký hoạt động nào!'}
 
             <ModelBrowseFile activity={activity} />
             {showAlert && (

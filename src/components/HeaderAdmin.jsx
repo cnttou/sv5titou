@@ -2,7 +2,7 @@ import ButtonSwtich from '../components/ButtonSwtich';
 import { currentUser } from '../api/authentication';
 import LoginLogoutButton from './LoginLogoutButton';
 
-const buttonListBar = ['Manage News', 'Manage User'];
+const buttonListBar = ['Quản lý hoạt động', 'Quản lý sinh viên'];
 
 export default function HeaderAdmin({ setPage, page }) {
     const renderListBar = () => {
@@ -33,7 +33,7 @@ export default function HeaderAdmin({ setPage, page }) {
                 <ul className="dropdown-menu dropdown-menu-lg-end">
                     <li>
                         <button className="dropdown-item" type="button">
-                            Edit profile
+                            Hồ sơ
                         </button>
                     </li>
                     <li>
