@@ -11,8 +11,8 @@ import ModelBrowseFile from '../components/ModelBrowseFile';
 import Loading from '../components/Loading';
 
 function ManageActivityRegister() {
-    const listActivity = useSelector((state) => state.activitis.value);
-    const loading = useSelector((state) => state.activitis.loading);
+    const listActivity = useSelector((state) => state.activities.value);
+    const loading = useSelector((state) => state.activities.loading);
 
     const dispatch = useDispatch();
     const [activity, setActivity] = useState('');

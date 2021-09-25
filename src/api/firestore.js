@@ -8,7 +8,7 @@ export const addImage = (fileName, acId = '') => {
     return db
         .collection('register_activity')
         .doc(uId)
-        .collection('activitis')
+        .collection('activities')
         .doc(acId)
         .update({
             images: firebase.firestore.FieldValue.arrayUnion(fileName),
@@ -19,7 +19,7 @@ export const deleteImage = (fileName, acId = '') => {
     return db
         .collection('register_activity')
         .doc(uId)
-        .collection('activitis')
+        .collection('activities')
         .doc(acId)
         .update({
             images: firebase.firestore.FieldValue.arrayRemove(fileName),
@@ -31,7 +31,7 @@ export const getRegisterActivity = (userId) => {
     return db
         .collection('register_activity')
         .doc(uId)
-        .collection('activitis')
+        .collection('activities')
         .get()
         .then((querySnapshot) => {
             let data = [];
@@ -49,7 +49,7 @@ export const updateConfirmActivity = (acId, proof) => {
     return db
         .collection('register_activity')
         .doc(uId)
-        .collection('activitis')
+        .collection('activities')
         .doc(acId)
         .update({
             proof,
@@ -66,7 +66,7 @@ export const removeRegisterActivity = (acId) => {
     return db
         .collection('register_activity')
         .doc(uId)
-        .collection('activitis')
+        .collection('activities')
         .doc(acId)
         .delete()
         .then(() => {
@@ -90,7 +90,7 @@ export const registerActivity = (acId, name, date, location) => {
     return db
         .collection('register_activity')
         .doc(uId)
-        .collection('activitis')
+        .collection('activities')
         .doc(acId)
         .set(data)
         .then(() => {
@@ -230,7 +230,7 @@ export const confirmProof = (uid, acId) => {
     return db
         .collection('register_activity')
         .doc(uid)
-        .collection('activitis')
+        .collection('activities')
         .doc(acId)
         .update({ confirm: true })
         .then(() => {
@@ -246,7 +246,7 @@ export const cancelConfirmProof = (uid, acId) => {
     return db
         .collection('register_activity')
         .doc(uid)
-        .collection('activitis')
+        .collection('activities')
         .doc(acId)
         .update({ confirm: false })
         .then(() => {

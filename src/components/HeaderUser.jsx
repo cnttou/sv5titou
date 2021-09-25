@@ -60,7 +60,7 @@ export default function HeaderUser() {
                             >
                                 {currentUser()?.displayName}
                             </button>
-                            <ul className="dropdown-menu dropdown-menu-lg-end">
+                            <ul className="dropdown-menu dropdown-menu-lg-end p-2">
                                 <li>
                                     <button
                                         className="dropdown-item"

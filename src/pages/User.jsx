@@ -8,7 +8,7 @@ import { fetchRegisterActivityThunk } from '../store/reducers/ActivitySlide';
 
 function User() {
     const listNews = useSelector((state) => state.news.value);
-    const listActivity = useSelector((state) => state.activitis.value);
+    const listActivity = useSelector((state) => state.activities.value);
     const dispatch = useDispatch();
 
     useEffect(() => {

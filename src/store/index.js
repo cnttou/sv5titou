@@ -6,7 +6,7 @@ import userReducer from './reducers/UserSlide';
 export default configureStore({
     reducer: {
         news: newsReducer,
-        activitis: activityReducer,
+        activities: activityReducer,
         user: userReducer,
     },
 });
