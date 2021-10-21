@@ -1,0 +1,9 @@
+{
+	"configurations": [
+		{
+			"name": "Debug app",
+            "type": "firefox",
+            "request": "attach"
+		}
+	]
+}

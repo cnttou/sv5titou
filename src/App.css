@@ -1,42 +1,42 @@
 .app {
 }
 .header {
-    margin: 20px 0;
-    padding: 0;
+	margin: 20px 0;
+	padding: 0;
 }
 /* For all use */
 .require:after {
-    content: ' *';
-    color: red;
+	content: ' *';
+	color: red;
 }
 
 a {
-    text-decoration: none;
+	text-decoration: none;
 }
 
 /* Admin Login CSS */
 .AdminLogin {
-    position: absolute;
-    left: 50%;
-    top: 50%;
-    transform: translate(-50%, -50%);
-    box-shadow: 0px 0px 15px #0008;
-    padding: 15px;
-    max-width: 500px;
-    border-radius: 10px;
+	position: absolute;
+	left: 50%;
+	top: 50%;
+	transform: translate(-50%, -50%);
+	box-shadow: 0px 0px 15px #0008;
+	padding: 15px;
+	max-width: 500px;
+	border-radius: 10px;
 }
 .image-proof__content {
-    position: relative;
+	position: relative;
 }
 .image-proof__content > button {
-    position: absolute;
-    top: 0;
-    right: 0;
-    background-color: wheat;
+	position: absolute;
+	top: 0;
+	right: 0;
+	background-color: wheat;
 }
 .image-proof {
-    object-fit: contain;
-    width: 100%;
+	object-fit: contain;
+	width: 100%;
 }
 /* #dialog {
     top: 50%;
@@ -46,31 +46,38 @@ a {
     position: fixed;
 } */
 
+.wrapper-loading {
+	width: 100%;
+	min-height: 500px;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
 @media screen and (max-width: 500px) {
-    .AdminLogin {
-        position: absolute;
-        left: 50%;
-        top: 50%;
-        transform: translate(-50%, -70%);
-        box-shadow: none;
-        padding: 15px;
-        max-width: 500px;
-        border-radius: none;
-    }
-    .table-news thead th:nth-child(n+4){
-        display: none;
-    }
-    .table-news tbody td:nth-child(n+4){
-        display: none;
-    }
-    .table-register-activity th:nth-child(3){
-        display: none;
-    }
-    .table-register-activity td:nth-child(3){
-        display: none;
-    }
-    .btn-group{
-        flex-direction: column;
-        border-radius: none;
-    }
+	.AdminLogin {
+		position: absolute;
+		left: 50%;
+		top: 50%;
+		transform: translate(-50%, -70%);
+		box-shadow: none;
+		padding: 15px;
+		max-width: 500px;
+		border-radius: none;
+	}
+	.table-news thead th:nth-child(n + 4) {
+		display: none;
+	}
+	.table-news tbody td:nth-child(n + 4) {
+		display: none;
+	}
+	.table-register-activity th:nth-child(3) {
+		display: none;
+	}
+	.table-register-activity td:nth-child(3) {
+		display: none;
+	}
+	.btn-group {
+		flex-direction: column;
+		border-radius: none;
+	}
 }

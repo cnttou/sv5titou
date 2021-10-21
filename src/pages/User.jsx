@@ -1,64 +1,126 @@
 import { useEffect } from 'react';
-import NewsRowTable from '../components/NewsRowTable';
 import { useSelector, useDispatch } from 'react-redux';
-import { fetchNewsThunk } from '../store/reducers/NewsSlide';
+import {
+	fetchActivityAction,
+	fetchRegisteredActivityAction,
+	registerActivityAction,
+} from '../store/actions';
 import SortItem from '../components/SortNewsItem';
+import { Layout, Button, BackTop, message } from 'antd';
+import { PlusCircleOutlined } from '@ant-design/icons';
+import useModel from '../hooks/useModel';
+import ListActivityFeed from '../components/ListActivityFeed';
+import SiderContent from '../components/SiderContent';
+import { currentUser } from '../api/authentication';
+import styles from '../styles/Home.module.css';
 import Loading from '../components/Loading';
-import { fetchRegisterActivityThunk } from '../store/reducers/ActivitySlide';
+
+const { Content } = Layout;
 
 function User() {
-    const listNews = useSelector((state) => state.news.value);
-    const listActivity = useSelector((state) => state.activitis.value);
-    const dispatch = useDispatch();
+	const listNews = useSelector((state) => state.activity.value);
+	const listActivity = useSelector((state) => state.myActivity.value);
+	const user = useSelector((state) => state.user.value);
 
-    useEffect(() => {
-        dispatch(fetchRegisterActivityThunk());
-        dispatch(fetchNewsThunk(10));
-    }, []);
+	const dispatch = useDispatch();
 
-    const checkRegister = (acId) => {
-        if (listActivity.find((c) => c.id === acId))
-            return (
-                <img src="https://img.icons8.com/color/20/000000/checked--v1.png" />
-            );
-        else return '';
-    };
+	useEffect(() => {
+		if (user.uid !== undefined && listNews.length === 0) {
+			dispatch(fetchRegisteredActivityAction());
+		}
+		if (listNews.length === 0) dispatch(fetchActivityAction(10));
+	}, [user]);
 
-    const loadTable = (listNews = []) => (
-        <table className="table table-news table-bordered table-hover mt-3">
-            <thead>
-                <tr className="bg-info">
-                    <th scope="col">Tên</th>
-                    <th scope="col">Tiêu chí</th>
-                    <th scope="col">Thời gian</th>
-                    <th scope="col">Địa điểm</th>
-                    <th scope="col">Số người</th>
-                </tr>
-            </thead>
-            <tbody>
-                {listNews.map((c, i) => (
-                    <NewsRowTable
-                        checkRegister={checkRegister}
-                        name={c.name}
-                        target={c.target}
-                        date={c.date}
-                        location={c.location}
-                        numPeople={c.numPeople}
-                        id={c.id}
-                        index={i}
-                        key={i}
-                    />
-                ))}
-            </tbody>
-        </table>
-    );
+	const checkRegister = (acId) => {
+		if (
+			listActivity.length !== 0 &&
+			listActivity.find((c) => c.id === acId)
+		)
+			return true;
 
-    return (
-        <>
-            <SortItem />
-            {listNews?.length ? loadTable(listNews) : <Loading />}
-        </>
-    );
+		return false;
+	};
+
+	const handleRegister = () => {
+		if (checkRegister(dataModel.id)) {
+			message.info('Hoạt động này đã đăng ký.');
+			return;
+		}
+		if (currentUser().uid) {
+			const { id, name, date, location, numPeople, summary, target } =
+				dataModel;
+			dispatch(
+				registerActivityAction({
+					id,
+					name,
+					date,
+					location,
+					numPeople,
+					summary,
+					target,
+				})
+			)
+				.then(() => {
+					message.success('Đăng kí thành công.');
+				})
+				.catch((err) => {
+					message.warning('Đăng kí thất bại, vui lòng thử lại.');
+					console.log('Đăng ký lỗi: ', err);
+				});
+		} else
+			message.warning(
+				'Bạn phải đăng nhập để thực hiện được chức năng này'
+			);
+		console.log('clicked register', dataModel);
+	};
+
+	const action = [
+		<Button
+			key={'đăng ký'}
+			icon={<PlusCircleOutlined />}
+			type="primary"
+			onClick={handleRegister}
+		>
+			Đăng ký
+		</Button>,
+	];
+	const { dataModel, setIndexData, ui, setVisible, visible } = useModel({
+		action,
+		title: 'Chi tiết bài viết',
+		data: listNews,
+		checkRegister,
+	});
+	const handleClickActivityFeed = (index, obj) => {
+		if (index === null || index === undefined) {
+			Modal.error({
+				title: 'Lỗi',
+				content: 'Vui lòng tải lại trang và thử lại',
+			});
+			return;
+		}
+
+		setIndexData(index);
+		setVisible(true);
+	};
+	const loadList = (listNews = []) => (
+		<ListActivityFeed
+			checkRegister={checkRegister}
+			data={listNews || []}
+			handleClick={handleClickActivityFeed}
+		/>
+	);
+
+	return (
+		<Layout>
+			<Content className={styles.content}>
+				<SortItem />
+				{listNews?.length ? loadList(listNews) : <Loading />}
+			</Content>
+			<SiderContent />
+			<BackTop />
+			{visible && ui()}
+		</Layout>
+	);
 }
 
 export default User;

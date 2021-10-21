@@ -1,13 +1,16 @@
 import HeaderUser from '../components/HeaderUser';
+import { Layout } from 'antd';
+import FooterContent from '../components/FooterContent';
 
 const UserLayout =
-    (Component) =>
-    ({ ...rest }) => {
-        return (
-            <div className="container-xl">
-                <HeaderUser />
-                <Component {...rest} />
-            </div>
-        );
-    };
+	(Component) =>
+	({ ...rest }) => {
+		return (
+			<>
+				<Layout className="layout">
+					<Component {...rest} />
+				</Layout>
+			</>
+		);
+	};
 export default UserLayout;

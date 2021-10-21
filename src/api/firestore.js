@@ -1,4 +1,5 @@
 import { toast } from 'react-toastify';
+import { currentUser } from './authentication';
 import firebase from './firebase';
 
 const db = firebase.firestore();
@@ -8,7 +9,7 @@ export const addImage = (fileName, acId = '') => {
     return db
         .collection('register_activity')
         .doc(uId)
-        .collection('activitis')
+        .collection('activities')
         .doc(acId)
         .update({
             images: firebase.firestore.FieldValue.arrayUnion(fileName),
@@ -19,37 +20,37 @@ export const deleteImage = (fileName, acId = '') => {
     return db
         .collection('register_activity')
         .doc(uId)
-        .collection('activitis')
+        .collection('activities')
         .doc(acId)
         .update({
             images: firebase.firestore.FieldValue.arrayRemove(fileName),
         });
 };
 
-export const getRegisterActivity = (userId) => {
-    let uId = userId || firebase.auth().currentUser.uid;
+export const getRegisterActivityApi = () => {
+    let uId = currentUser().uid;
     return db
-        .collection('register_activity')
-        .doc(uId)
-        .collection('activitis')
-        .get()
+		.collection('register_activity')
+		.doc(uId)
+		.collection('activities')
+		.get()
         .then((querySnapshot) => {
             let data = [];
-            querySnapshot.forEach((doc) => {
+            querySnapshot.forEach(async (doc) => {
                 data.push({
-                    ...doc.data(),
-                    id: doc.id,
-                });
+					...doc.data(),
+					id: doc.id,
+				});
             });
             return data;
-        });
+        }).catch((error) => console.log(error.message));;
 };
 export const updateConfirmActivity = (acId, proof) => {
     let uId = firebase.auth().currentUser.uid;
     return db
         .collection('register_activity')
         .doc(uId)
-        .collection('activitis')
+        .collection('activities')
         .doc(acId)
         .update({
             proof,
@@ -66,44 +67,31 @@ export const removeRegisterActivity = (acId) => {
     return db
         .collection('register_activity')
         .doc(uId)
-        .collection('activitis')
+        .collection('activities')
         .doc(acId)
         .delete()
-        .then(() => {
-            toast.success('Đã hủy đăng kí.');
-            return acId;
-        })
-        .catch(() => {
-            toast.warn('Hủy đăng kí thất bại, vui lòng thử lại.');
-        });
+        .then(() =>  acId)
 };
-export const registerActivity = (acId, name, date, location) => {
-    let uId = firebase.auth().currentUser.uid;
+export const registerActivityApi = (dataActivity) => {
+    let uId = currentUser().uid;
+    let acId = dataActivity.id
+    
     let data = {
-        confirm: false,
-        proof: false,
-        name,
-        date,
-        location,
-        images: [],
-    };
+		confirm: false,
+		proof: false,
+		...dataActivity,
+	};
     return db
-        .collection('register_activity')
-        .doc(uId)
-        .collection('activitis')
-        .doc(acId)
-        .set(data)
-        .then(() => {
-            toast.success('Đăng kí thành công.');
-            return { ...data, id: acId };
-        })
-        .catch((e) => {
-            console.log(e);
-            toast.warn('Đăng kí không thành công, vui lòng thử lại.');
-        });
+		.collection('register_activity')
+		.doc(uId)
+		.collection('activities')
+		.doc(acId)
+		.set(data).then((res)=>{
+            console.log("res of register: ",res);
+            return data});
 };
 
-export const getNewsDocument = (docId = '') => {
+export const getDetailActivityApi = (docId = '') => {
     return db
         .collection('news')
         .doc(docId)
@@ -116,7 +104,7 @@ export const getNewsDocument = (docId = '') => {
             return data;
         });
 };
-export const getNews = (limit = 10000) => {
+export const getActivitiesApi = (limit = 25) => {
     return db
         .collection('news')
         .orderBy('date', 'desc')
@@ -183,19 +171,22 @@ export const addData = (collection = 'news', data, docId = '') => {
 export const updateData = (collection = 'news', data, docId = '') => {
     return db.collection(collection).doc(docId).update(data);
 };
-export const addUserDetail = (email, userId) => {
+export const addUserDetail = () => {
     db.collection('register_activity')
-        .doc(userId)
-        .set({
-            email,
-            userId,
-        })
-        .then(() => {
-            console.log('add user detail success');
-        })
-        .catch((err) => {
-            console.log(err);
-        });
+		.doc(currentUser().uid)
+		.set(
+			{
+				email: currentUser().email,
+				userId: currentUser().uid,
+			},
+			{ merge: true }
+		)
+		.then(() => {
+			console.log('add user detail success');
+		})
+		.catch((err) => {
+			console.log(err);
+		});
 };
 
 export const getUserActivity = () => {
@@ -230,7 +221,7 @@ export const confirmProof = (uid, acId) => {
     return db
         .collection('register_activity')
         .doc(uid)
-        .collection('activitis')
+        .collection('activities')
         .doc(acId)
         .update({ confirm: true })
         .then(() => {
@@ -246,7 +237,7 @@ export const cancelConfirmProof = (uid, acId) => {
     return db
         .collection('register_activity')
         .doc(uid)
-        .collection('activitis')
+        .collection('activities')
         .doc(acId)
         .update({ confirm: false })
         .then(() => {

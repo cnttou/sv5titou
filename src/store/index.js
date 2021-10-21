@@ -1,12 +1,14 @@
 import { configureStore } from '@reduxjs/toolkit';
-import newsReducer from './reducers/NewsSlide';
-import activityReducer from './reducers/ActivitySlide';
+import activitySlide from './reducers/activitySlide';
+import myActivitySlice from './reducers/myActivitySlice';
 import userReducer from './reducers/UserSlide';
 
-export default configureStore({
-    reducer: {
-        news: newsReducer,
-        activitis: activityReducer,
-        user: userReducer,
-    },
+const store = configureStore({
+	reducer: {
+		activity: activitySlide,
+		myActivity: myActivitySlice,
+		user: userReducer,
+	},
 });
+
+export default store;

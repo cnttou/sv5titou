@@ -1,0 +1,11 @@
+.siderBar {
+	top: 0px;
+    right: 0px;
+	position: sticky;
+}
+
+@media only screen and (max-width: 600px) {
+	.siderBar {
+		display: none;
+	}
+}

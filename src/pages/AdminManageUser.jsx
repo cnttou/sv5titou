@@ -4,60 +4,60 @@ import Loading from '../components/Loading';
 import ModelBrowseFile from '../components/ModelBrowseFile';
 import NewsRowTable from '../components/NewsRowTable';
 import {
-    cancelConfirmProofThunk,
-    confirmProofThunk,
-    fetchUserThunk,
+	cancelConfirmProofThunk,
+	confirmProofThunk,
+	fetchUserThunk,
 } from '../store/reducers/UserSlide';
 
 export default function AdminManageUser() {
-    const [activity, setActivity] = useState('');
+	const [activity, setActivity] = useState('');
 
-    const dispatch = useDispatch();
-    let listUser = useSelector((state) => state.user.value);
+	const dispatch = useDispatch();
+	let listUser = useSelector((state) => state.user.value);
 
-    useEffect(async () => {
-        dispatch(fetchUserThunk());
-    }, []);
+	useEffect(async () => {
+		dispatch(fetchUserThunk());
+	}, []);
 
-    const handleConfirm = (index, isConfirm) => {
-        let ac = listUser[index];
-        if (isConfirm)
-            dispatch(confirmProofThunk({ uid: ac.userId, acId: ac.id }));
-        else dispatch(cancelConfirmProofThunk({ uid: ac.userId, acId: ac.id }));
-    };
+	const handleConfirm = (index, isConfirm) => {
+		let ac = listUser[index];
+		if (isConfirm)
+			dispatch(confirmProofThunk({ uid: ac.userId, acId: ac.id }));
+		else dispatch(cancelConfirmProofThunk({ uid: ac.userId, acId: ac.id }));
+	};
 
-    const handleSeeProof = (index) => {
-        setActivity(listUser[index]);
-    };
-    const loadTable = (listUser = []) => (
-        <table className="table table-bordered table-hover mt-3">
-            <thead>
-                <tr className="bg-info">
-                    <th scope="col">Tên</th>
-                    <th scope="col">Email</th>
-                    <th scope="col">Thao tác</th>
-                </tr>
-            </thead>
-            <tbody>
-                {listUser.map((c, i) => (
-                    <NewsRowTable
-                        email={c.email}
-                        name={c.name}
-                        images={c.images}
-                        id={c.id}
-                        index={i}
-                        key={i}
-                        handleConfirm={handleConfirm}
-                        handleProof={handleSeeProof}
-                    />
-                ))}
-            </tbody>
-        </table>
-    );
-    return (
-        <div>
-            {listUser?.length ? loadTable(listUser) : <Loading />}
-            <ModelBrowseFile activity={activity} />
-        </div>
-    );
+	const handleSeeProof = (index) => {
+		setActivity(listUser[index]);
+	};
+	const loadTable = (listUser = []) => (
+		<table className="table table-bordered table-hover mt-3">
+			<thead>
+				<tr className="bg-info">
+					<th scope="col">Tên</th>
+					<th scope="col">Email</th>
+					<th scope="col">Thao tác</th>
+				</tr>
+			</thead>
+			<tbody>
+				{listUser.map((c, i) => (
+					<NewsRowTable
+						email={c.email}
+						name={c.name}
+						images={c.images}
+						id={c.id}
+						index={i}
+						key={i}
+						handleConfirm={handleConfirm}
+						handleProof={handleSeeProof}
+					/>
+				))}
+			</tbody>
+		</table>
+	);
+	return (
+		<div>
+			{listUser?.length ? loadTable(listUser) : <Loading />}
+			<ModelBrowseFile activity={activity} />
+		</div>
+	);
 }
