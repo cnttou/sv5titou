@@ -7,16 +7,16 @@ import {
 	cancelConfirmProofThunk,
 	confirmProofThunk,
 	fetchUserThunk,
-} from '../store/reducers/UserSlide';
+} from '../store/actions';
 
 export default function AdminManageUser() {
 	const [activity, setActivity] = useState('');
 
 	const dispatch = useDispatch();
-	let listUser = useSelector((state) => state.user.value);
+	let listUser = useSelector((state) => state.userActivity.value);
 
 	useEffect(async () => {
-		dispatch(fetchUserThunk());
+		dispatch(fetchUserThunk()).catch((error) => console.log(error.message));
 	}, []);
 
 	const handleConfirm = (index, isConfirm) => {

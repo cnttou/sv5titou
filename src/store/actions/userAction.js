@@ -5,14 +5,16 @@ import {
 	getUserActivity,
 } from '../../api/firestore';
 
-export const loginAction = createAction("LOGIN")
+export const loginAction = createAction('LOGIN');
 
 export const logoutAction = createAction('LOGOUT');
 
 export const fetchUserThunk = createAsyncThunk(
 	'user/fetchUserActivity',
 	async () => {
-		return await getUserActivity();
+		let response = await getUserActivity();
+        console.log('getUserActivity', response);
+		return response;
 	}
 );
 export const confirmProofThunk = createAsyncThunk(

@@ -10,7 +10,7 @@ const reducer = createReducer(initialState, (builder) => {
 		state.value = action.payload;
 	});
 	builder.addCase(logoutAction, (state, action) => {
-		state = null;
+		state = initialState;
 	});
 });
 

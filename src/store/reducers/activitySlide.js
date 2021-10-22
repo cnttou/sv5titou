@@ -1,4 +1,9 @@
-import { createSlice } from '@reduxjs/toolkit';
+import {
+	createSlice,
+	isFulfilled,
+	isPending,
+	isRejected,
+} from '@reduxjs/toolkit';
 import {
 	compareNumber,
 	compareStringName,
@@ -16,6 +21,7 @@ export const activity = createSlice({
 	name: 'myActivity',
 	initialState: {
 		value: [],
+		loading: 0,
 	},
 	reducers: {
 		sortActivityByNameAction: (state, action) => {
@@ -40,17 +46,32 @@ export const activity = createSlice({
 			}
 		},
 	},
-	extraReducers: {
-		[fetchActivityAction.fulfilled]: (state, action) => {
-			state.value = action.payload;
-		},
-		[deleteActivityAction.fulfilled]: (state, action) => {
-			state.value = state.value.filter((c) => c.id != action.payload);
-		},
-		[addActivityAction.fulfilled]: (state, action) => {
-			state.value.push(action.payload);
-		},
-		
+	extraReducers: (builder) => {
+		builder
+			.addCase(fetchActivityAction.fulfilled, (state, action) => {
+				state.value = action.payload;
+			})
+			.addCase(deleteActivityAction.fulfilled, (state, action) => {
+				state.value = state.value.filter((c) => c.id != action.payload);
+			})
+			.addCase(addActivityAction.fulfilled, (state, action) => {
+				let newValue = state.value.filter(
+					(c) => c.id !== action.payload.id
+				);
+				newValue.push(action.payload);
+
+				state.value = newValue;
+			});
+		builder
+			.addMatcher(isPending, (state) => {
+				state.loading = state.loading + 1;
+			})
+			.addMatcher(isRejected, (state) => {
+				state.loading = state.loading - 1;
+			})
+			.addMatcher(isFulfilled, (state) => {
+				state.loading = state.loading - 1;
+			});
 	},
 });
 export const { sortActivityByNameAction } = activity.actions;

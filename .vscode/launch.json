@@ -2,8 +2,14 @@
 	"configurations": [
 		{
 			"name": "Debug app",
-            "type": "firefox",
-            "request": "attach"
+			"type": "firefox",
+			"request": "attach",
+			"pathMappings": [
+				{
+					"url": "http://localhost:3000/src/api",
+					"path": "${workspaceFolder}/src/api"
+				}
+			]
 		}
 	]
 }

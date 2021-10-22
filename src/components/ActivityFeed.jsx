@@ -8,6 +8,7 @@ export const nameTarget = {
 	'hoc-tap': 'Học Tập',
 	'dao-duc': 'Đạo Đức',
 	'tinh-nguyen': 'Tình Nguyện',
+	'suc-khoe': 'Sức khỏe',
 };
 
 function ActivityFeed(props) {

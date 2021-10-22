@@ -1,5 +1,6 @@
 import { lazy } from 'react';
 import UserLayout from '../layouts/UserLayout';
+import LoginAdmin from '../pages/LoginAdmin';
 
 const ActivityRegistered = lazy(() => import('../pages/ActivityRegistered'));
 const Profile = lazy(() => import('../pages/Profile'));
@@ -11,7 +12,13 @@ const PageNotFound = lazy(() => import('../pages/PageNotFound'));
 const routes = [
 	{
 		path: '/login',
-		component: UserLayout(Login),
+		component: Login,
+		exact: true,
+		private: false,
+	},
+	{
+		path: '/login-admin',
+		component: LoginAdmin,
 		exact: true,
 		private: false,
 	},
@@ -19,7 +26,7 @@ const routes = [
 		path: '/admin',
 		component: Admin,
 		exact: true,
-		private: true,
+		private: false,
 	},
 	{
 		path: '/profile',

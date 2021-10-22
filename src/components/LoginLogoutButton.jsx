@@ -1,14 +1,14 @@
 import { useDispatch } from 'react-redux';
 import { useHistory } from 'react-router';
 import { Link } from 'react-router-dom';
-import { currentUser, logout } from '../api/authentication';
+import { currentUser, logoutApi } from '../api/authentication';
 
 export default function LoginLogoutButton() {
     let history = useHistory();
     const dispatch = useDispatch();
 
     const handleLogout = () => {
-        logout(history, dispatch);
+        logoutApi(history, dispatch);
     };
 
     if (currentUser()?.email)

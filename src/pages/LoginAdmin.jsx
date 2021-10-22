@@ -1,21 +1,24 @@
+import { message } from 'antd';
 import { useState } from 'react';
-import { useHistory, useLocation } from 'react-router-dom';
-import { loginByGoogle, loginWithEmailPassword } from '../api/authentication';
+import { useHistory } from 'react-router-dom';
+import { loginWithEmailPasswordApi } from '../api/authentication';
 
-export default function Login() {
+export default function LoginAdmin() {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     
     let history = useHistory();
-    let location = useLocation();
 
     const handleLogin = (e) => {
         e.preventDefault();
-        loginWithEmailPassword(history, location, email, password);
-    };
-
-    const handleLoginWithGmail = () => {
-        loginByGoogle(history);
+        loginWithEmailPasswordApi(email, password)
+			.then(() => {
+				history.replace('/admin');
+			})
+			.catch((error) => {
+				message.warning('Thông tin đăng nhập không đúng!');
+				console.log(error.errorMessage);
+			});;
     };
     
     const handleEmailInput = ({ target }) => setEmail(target.value);
@@ -62,15 +65,6 @@ export default function Login() {
                         onClick={handleLogin}
                     >
                         Đăng nhập
-                    </button>
-                    <p className="text-center pt-1 m-0">--- hoặc ---</p>
-
-                    <button
-                        type="button"
-                        className="btn btn-danger form-control"
-                        onClick={handleLoginWithGmail}
-                    >
-                        <i className="fab fa-google-plus-g"></i> | Đăng nhập Gmail @ou.edu.vn
                     </button>
                 </form>
             </div>

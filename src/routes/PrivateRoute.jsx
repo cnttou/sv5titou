@@ -1,13 +1,14 @@
-import firebase from '../api/firebase';
 import { Route, Redirect } from 'react-router-dom';
+import { currentUser } from '../api/authentication';
+
 function PrivateRoute({ ...rest }) {
-    let auth = firebase.auth().currentUser;
+    let auth = currentUser().uid;
     return auth?.email ? (
         <Route {...rest} />
     ) : (
         <Redirect
             to={{
-                pathname: '/login',
+                pathname: '/login-admin',
                 state: { from: rest.path },
             }}
         />

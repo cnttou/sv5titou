@@ -1,6 +1,5 @@
 import 'antd/dist/antd.css';
 import './App.css';
-import 'react-toastify/dist/ReactToastify.css';
 import {
 	BrowserRouter as Router,
 	Switch,

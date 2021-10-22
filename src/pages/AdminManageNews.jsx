@@ -1,87 +1,130 @@
-import { useEffect, useState } from 'react';
-import NewsRowTable from '../components/NewsRowTable';
-import ModelNews from '../components/ModelNews';
+import { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { deleteNewsThunk, fetchNewsThunk } from '../store/reducers/NewsSlide';
-import SortItem from '../components/SortNewsItem';
+import { deleteActivityAction, fetchActivityAction } from '../store/actions';
 import Loading from '../components/Loading';
+import { Table, Space, Button } from 'antd';
+import { compareStringDate, compareStringName } from '../utils/compareFunction';
+import useCreateEditActivityModel from '../hooks/useCreateEditActivityModel';
+import { nameTarget } from '../components/ActivityFeed';
+
+const initActivity = {
+	name: '',
+	date: null,
+	location: '',
+	summary: '',
+	numPeople: null,
+	target: null,
+};
 
 export default function AdminManageNews() {
 	const listNews = useSelector((state) => state.activity.value);
 	const dispatch = useDispatch();
-	const [newsEdit, setNewsEdit] = useState({});
 
 	useEffect(() => {
 		if (listNews.length === 0) {
-			dispatch(fetchNewsThunk(10));
+			dispatch(fetchActivityAction(10));
 		}
 	}, []);
 
-	const handleEdit = (index) => {
-		setNewsEdit(listNews[index]);
+	const handleShowModelToEdit = (item) => {
+		setDataModel(item);
+		setVisible(true);
 	};
 
-	const handleDelete = (index) => {
-		dispatch(deleteNewsThunk(listNews[index].id));
+	const handleShowModelToAddNew = () => {
+		setDataModel(initActivity);
+		setVisible(true);
 	};
-	const buttons = [
+
+	const handleDelete = (item) => {
+		dispatch(deleteActivityAction(item.id));
+	};
+
+	const { ui, visible, setVisible, dataModel, setDataModel } =
+		useCreateEditActivityModel({
+			title: 'Tạo và chỉnh sửa hoạt động',
+		});
+
+	const columns = [
 		{
-			handle: handleEdit,
-			type: 'button',
-			value: 'Sửa',
-			className: 'btn btn-warning',
+			title: 'Tên',
+			dataIndex: 'name',
+			key: 'name',
+			defaultSortOrder: 'descend',
+			sorter: (a, b) => compareStringName(a.name, b.name),
+			render: (text) => <a>{text}</a>,
 		},
 		{
-			handle: handleDelete,
-			type: 'button',
-			value: 'Xóa',
-			className: 'btn btn-danger',
+			title: 'Tiêu chí',
+			dataIndex: 'target',
+			key: 'target',
+			filters: [
+				{
+					text: 'Hội nhập',
+					value: 'hoi-nhap',
+				},
+				{
+					text: 'Đạo đức',
+					value: 'dao-duc',
+				},
+				{
+					text: 'Học Tập',
+					value: 'hoc-tap',
+				},
+				{
+					text: 'Tình Nguyện',
+					value: 'tinh-nguyen',
+				},
+				{
+					text: 'Sức khỏe',
+					value: 'suc-khoe',
+				},
+			],
+			onFilter: (value, record) => record.target === value,
+			render: (text) => nameTarget[text],
+		},
+		{
+			title: 'Thời gian',
+			dataIndex: 'date',
+			key: 'date',
+			defaultSortOrder: 'descend',
+			sorter: (a, b) => compareStringDate(a.date, b.date),
+		},
+		{
+			title: 'Địa điểm',
+			dataIndex: 'location',
+			key: 'location',
+		},
+		{
+			title: 'Số người',
+			dataIndex: 'numPeople',
+			key: 'numPeople',
+		},
+		{
+			title: 'Thao tác',
+			key: 'action',
+			render: (text, record) => (
+				<Space size="middle">
+					<Button onClick={() => handleShowModelToEdit(record)}>
+						Sửa
+					</Button>
+					<Button danger onClick={() => handleDelete(record)}>
+						Xóa
+					</Button>
+				</Space>
+			),
 		},
 	];
 	const loadTable = (listNews = []) => (
-		<table className="table table-bordered table-hover mt-3">
-			<thead>
-				<tr className="bg-info">
-					<th scope="col">Tên</th>
-					<th scope="col">Tiêu chí</th>
-					<th scope="col">Thời gian</th>
-					<th scope="col">Địa điểm</th>
-					<th scope="col">Số người</th>
-					<th scope="col">Thao tác</th>
-				</tr>
-			</thead>
-			<tbody>
-				{listNews.map((c, i) => (
-					<NewsRowTable
-						buttons={buttons}
-						name={c.name}
-						target={c.target}
-						date={c.date}
-						location={c.location}
-						numPeople={c.numPeople}
-						id={c.id}
-						index={i}
-						key={i}
-					/>
-				))}
-			</tbody>
-		</table>
+		<Table columns={columns} dataSource={listNews} />
 	);
 	return (
 		<div>
-			<SortItem />
 			{listNews?.length ? loadTable(listNews) : <Loading />}
-			<div className="d-grid">
-				<button
-					type="button"
-					className="btn btn-primary"
-					data-bs-toggle="modal"
-					data-bs-target="#exampleModal"
-				>
-					Hoạt động mới
-				</button>
-			</div>
-			<ModelNews item={newsEdit} setItem={setNewsEdit} />
+			<Button type="primary" block onClick={handleShowModelToAddNew}>
+				Hoạt động mới
+			</Button>
+			{visible === true ? ui() : null}
 		</div>
 	);
 }

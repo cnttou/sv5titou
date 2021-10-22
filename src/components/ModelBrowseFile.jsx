@@ -2,9 +2,9 @@ import { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { getUrlImage } from '../api/firebaseStorage';
 import {
-	addImageThunk,
-	deleteImageThunk,
-} from '../store/reducers/activitySlide';
+	addImageAction,
+	deleteImageAction,
+} from '../store/actions';
 
 export default function ModelBrowseFile({ activity }) {
 	const dispatch = useDispatch();
@@ -34,13 +34,13 @@ export default function ModelBrowseFile({ activity }) {
 		if (files.length === 0) return;
 
 		files.forEach((c) => {
-			dispatch(addImageThunk({ file: c, acId: activity.id }));
+			dispatch(addImageAction({ file: c, acId: activity.id }));
 		});
 		handleHide();
 	};
 	const handleRemoveImage = (index) => {
 		let fileName = activity.images[index];
-		dispatch(deleteImageThunk({ fileName, acId: activity.id }));
+		dispatch(deleteImageAction({ fileName, acId: activity.id }));
 		let images = [...listImage];
 		images.splice(index, 1);
 		setListImage(images);

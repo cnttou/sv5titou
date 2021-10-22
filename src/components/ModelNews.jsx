@@ -3,7 +3,7 @@ import Input from './Input';
 import Select from './Select';
 import { useRef } from 'react';
 import { useEffect } from 'react';
-import { addNewsThunk } from '../store/reducers/NewsSlide';
+import { addActivityAction } from '../store/actions';
 import { useDispatch } from 'react-redux';
 
 const listSelect = [
@@ -43,7 +43,7 @@ export default function ModelNews({ item, setItem }) {
 
 	const handleSubmit = () => {
 		let data = { name, target, numPeople, date, location, summary };
-		dispatch(addNewsThunk({ data, docId }));
+		dispatch(addActivityAction({ data, docId }));
 	};
 	const resetData = (
 		d = '',
