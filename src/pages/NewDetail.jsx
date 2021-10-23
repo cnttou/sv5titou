@@ -33,7 +33,7 @@ export default function NewDetail() {
 	};
 
 	const colorCard = (id, confirm) => {
-		if (confirm === false) return '#40a9ff';
+		if (confirm === false) return '#69c0ff';
 		else if (confirm === true) return '#73d13d';
 		return 'white';
 	};

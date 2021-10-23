@@ -11,7 +11,7 @@ function useModel({ title, action, checkRegister, loading, data }) {
 
 	const colorCard = (id, confirm) => {
 		if ((checkRegister && checkRegister(id)) || confirm === false)
-			return '#40a9ff';
+			return '#69c0ff';
 		else if (confirm === true) return '#73d13d';
 		return 'white';
 	};

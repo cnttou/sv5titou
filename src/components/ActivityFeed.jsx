@@ -3,9 +3,9 @@ import {
 	DeleteOutlined,
 	PaperClipOutlined,
 } from '@ant-design/icons';
-import { Button, Card, Image, List } from 'antd';
+import {Typography, Button, Card, Image, List } from 'antd';
 import ReactQuill from 'react-quill';
-import { c } from '../../dist/assets/vendor.e73c3702';
+import { nameLevelActivity } from '../hooks/useCreateEditActivityModel';
 import styles from '../styles/ActivityFeed.module.css';
 import Loading from './Loading';
 
@@ -41,6 +41,7 @@ function ActivityFeed(props) {
 		proof,
 		images,
 		confirm,
+        level,
 	} = data;
 	return (
 		<>
@@ -52,7 +53,12 @@ function ActivityFeed(props) {
 					showFull ? { maxHeight: '65vh', overflow: 'scroll' } : null
 				}
 				headStyle={{ background: colorCard(id, confirm) }}
-				title={name}
+				title={
+					<>
+						<Typography.Title level={4}>{name}</Typography.Title>
+						<Typography.Text type="secondary">{nameLevelActivity[level]}</Typography.Text>
+					</>
+				}
 				extra={
 					btnDetail && (
 						<a onClick={() => handleClickDetail(props.index, data)}>
