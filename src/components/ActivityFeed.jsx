@@ -1,5 +1,11 @@
-import { CloseCircleOutlined } from '@ant-design/icons';
-import { Button, Card, Image } from 'antd';
+import {
+	CloseCircleOutlined,
+	DeleteOutlined,
+	PaperClipOutlined,
+} from '@ant-design/icons';
+import { Button, Card, Image, List } from 'antd';
+import ReactQuill from 'react-quill';
+import { c } from '../../dist/assets/vendor.e73c3702';
 import styles from '../styles/ActivityFeed.module.css';
 import Loading from './Loading';
 
@@ -10,6 +16,7 @@ export const nameTarget = {
 	'tinh-nguyen': 'Tình Nguyện',
 	'suc-khoe': 'Sức khỏe',
 };
+export const typeFileimage = ['.jpeg', '.jpg', '.png'];
 
 function ActivityFeed(props) {
 	const {
@@ -68,45 +75,89 @@ function ActivityFeed(props) {
 				</p>
 				<p>
 					<strong>Thông tin chi tiết:</strong>
-					{summary}
+					<ReactQuill
+						theme={null}
+						defaultValue={summary}
+						readOnly={true}
+						className="ql-clipboard-disable"
+					/>
 				</p>
 				{images && (
 					<div>
 						<strong>Minh chứng đã thêm:</strong>
 						<br />
-						<Image.PreviewGroup>
-							{images.map((c, index) => (
+						<List
+							itemLayout="horizontal"
+							size="small"
+							bordered
+							dataSource={images}
+							renderItem={(item) =>
+								typeFileimage.includes(
+									item.name.slice(item.name.lastIndexOf('.'))
+								) ? null : (
+									<List.Item>
+										<List.Item.Meta
+											icon={<PaperClipOutlined />}
+											title={
+												<a
+													target="_blank"
+													href={item.url}
+												>
+													{item.name}
+												</a>
+											}
+										/>
+
+										{handleRemoveImage && (
+											<DeleteOutlined
+												style={{ color: 'red' }}
+												onClick={() => {
+													handleRemoveImage(item);
+												}}
+											/>
+										)}
+									</List.Item>
+								)
+							}
+						/>
+					</div>
+				)}
+				<Image.PreviewGroup>
+					{images &&
+						images.map((c, index) =>
+							typeFileimage.includes(
+								c.name.slice(c.name.lastIndexOf('.'))
+							) ? (
 								<div
 									key={index}
 									style={{
-										position: 'relative',
 										width: '50%',
 										display: 'inline-block',
+										marginTop: 5,
+										position: 'relative',
 									}}
 								>
 									<Image width={'100%'} src={c.url} />
-									<Button
-										style={{
-											position: 'absolute',
-											right: 0,
-											top: 0,
-										}}
-										type="ghost"
-										shape="circle"
-										size="large"
-										icon={<CloseCircleOutlined />}
-										onClick={() => {
-											handleRemoveImage(c);
-										}}
-									/>
+									{handleRemoveImage && (
+										<Button
+											style={{
+												position: 'absolute',
+												right: 0,
+												top: 0,
+											}}
+											type="ghost"
+											shape="circle"
+											size="large"
+											icon={<CloseCircleOutlined />}
+											onClick={() => {
+												handleRemoveImage(c);
+											}}
+										/>
+									)}
 								</div>
-							))}
-						</Image.PreviewGroup>
-						{images.length === 0 && (
-							<p>Bạn chưa có minh chứng nào</p>
+							) : null
 						)}
-					</div>
-				)}
+				</Image.PreviewGroup>
 				{loading === true && images === undefined ? (
 					<Loading size="default" />
 				) : null}

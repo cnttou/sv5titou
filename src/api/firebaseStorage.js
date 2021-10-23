@@ -15,7 +15,8 @@ export const taskEvent = firebase.storage.TaskEvent.STATE_CHANGED;
 
 export const upFile = (acId, file) => {
 	let fileProofRef = imagesRef.child(currentUser().uid).child(acId);
-	return fileProofRef.child(`/${file.name}`).put(file, metadata);
+	console.log('file upload', file);
+	return fileProofRef.child(`/${file.name}`).put(file);
 };
 
 export const deleteFile = (acId, fileName) => {
@@ -71,4 +72,24 @@ export const getFileFromAActivity = (acId) => {
 		let images = await Promise.all(kq);
 		return extraRs.map((c, index) => ({ ...c, url: images[index] }));
 	});
+};
+
+export const getFile = (uid, acId) => {
+	let fileProofRef = imagesRef.child(uid).child(acId);
+	return fileProofRef
+		.listAll()
+		.then(async (res) => {
+			let kq = [];
+			let extraRs = [];
+			res.items.forEach((itemRef) => {
+				extraRs.push({
+					name: itemRef.name,
+					fullPath: itemRef.fullPath,
+				});
+				kq.push(itemRef.getDownloadURL());
+			});
+			let images = await Promise.all(kq);
+			return extraRs.map((c, index) => ({ ...c, url: images[index] }));
+		})
+		.catch((error) => console.log(error.message));
 };

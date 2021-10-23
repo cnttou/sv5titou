@@ -6,8 +6,8 @@
 			"request": "attach",
 			"pathMappings": [
 				{
-					"url": "http://localhost:3000/src/api",
-					"path": "${workspaceFolder}/src/api"
+					"url": "http://localhost:3000/src/",
+					"path": "${workspaceFolder}/src/"
 				}
 			]
 		}

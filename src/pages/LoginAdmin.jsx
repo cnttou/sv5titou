@@ -13,7 +13,7 @@ export default function LoginAdmin() {
         e.preventDefault();
         loginWithEmailPasswordApi(email, password)
 			.then(() => {
-				history.replace('/admin');
+				history.push('/admin');
 			})
 			.catch((error) => {
 				message.warning('Thông tin đăng nhập không đúng!');

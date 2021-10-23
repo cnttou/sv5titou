@@ -6,6 +6,7 @@ import {
 } from '@reduxjs/toolkit';
 import {
 	addImageAction,
+	cancelMyConfirmProofAction,
 	deleteImageAction,
 	deleteImageByFullPathAction,
 	fetchRegisteredActivityAction,
@@ -56,6 +57,12 @@ export const myActivitySlice = createSlice({
 					);
 				}
 			)
+			.addCase(cancelMyConfirmProofAction.fulfilled, (state, action) => {
+				const { acId, confirm } = action.payload;
+				state.value = state.value.map((c) =>
+					c.id === acId ? { ...c, confirm } : c
+				);
+			})
 			.addCase(addImageAction.fulfilled, (state, action) => {
 				const { fileName, acId } = action.payload;
 				state.value = state.value.map((c) => {

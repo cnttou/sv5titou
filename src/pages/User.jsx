@@ -6,18 +6,22 @@ import {
 	registerActivityAction,
 } from '../store/actions';
 import SortItem from '../components/SortNewsItem';
-import { Layout, Button, BackTop, message } from 'antd';
-import { PlusCircleOutlined } from '@ant-design/icons';
+import { Layout, Button, BackTop, message, Input } from 'antd';
+import { CloudSyncOutlined, PlusCircleOutlined } from '@ant-design/icons';
 import useModel from '../hooks/useModel';
 import ListActivityFeed from '../components/ListActivityFeed';
 import SiderContent from '../components/SiderContent';
 import { currentUser } from '../api/authentication';
 import styles from '../styles/Home.module.css';
 import Loading from '../components/Loading';
+import { useState } from 'react';
 
+const { Search } = Input;
 const { Content } = Layout;
 
 function User() {
+	const [resultSearch, setResultSearch] = useState([]);
+
 	const listNews = useSelector((state) => state.activity.value);
 	const listActivity = useSelector((state) => state.myActivity.value);
 	const user = useSelector((state) => state.user.value);
@@ -39,6 +43,13 @@ function User() {
 			return true;
 
 		return false;
+	};
+	const onSearch = (value) => {
+		let kw = value.toLowerCase();
+		let rs = listNews.filter((c) => {
+			return c.name.toLowerCase().indexOf(kw) !== -1;
+		});
+		setResultSearch(rs);
 	};
 
 	const handleRegister = () => {
@@ -114,7 +125,20 @@ function User() {
 		<Layout>
 			<Content className={styles.content}>
 				<SortItem />
-				{listNews?.length ? loadList(listNews) : <Loading />}
+				<Search
+					placeholder="Nhập tên chương trình cần tìm."
+					onSearch={onSearch}
+					enterButton
+					allowClear
+					className={styles.search}
+				/>
+				{resultSearch.length !== 0 ? (
+					loadList(resultSearch)
+				) : listNews?.length ? (
+					loadList(listNews)
+				) : (
+					<Loading />
+				)}
 			</Content>
 			<SiderContent />
 			<BackTop />

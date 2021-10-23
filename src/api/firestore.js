@@ -130,52 +130,46 @@ export const getActivitiesApi = (limit = 25) => {
  * @param {String} docId the id for this document
  * @returns if it done return docId deleted
  */
-export const deleteData = (collection = 'news', docId) => {
+export const deleteData = (collection, docId) => {
 	return db
-		.collection(collection)
+		.collection(collection || 'news')
 		.doc(docId)
 		.delete()
-		.then(() => {
-			toast.success('Xóa thành công tin tức');
-			return docId;
-		})
-		.catch((error) => {
-			toast.warn('Xóa thất bại vui lòng thử lại.');
-			console.log(error);
-		});
+		.then(() => docId);
 };
-export const addData = (collection = 'news', data, docId = '') => {
-	if (docId === '')
+export const addData = (collection = 'news', data, docId) => {
+	if (docId === null) {
 		return db
-			.collection(collection)
-			.add(data)
-			.then((doc) => ({ ...data, id: doc.id }));
-	else
+        .collection(collection)
+        .add(data)
+        .then((doc) => ({ ...data, id: doc.id }));
+	} else{
 		return db
 			.collection(collection)
 			.doc(docId)
 			.set(data)
 			.then(() => ({ ...data, id: docId }));
+    }
 };
 export const updateData = (collection = 'news', data, docId = '') => {
 	return db.collection(collection).doc(docId).update(data);
 };
-export const addUserDetail = () => {
-	db.collection('register_activity')
+export const addUserDetail = (data) => {
+    console.log('data add :', {
+		email: currentUser().email,
+		userId: currentUser().uid,
+		...data,
+	});
+	return db.collection('register_activity')
 		.doc(currentUser().uid)
 		.set(
 			{
 				email: currentUser().email,
 				userId: currentUser().uid,
+                ...data
 			},
 			{ merge: true }
-		)
-		.then(() => {
-			console.log('add user detail success');
-		})
-		.catch((err) => {
-			console.log(err);
-		});
+		).then(()=>({...data})).catch((err)=>console.log(err.message))
 };
 
 export const getUserActivity = () => {
@@ -190,7 +184,7 @@ export const getUserActivity = () => {
 			return list;
 		})
 		.then((rs) => {
-            return Promise.all(
+			return Promise.all(
 				rs.map((c) => getRegisterActivityApi(c.userId))
 			).then((res) => {
 				return rs.map((c, index) => ({ ...c, listData: res[index] }));
@@ -205,15 +199,28 @@ export const confirmProof = (uid, acId) => {
 		.doc(acId)
 		.update({ confirm: true })
 		.then(() => {
-			toast.success('Xác nhận thành công.');
 			return { uid, acId, confirm: true };
 		})
-		.catch((e) => {
-			console.log(e);
-			toast.warn('Xác nhận không thành công, vui lòng thử lại.');
+		.catch((error) => {
+			console.log(error.message);
 		});
 };
-export const cancelConfirmProof = (uid, acId) => {
+export const cancelConfirmProof = (uid, acId, confirm) => {
+	return db
+		.collection('register_activity')
+		.doc(uid)
+		.collection('activities')
+		.doc(acId)
+		.update({ confirm })
+		.then(() => {
+			return { uid, acId, confirm: false };
+		})
+		.catch((error) => {
+			console.log(error.message);
+		});
+};
+export const cancelConfirmMyProofApi = ( acId ) => {
+    let uid = currentUser().uid
 	return db
 		.collection('register_activity')
 		.doc(uid)
@@ -221,11 +228,9 @@ export const cancelConfirmProof = (uid, acId) => {
 		.doc(acId)
 		.update({ confirm: false })
 		.then(() => {
-			toast.success('Hủy xác nhận thành công.');
-			return { uid, acId, confirm: false };
+			return { acId, confirm: false };
 		})
-		.catch((e) => {
-			console.log(e);
-			toast.warn('Hủy xác nhận không thành công, vui lòng thử lại.');
+		.catch((error) => {
+			console.log(error.message);
 		});
 };

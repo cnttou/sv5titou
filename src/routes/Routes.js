@@ -1,13 +1,14 @@
 import { lazy } from 'react';
-import UserLayout from '../layouts/UserLayout';
-import LoginAdmin from '../pages/LoginAdmin';
 
-const ActivityRegistered = lazy(() => import('../pages/ActivityRegistered'));
-const Profile = lazy(() => import('../pages/Profile'));
-const Admin = lazy(() => import('../pages/Admin'));
 const User = lazy(() => import('../pages/User'));
 const Login = lazy(() => import('../pages/Login'));
+const Profile = lazy(() => import('../pages/Profile'));
+const NewDetail = lazy(() => import('../pages/NewDetail'));
+const LoginAdmin = lazy(() => import('../pages/LoginAdmin'));
 const PageNotFound = lazy(() => import('../pages/PageNotFound'));
+const AdminManageUser = lazy(() => import('../pages/AdminManageUser'));
+const AdminManageNews = lazy(() => import('../pages/AdminManageNews'));
+const ActivityRegistered = lazy(() => import('../pages/ActivityRegistered'));
 
 const routes = [
 	{
@@ -24,7 +25,13 @@ const routes = [
 	},
 	{
 		path: '/admin',
-		component: Admin,
+		component: AdminManageNews,
+		exact: true,
+		private: false,
+	},
+	{
+		path: '/admin-manage-user',
+		component: AdminManageUser,
 		exact: true,
 		private: false,
 	},
@@ -38,6 +45,12 @@ const routes = [
 		path: '/news',
 		component: User,
 		exact: true,
+		private: false,
+	},
+	{
+		path: '/news/:id',
+		component: NewDetail,
+		exact: false,
 		private: false,
 	},
 	{

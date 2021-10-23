@@ -1,19 +1,9 @@
-import {
-	createSlice,
-	isFulfilled,
-	isPending,
-	isRejected,
-} from '@reduxjs/toolkit';
-import {
-	compareNumber,
-	compareStringName,
-	compareStringDate,
-	compareStringTarget,
-} from '../../utils/compareFunction';
+import { createSlice } from '@reduxjs/toolkit';
 import {
 	cancelConfirmProofThunk,
 	confirmProofThunk,
 	fetchUserThunk,
+	getImageProofAction,
 } from '../actions';
 
 export const userActivity = createSlice({
@@ -24,25 +14,43 @@ export const userActivity = createSlice({
 	},
 	extraReducers: (builder) => {
 		builder
+			.addCase(getImageProofAction.fulfilled, (state, action) => {
+				const { uid, acId, images } = action.payload;
+				state.value = state.value.map((c) => {
+					if (c.userId === uid) {
+						c.listData = c.listData.map((d) =>
+							d.id === acId ? { ...d, images } : d
+						);
+					}
+					return c;
+				});
+			})
 			.addCase(fetchUserThunk.fulfilled, (state, action) => {
 				state.value = action.payload;
 				state.loading = state.loading - 1;
 			})
 			.addCase(confirmProofThunk.fulfilled, (state, action) => {
 				const { uid, acId, confirm } = action.payload;
-				state.value = state.value.map((c) => {
-					if (c.userId == uid && c.id == acId) {
-						return { ...c, confirm };
+                
+                state.value = state.value.map((c) => {
+					if (c.userId === uid) {
+						c.listData = c.listData.map((d) =>
+							d.id === acId ? { ...d, confirm } : d
+						);
 					}
 					return c;
 				});
+
 				state.loading = state.loading - 1;
 			})
 			.addCase(cancelConfirmProofThunk.fulfilled, (state, action) => {
 				const { uid, acId, confirm } = action.payload;
-				state.value = state.value.map((c) => {
-					if (c.userId == uid && c.id == acId) {
-						return { ...c, confirm };
+
+                state.value = state.value.map((c) => {
+					if (c.userId === uid) {
+						c.listData = c.listData.map((d) =>
+							d.id === acId ? { ...d, confirm } : d
+						);
 					}
 					return c;
 				});

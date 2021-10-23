@@ -1,5 +1,7 @@
 import { createAction, createAsyncThunk } from '@reduxjs/toolkit';
 import {
+	addUserDetail,
+	cancelConfirmMyProofApi,
 	cancelConfirmProof,
 	confirmProof,
 	getUserActivity,
@@ -9,11 +11,18 @@ export const loginAction = createAction('LOGIN');
 
 export const logoutAction = createAction('LOGOUT');
 
+export const addUserDetailAction = createAsyncThunk(
+	'user/addUserDetail',
+	async (data) => {
+		let response = await addUserDetail(data);
+		return response;
+	}
+);
+
 export const fetchUserThunk = createAsyncThunk(
 	'user/fetchUserActivity',
 	async () => {
 		let response = await getUserActivity();
-        console.log('getUserActivity', response);
 		return response;
 	}
 );
@@ -25,7 +34,13 @@ export const confirmProofThunk = createAsyncThunk(
 );
 export const cancelConfirmProofThunk = createAsyncThunk(
 	'user/cancelConfirmProof',
-	async ({ uid, acId }) => {
-		return await cancelConfirmProof(uid, acId);
+	async ({ uid, acId, confirm }) => {
+		return await cancelConfirmProof(uid, acId, confirm);
+	}
+);
+export const cancelMyConfirmProofAction = createAsyncThunk(
+	'user/cancelMyConfirmProof',
+	async (acId) => {
+		return await cancelConfirmMyProofApi(acId);
 	}
 );

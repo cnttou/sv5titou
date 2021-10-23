@@ -8,7 +8,8 @@ import {
 	Select,
 	InputNumber,
 	DatePicker,
-    message,
+	message,
+    Switch,
 } from 'antd';
 import { nameTarget } from '../components/ActivityFeed';
 import { useRef } from 'react';
@@ -28,7 +29,9 @@ const tailLayout = {
 };
 
 const initActivity = {
-	name: '',
+    active: true,
+	level: null,
+    name: '',
 	date: null,
 	location: '',
 	summary: '',
@@ -36,16 +39,24 @@ const initActivity = {
 	target: null,
 };
 
+export const nameLevelActivity = {
+    lop: "Cấp chi",
+    khoa: "Cấp khoa",
+    truong: "Cấp trường"
+}
+
 function useCreateEditActivityModel({ title, action }) {
 	const [visible, setVisible] = useState(false);
 	const [dataModel, setDataModel] = useState(initActivity);
-    const dispatch = useDispatch()
+	const dispatch = useDispatch();
 
 	const formRef = useRef();
 	const [form] = Form.useForm();
 
 	useEffect(() => {
-		let date = moment(dataModel.date, 'DD-MM-YYYY');
+		let date = null;
+		if (dataModel.date) date = moment(dataModel.date, 'DD-MM-YYYY');
+
 		form.setFieldsValue({ ...dataModel, date });
 	}, [dataModel]);
 
@@ -53,16 +64,18 @@ function useCreateEditActivityModel({ title, action }) {
 		const data = Object.assign(form.getFieldsValue());
 		let date = moment(form.getFieldsValue().date).format('DD-MM-YYYY');
 		data.date = date;
-        data.id = dataModel.id || null;
-        console.log(data);
+		let docId = dataModel.id || null;
+		console.log(data);
 
-        dispatch(addActivityAction({ data, docId: data.id })).then(()=>{
-            message.success("Thêm thành công.")
-            setVisible(false)
-        }).catch((err)=>{
-            message.error("Thêm thất bại, vui lòng thử lại.")
-            console.log(err.message);
-        });
+		dispatch(addActivityAction({ data, docId }))
+			.then(() => {
+				message.success('Thêm thành công.');
+				setVisible(false);
+			})
+			.catch((err) => {
+				message.error('Thêm thất bại, vui lòng thử lại.');
+				console.log(err.message);
+			});
 	};
 
 	const onReset = () => {
@@ -87,6 +100,30 @@ function useCreateEditActivityModel({ title, action }) {
 				onFinish={onFinish}
 				validateMessages={{ required: "Bạn chưa điền '${name}'" }}
 			>
+				<Form.Item
+					name="active"
+					label="Kích hoạt"
+					rules={[{ required: true }]}
+				>
+					<Switch defaultChecked />
+				</Form.Item>
+				<Form.Item
+					name="level"
+					label="Hoạt động cấp"
+					rules={[{ required: true }]}
+				>
+					<Select
+						size="middle"
+						placeholder="Cấp của hoạt động"
+						style={{ width: '100%' }}
+					>
+						{Object.entries(nameLevelActivity).map((c, index) => (
+							<Option key={c[0]}>
+								{c[1]}
+							</Option>
+						))}
+					</Select>
+				</Form.Item>
 				<Form.Item
 					name="name"
 					label="Tên chương trình"
@@ -156,7 +193,11 @@ function useCreateEditActivityModel({ title, action }) {
 				</Form.Item>
 				<Form.Item
 					{...tailLayout}
-					style={{ display: 'flex', justifyContent: 'center' }}
+					style={{
+						display: 'flex',
+						justifyContent: 'center',
+						marginBottom: 0,
+					}}
 				>
 					<Button
 						htmlType="button"
@@ -164,10 +205,10 @@ function useCreateEditActivityModel({ title, action }) {
 						block
 						onClick={onReset}
 					>
-						Reset
+						Đặt lại form
 					</Button>
 					<Button type="primary" block htmlType="submit">
-						Submit
+						GỬI
 					</Button>
 				</Form.Item>
 			</Form>

@@ -10,10 +10,14 @@ import {
 	Button,
 	Typography,
 	Result,
+	Input,
+	message,
 } from 'antd';
 import { useState } from 'react';
+import { useDispatch } from 'react-redux';
 import { useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
+import { addUserDetailAction } from '../store/actions';
 import styles from '../styles/Profile.module.css';
 
 const { Content } = Layout;
@@ -30,8 +34,10 @@ for (let i = 10; i < 36; i++) {
 
 function Profile(props) {
 	const [inputClass, setInputClass] = useState('');
+	const [inputName, setInputName] = useState('');
 	const [showSaveBtn, setShowSaveBtn] = useState(false);
 
+	const dispatch = useDispatch();
 	const user = useSelector((s) => s.user.value);
 	const listActivity = useSelector((state) => state.myActivity.value);
 
@@ -43,6 +49,19 @@ function Profile(props) {
 		console.log('saved: ', inputClass);
 		setShowSaveBtn(false);
 	};
+    const onChangeName = (e)=>{
+        setInputName(e.target.value)
+    }
+	const saveName = () => {
+		dispatch(addUserDetailAction({ fullName: inputName })).then(
+			() => {
+				message.success('Thêm thành công');
+			},
+			() => {
+				message.warning('Thêm không thành công, vui lòng thử lại.');
+			}
+		);
+	};
 	const loadProfile = () => (
 		<Card bordered={true} className={styles.card}>
 			<Meta
@@ -51,6 +70,18 @@ function Profile(props) {
 				description={user.studentCode}
 			/>
 			<Divider plain></Divider>
+			<p>
+				<strong>Họ tên có dấu:</strong>
+				<Input
+					placeholder="Nhập để thêm"
+					defaultValue={user.fullName || user.displayName}
+					onChange={onChangeName}
+					addonAfter={
+						inputName && <SaveOutlined onClick={saveName} />
+					}
+                    autoFocus={true}
+				/>
+			</p>
 			<p>
 				<strong>Email:</strong> {user.email}
 			</p>
@@ -91,7 +122,7 @@ function Profile(props) {
 	const loadNullProfile = () => (
 		<Result
 			status="warning"
-            title="Trang không hợp lệ"
+			title="Trang không hợp lệ"
 			subTitle="Vui lòng đăng nhập để thực hiện chức năng"
 			extra={
 				<Button type="primary">

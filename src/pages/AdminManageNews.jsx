@@ -2,12 +2,25 @@ import { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { deleteActivityAction, fetchActivityAction } from '../store/actions';
 import Loading from '../components/Loading';
-import { Table, Space, Button } from 'antd';
+import {
+	Space,
+	Button,
+	Modal,
+	Layout,
+} from 'antd';
 import { compareStringDate, compareStringName } from '../utils/compareFunction';
 import useCreateEditActivityModel from '../hooks/useCreateEditActivityModel';
 import { nameTarget } from '../components/ActivityFeed';
+import { ExclamationCircleOutlined } from '@ant-design/icons';
+import styles from '../styles/Admin.module.css';
+import TableCustom from '../components/TableCustom';
+
+const { confirm } = Modal;
+const { Content } = Layout;
 
 const initActivity = {
+	active: true,
+	level: null,
 	name: '',
 	date: null,
 	location: '',
@@ -18,6 +31,7 @@ const initActivity = {
 
 export default function AdminManageNews() {
 	const listNews = useSelector((state) => state.activity.value);
+
 	const dispatch = useDispatch();
 
 	useEffect(() => {
@@ -37,12 +51,23 @@ export default function AdminManageNews() {
 	};
 
 	const handleDelete = (item) => {
-		dispatch(deleteActivityAction(item.id));
+		console.log('clicked delete activity', item);
+		confirm({
+			title: 'Bạn có chắc muốn xóa hoạt động?',
+			icon: <ExclamationCircleOutlined />,
+			content: item.name,
+			onOk() {
+				return dispatch(deleteActivityAction(item.id)).then(() => {
+					message.success('Xóa thành công.');
+				});
+			},
+			onCancel() {},
+		});
 	};
 
-	const { ui, visible, setVisible, dataModel, setDataModel } =
+	const { ui, visible, setVisible, setDataModel } =
 		useCreateEditActivityModel({
-			title: 'Tạo và chỉnh sửa hoạt động',
+			title: 'Tạo hoặc chỉnh sửa hoạt động',
 		});
 
 	const columns = [
@@ -50,6 +75,7 @@ export default function AdminManageNews() {
 			title: 'Tên',
 			dataIndex: 'name',
 			key: 'name',
+			searchFilter: true,
 			defaultSortOrder: 'descend',
 			sorter: (a, b) => compareStringName(a.name, b.name),
 			render: (text) => <a>{text}</a>,
@@ -87,6 +113,7 @@ export default function AdminManageNews() {
 			title: 'Thời gian',
 			dataIndex: 'date',
 			key: 'date',
+			dateBeweenFilter: true,
 			defaultSortOrder: 'descend',
 			sorter: (a, b) => compareStringDate(a.date, b.date),
 		},
@@ -115,16 +142,23 @@ export default function AdminManageNews() {
 			),
 		},
 	];
-	const loadTable = (listNews = []) => (
-		<Table columns={columns} dataSource={listNews} />
+
+	const loadTable = () => (
+		<TableCustom
+			columns={columns}
+			dataSource={listNews}
+			// scroll={{ y: 'calc(100vh-144px)' }}
+			footer={()=>
+				<Button type="primary" block onClick={handleShowModelToAddNew}>
+					Thêm hoạt động
+				</Button>
+			}
+		/>
 	);
 	return (
-		<div>
-			{listNews?.length ? loadTable(listNews) : <Loading />}
-			<Button type="primary" block onClick={handleShowModelToAddNew}>
-				Hoạt động mới
-			</Button>
+		<Content className={styles.content}>
+			{listNews?.length ? loadTable() : <Loading />}
 			{visible === true ? ui() : null}
-		</div>
+		</Content>
 	);
 }

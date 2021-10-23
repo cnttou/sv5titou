@@ -1,5 +1,5 @@
 import { createReducer } from '@reduxjs/toolkit';
-import { loginAction, logoutAction } from '../actions';
+import { addUserDetailAction, loginAction, logoutAction } from '../actions';
 
 const initialState = {
 	error: '',
@@ -10,8 +10,11 @@ const reducer = createReducer(initialState, (builder) => {
 		state.value = action.payload;
 	});
 	builder.addCase(logoutAction, (state, action) => {
-		state = initialState;
+		state.value = {};
 	});
+    builder.addCase(addUserDetailAction.fulfilled, (state, action)=>{
+        state.value = Object.assign(state.value, action.payload)
+    })
 });
 
 export default reducer;

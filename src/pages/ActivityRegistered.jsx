@@ -1,12 +1,13 @@
-import { Button, Layout, message } from 'antd';
-import ListActivityFeed from '../components/ListActivityFeed';
-import { DeleteOutlined } from '@ant-design/icons';
+import { Button, Layout, message, Modal } from 'antd';
+import { DeleteOutlined, ExclamationCircleOutlined } from '@ant-design/icons';
 import InputUpload from '../components/InputUpload';
 import styles from '../styles/PageActivityRegistered.module.css';
 import useModel from '../hooks/useModel';
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import {
+    cancelConfirmProofThunk,
+	cancelMyConfirmProofAction,
 	fetchRegisteredActivityAction,
 	getImageProofByActivityAction,
 	removeRegisteredActivityAction,
@@ -18,8 +19,10 @@ import {
 } from '../api/firebaseStorage';
 import { addImageToActivityAction } from '../store/reducers/myActivitySlice';
 import Loading from '../components/Loading';
+import ListRowActivityRegistered from '../components/ListRowActivityRegistered';
 
 const { Content } = Layout;
+const { confirm } = Modal;
 
 const initInputUpload = {
 	onUploadSuccess: true,
@@ -44,8 +47,21 @@ function ActivityRegistered(props) {
 			dispatch(fetchRegisteredActivityAction());
 	}, [user]);
 
-	const handleUnregister = () => {
-		dispatch(removeRegisteredActivityAction(dataModel.id))
+    const showBoxQuestion = ()=>{
+        confirm({
+			title: 'Bạn có chắc muốn hủy hoạt động?',
+			icon: <ExclamationCircleOutlined />,
+			content:
+				'Tất cả những file minh chứng của hoạt động này cũng bị xóa theo.',
+			onOk() {
+                console.log('clicked unregister', dataModel);
+				return handleUnregister();
+			},
+			onCancel() {},
+		});
+    }
+	const handleUnregister = async () => {
+		return dispatch(removeRegisteredActivityAction(dataModel.id))
 			.then(() => {
 				deleteFolderImageActivityApi(dataModel.id)
 					.then(() => {
@@ -63,7 +79,6 @@ function ActivityRegistered(props) {
 				message.error('Hủy thất bại, vui lòng thử lại');
 				console.log(error.message);
 			});
-		console.log('clicked unregister', dataModel);
 	};
 	const handleBeforeUpload = (file) => {
 		const isLt5M = file.size / 1024 / 1024 < 5;
@@ -73,6 +88,9 @@ function ActivityRegistered(props) {
 		return isLt5M;
 	};
 	const handleUpload = (data) => {
+        if (dataModel.confirm !== "false" || dataModel.confirm !== "false"){
+            dispatch(cancelMyConfirmProofAction(dataModel.id));
+        }
 		const task = upFile(dataModel.id, data.file);
 		task.on(
 			taskEvent,
@@ -117,7 +135,7 @@ function ActivityRegistered(props) {
 			key={'Hủy đăng ký'}
 			icon={<DeleteOutlined />}
 			type="danger"
-			onClick={handleUnregister}
+			onClick={showBoxQuestion}
 		>
 			Hủy đăng ký
 		</Button>,
@@ -158,7 +176,7 @@ function ActivityRegistered(props) {
 	return (
 		<Content className={styles.content}>
 			{loading === 0 || data.length !== 0 ? (
-				<ListActivityFeed
+				<ListRowActivityRegistered
 					data={data || []}
 					handleClick={handleClickActivityFeed}
 				/>

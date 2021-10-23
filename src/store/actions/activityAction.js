@@ -1,6 +1,7 @@
 import {
 	deleteFile,
 	deleteFileByFullPath,
+	getFile,
 	getFileFromAActivity,
 	upFile,
 } from '../../api/firebaseStorage';
@@ -27,14 +28,17 @@ export const fetchActivityAction = createAsyncThunk(
 export const addActivityAction = createAsyncThunk(
 	'news/addNews',
 	async ({ data, docId }) => {
-		return await addData('news', data, docId);
+		let response = await addData('news', data, docId);
+		console.log('response add activity: ', response);
+		return response;
 	}
 );
 
 export const deleteActivityAction = createAsyncThunk(
 	'news/deleteNews',
 	async (docId) => {
-		return await deleteData('news', docId);
+		let response = await deleteData('news', docId);
+		return response;
 	}
 );
 
@@ -75,6 +79,14 @@ export const getImageProofByActivityAction = createAsyncThunk(
 	async (acId, thunkAPI) => {
 		let response = await getFileFromAActivity(acId);
 		return { images: response, acId };
+	}
+);
+export const getImageProofAction = createAsyncThunk(
+	'registerActivity/getImageProofAction',
+	async ({ uid, acId }, thunkAPI) => {
+		let response = await getFile(uid, acId);
+		console.log('typeof response', typeof response);
+		return { images: response, uid, acId };
 	}
 );
 export const deleteImageAction = createAsyncThunk(
