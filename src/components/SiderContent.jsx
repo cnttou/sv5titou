@@ -9,7 +9,12 @@ function SiderContent(props) {
     const listActivity = useSelector((state) => state.myActivity.value);
 
 	return (
-		<Sider theme="light" className={styles.siderBar} width={300}>
+		<Sider
+			theme="light"
+			className={styles.siderBar}
+			width={300}
+			id="sticky"
+		>
 			<List
 				header={<Title level={5}>Các hoạt động đã đăng ký</Title>}
 				bordered

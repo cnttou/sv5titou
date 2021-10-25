@@ -15,6 +15,7 @@ import {
 	deleteActivityAction,
 	fetchActivityAction,
 	getImageProofByActivityAction,
+    logoutAction,
 } from '../actions';
 
 export const activity = createSlice({
@@ -61,7 +62,9 @@ export const activity = createSlice({
 				newValue.push(action.payload);
 
 				state.value = newValue;
-			});
+			}).addCase(logoutAction, (state)=>{
+                state.value = [];
+            });
 		builder
 			.addMatcher(isPending, (state) => {
 				state.loading = state.loading + 1;

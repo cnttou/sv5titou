@@ -14,6 +14,9 @@ a {
 	text-decoration: none;
 }
 
+#root{
+    background-color: #f0f2f5;
+}
 /* Admin Login CSS */
 .AdminLogin {
 	position: absolute;
@@ -41,7 +44,13 @@ a {
 .ql-clipboard{
     display: none;
 }
-
+.ql-editor{
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+}
+.ql-editor > p{
+    text-overflow: ellipsis;
+}
 .wrapper-loading {
 	width: 100%;
 	min-height: 500px;

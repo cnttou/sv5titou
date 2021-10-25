@@ -5,7 +5,8 @@ const { Footer } = Layout;
 function FooterContent(props) {
 	return (
 		<Footer style={styles.footer}>
-			Design ©2021 Created by Kanj
+			Trường Đại học Mở Tp.Hồ Chính Minh <br/>
+			<span>Design ©2021</span>
 		</Footer>
 	);
 }
@@ -13,7 +14,9 @@ function FooterContent(props) {
 const styles = {
 	footer: {
 		textAlign: 'center',
-        marginTop: "10px",
+		borderTop: '1px solid #5262a5',
+		marginTop: '10px',
+		padding: '12px 50px',
 	},
 };
 

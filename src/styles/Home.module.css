@@ -2,19 +2,33 @@
 	display: flex;
 	align-items: center;
 	flex-direction: column;
-	background-color: white;
+	background-color: #f0f2f5;
 	padding-top: 5px;
 	min-height: calc(100vh - 144px);
+	max-width: calc(100vw - 305px);
 }
 
-.search{
-    width: 100%;
-    padding: 0 50px;
-    display: flex;
-    margin: 5px 0;
+.backTopButton {
+	width: 45px;
+	height: 45px;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	background: antiquewhite;
+	border-radius: 100px;
+}
+
+.search {
+	width: 100%;
+	padding: 0 50px;
+	display: flex;
+	margin: 5px 0;
 }
 @media only screen and (max-width: 750px) {
 	.search {
 		padding: 0;
+	}
+	.content {
+		max-width: 100vw;
 	}
 }

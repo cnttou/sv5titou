@@ -4,6 +4,7 @@ import {
 	confirmProofThunk,
 	fetchUserThunk,
 	getImageProofAction,
+    logoutAction,
 } from '../actions';
 
 export const userActivity = createSlice({
@@ -31,8 +32,8 @@ export const userActivity = createSlice({
 			})
 			.addCase(confirmProofThunk.fulfilled, (state, action) => {
 				const { uid, acId, confirm } = action.payload;
-                
-                state.value = state.value.map((c) => {
+
+				state.value = state.value.map((c) => {
 					if (c.userId === uid) {
 						c.listData = c.listData.map((d) =>
 							d.id === acId ? { ...d, confirm } : d
@@ -46,7 +47,7 @@ export const userActivity = createSlice({
 			.addCase(cancelConfirmProofThunk.fulfilled, (state, action) => {
 				const { uid, acId, confirm } = action.payload;
 
-                state.value = state.value.map((c) => {
+				state.value = state.value.map((c) => {
 					if (c.userId === uid) {
 						c.listData = c.listData.map((d) =>
 							d.id === acId ? { ...d, confirm } : d
@@ -73,7 +74,10 @@ export const userActivity = createSlice({
 			})
 			.addCase(confirmProofThunk.rejected, (state) => {
 				state.loading = state.loading - 1;
-			});
+			})
+			.addCase(logoutAction, (state) => {
+				state.value = [];
+			});;
 	},
 });
 export default userActivity.reducer;

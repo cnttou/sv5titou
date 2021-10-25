@@ -7,7 +7,7 @@ import {
 } from '../store/actions';
 import SortItem from '../components/SortNewsItem';
 import { Layout, Button, BackTop, message, Input } from 'antd';
-import { CloudSyncOutlined, PlusCircleOutlined } from '@ant-design/icons';
+import { CloudSyncOutlined, PlusCircleOutlined, UpOutlined } from '@ant-design/icons';
 import useModel from '../hooks/useModel';
 import ListActivityFeed from '../components/ListActivityFeed';
 import SiderContent from '../components/SiderContent';
@@ -57,6 +57,10 @@ function User() {
 			message.info('Hoạt động này đã đăng ký.');
 			return;
 		}
+        if (!user.uid){
+            message.info('Vui lòng đăng nhập để đăng ký hoạt động.');
+            return
+        }
 		if (currentUser().uid) {
 			const { id, name, date, location, numPeople, summary, target } =
 				dataModel;
@@ -141,7 +145,11 @@ function User() {
 				)}
 			</Content>
 			<SiderContent />
-			<BackTop />
+			<BackTop>
+				<div className={styles.backTopButton}>
+					<UpOutlined size="30" />
+				</div>
+			</BackTop>
 			{visible && ui()}
 		</Layout>
 	);

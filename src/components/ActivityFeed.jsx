@@ -10,11 +10,11 @@ import styles from '../styles/ActivityFeed.module.css';
 import Loading from './Loading';
 
 export const nameTarget = {
-	'hoi-nhap': 'Hội Nhập',
-	'hoc-tap': 'Học Tập',
-	'dao-duc': 'Đạo Đức',
-	'tinh-nguyen': 'Tình Nguyện',
-	'suc-khoe': 'Sức khỏe',
+	'hoi-nhap': 'Hội nhập tốt',
+	'hoc-tap': 'Học tập tốt',
+	'dao-duc': 'Đạo đức tốt',
+	'tinh-nguyen': 'Tình nguyện tốt',
+	'suc-khoe': 'Thể lực tốt',
 };
 export const typeFileimage = ['.jpeg', '.jpg', '.png'];
 
@@ -52,20 +52,17 @@ function ActivityFeed(props) {
 				style={
 					showFull ? { maxHeight: '65vh', overflow: 'scroll' } : null
 				}
+				bodyStyle={{ maxHeight: 268 }}
 				headStyle={{ background: colorCard(id, confirm) }}
 				title={
 					<>
-						<Typography.Title level={4}>{name}</Typography.Title>
-						<Typography.Text type="secondary">{nameLevelActivity[level]}</Typography.Text>
+						<Typography.Title level={5}>{name}</Typography.Title>
+						<Typography.Text type="secondary">
+							{nameLevelActivity[level]}
+						</Typography.Text>
 					</>
 				}
-				extra={
-					btnDetail && (
-						<a onClick={() => handleClickDetail(props.index, data)}>
-							Chi tiết
-						</a>
-					)
-				}
+				onClick={() => handleClickDetail(props.index, data)}
 			>
 				<p>
 					<strong>Thời gian:</strong> {date}
@@ -73,19 +70,22 @@ function ActivityFeed(props) {
 				<p>
 					<strong>Địa điểm:</strong> {location}
 				</p>
-				<p>
-					<strong>Số lượng tối đa:</strong> {numPeople}
-				</p>
+				{numPeople && (
+					<p>
+						<strong>Số lượng tối đa:</strong> {numPeople}
+					</p>
+				)}
 				<p>
 					<strong>Tiêu chí xét SV5T:</strong> {nameTarget[target]}
 				</p>
-				<p>
+				<p style={{ marginBottom: 0 }}>
 					<strong>Thông tin chi tiết:</strong>
 					<ReactQuill
 						theme={null}
 						defaultValue={summary}
 						readOnly={true}
-						className="ql-clipboard-disable"
+						className={showFull ? "" : styles.editer}
+						style={{ height: '100%' }}
 					/>
 				</p>
 				{images && (

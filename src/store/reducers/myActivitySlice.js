@@ -11,6 +11,7 @@ import {
 	deleteImageByFullPathAction,
 	fetchRegisteredActivityAction,
 	getImageProofByActivityAction,
+	logoutAction,
 	registerActivityAction,
 	removeRegisteredActivityAction,
 } from '../actions';
@@ -106,7 +107,10 @@ export const myActivitySlice = createSlice({
 					);
 					state.value = newState;
 				}
-			);
+			)
+			.addCase(logoutAction, (state) => {
+				state.value = [];
+			});
 		builder
 			.addMatcher(isPending, (state, action) => {
 				state.loading = state.loading + 1;

@@ -1,7 +1,7 @@
 .siderBar {
-	top: 0px;
-    right: 0px;
-	position: sticky;
+	position: fixed;
+    right: 0;
+    top: 70px;
 }
 
 @media only screen and (max-width: 600px) {

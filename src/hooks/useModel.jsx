@@ -51,7 +51,7 @@ function useModel({ title, action, checkRegister, loading, data }) {
 		ui,
 		visible,
 		setVisible,
-		dataModel: data[indexData],
+		dataModel: data ? data[indexData] : {},
 		setIndexData,
 	};
 }
