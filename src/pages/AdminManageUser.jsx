@@ -6,11 +6,12 @@ import {
 	confirmProofThunk,
 	fetchUserThunk,
 } from '../store/actions';
-import { Table, Layout, Button } from 'antd';
+import { Table, Layout, Button, Switch } from 'antd';
 import styles from '../styles/Admin.module.css';
 import { nameTarget } from '../components/ActivityFeed';
 import useModelOnlyShowActivity from '../hooks/useModelOnlyShowActivity';
 import InputSelectWithAddItem from '../components/InputSelectWithAddItem';
+import { nameClassUser } from './Profile';
 
 const { Content } = Layout;
 
@@ -63,6 +64,24 @@ export default function AdminManageUser() {
 
 	const expandedRowRender = (activity) => {
 		const columns = [
+			// {
+			// 	title: 'Trạng thái',
+			// 	dataIndex: 'active',
+			// 	key: 'active',
+			// 	// filters: [
+			// 	// 	{
+			// 	// 		text: 'Chưa kích hoạt',
+			// 	// 		value: 'false',
+			// 	// 	},
+			// 	// 	{
+			// 	// 		text: 'Đã kích hoạt',
+			// 	// 		value: 'true',
+			// 	// 	},
+			// 	// ],
+			// 	// defaultFilteredValue: ['true'],
+			// 	// onFilter: (value, record) => record.active.toString() === value,
+			// 	render: (text) => <Switch checked={text} size="small" />,
+			// },
 			{
 				title: 'Tên hoạt động',
 				key: 'name',
@@ -136,8 +155,10 @@ export default function AdminManageUser() {
 		},
 		{
 			title: 'Lớp',
-			key: 'class',
-			render: (item) => <p>{item.class || 'Sv chưa điền'}</p>,
+			key: 'classUser',
+			render: (item) => (
+				<p>{nameClassUser[item.classUser] || 'Sv chưa điền'}</p>
+			),
 		},
 	];
 

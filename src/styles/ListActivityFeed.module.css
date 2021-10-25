@@ -4,6 +4,7 @@
 
 .list {
     min-width: 580px;
+    background: white;
 }
 
 @media only screen and (max-width: 600px) {

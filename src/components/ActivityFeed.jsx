@@ -50,9 +50,8 @@ function ActivityFeed(props) {
 				bordered={bordered || false}
 				className={styles.card}
 				style={
-					showFull ? { maxHeight: '65vh', overflow: 'scroll' } : null
+					showFull ? { maxHeight: '75vh', overflow: 'scroll' } : null
 				}
-				bodyStyle={{ maxHeight: 268 }}
 				headStyle={{ background: colorCard(id, confirm) }}
 				title={
 					<>
@@ -84,7 +83,7 @@ function ActivityFeed(props) {
 						theme={null}
 						defaultValue={summary}
 						readOnly={true}
-						className={showFull ? "" : styles.editer}
+						className={showFull ? '' : styles.editer}
 						style={{ height: '100%' }}
 					/>
 				</p>

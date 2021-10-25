@@ -13,25 +13,30 @@ import {
 	Input,
 	message,
 } from 'antd';
+import { useEffect } from 'react';
 import { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
-import { addUserDetailAction } from '../store/actions';
+import { addUserDetailAction, getUserDetailAction } from '../store/actions';
 import styles from '../styles/Profile.module.css';
 
 const { Content } = Layout;
 const { Meta } = Card;
 const { Option } = Select;
-const { Title } = Typography;
 
-const children = [];
-for (let i = 10; i < 36; i++) {
-	children.push(
-		<Option key={i.toString(36) + i}>{i.toString(36) + i}</Option>
-	);
-}
+export const nameClassUser = {
+	it81: 'DH18IT01',
+	it82: 'DH18IT02',
+	im81: 'DH18IM01',
+	im82: 'DH18IM02',
+	cs81: 'DH18CS01',
+	cs82: 'DH18CS02',
+};
 
+const nameClassUserOption = Object.entries(nameClassUser).map((v, k) => (
+	<Option key={v[0]}>{v[1]}</Option>
+));
 function Profile(props) {
 	const [inputClass, setInputClass] = useState('');
 	const [inputName, setInputName] = useState('');
@@ -41,17 +46,38 @@ function Profile(props) {
 	const user = useSelector((s) => s.user.value);
 	const listActivity = useSelector((state) => state.myActivity.value);
 
+	useEffect(() => {
+		if (!user.uid) return;
+		else if (user.fullName === undefined || user.classUser === undefined) {
+			dispatch(getUserDetailAction()).then((res) => {
+				if (res.payload.fullName) setInputName(res.payload.fullName);
+				if (res.payload.classUser) setInputClass(res.payload.classUser);
+			});
+		} else {
+			setInputName(user.fullName);
+			setInputClass(user.classUser);
+		}
+	}, [user]);
+
 	const handleChangeInputClass = (value) => {
 		setInputClass(value);
 		setShowSaveBtn(true);
 	};
 	const saveClass = () => {
+		dispatch(addUserDetailAction({ classUser: inputClass })).then(
+			(res) => {
+				message.success('Thêm thành công');
+			},
+			() => {
+				message.warning('Thêm không thành công, vui lòng thử lại.');
+			}
+		);
 		console.log('saved: ', inputClass);
 		setShowSaveBtn(false);
 	};
-    const onChangeName = (e)=>{
-        setInputName(e.target.value)
-    }
+	const onChangeName = (e) => {
+		setInputName(e.target.value);
+	};
 	const saveName = () => {
 		dispatch(addUserDetailAction({ fullName: inputName })).then(
 			() => {
@@ -71,15 +97,16 @@ function Profile(props) {
 			/>
 			<Divider plain></Divider>
 			<p>
-				<strong>Họ tên có dấu:</strong>
+				<strong>Họ và tên có dấu:</strong>
 				<Input
 					placeholder="Nhập để thêm"
 					defaultValue={user.fullName || user.displayName}
 					onChange={onChangeName}
+					value={inputName}
 					addonAfter={
 						inputName && <SaveOutlined onClick={saveName} />
 					}
-                    autoFocus={true}
+					autoFocus={true}
 				/>
 			</p>
 			<p>
@@ -102,16 +129,17 @@ function Profile(props) {
 				<Select
 					className={styles.selectInput}
 					placeholder="Nhập tên lớp"
-					defaultValue={'a10'}
 					onChange={handleChangeInputClass}
+					value={inputClass}
 				>
-					{children}
+					{nameClassUserOption}
 				</Select>
 				{showSaveBtn && (
 					<Button
 						type="primary"
 						size={'middle'}
-						icon={<SaveOutlined onClick={saveClass} />}
+						icon={<SaveOutlined />}
+						onClick={saveClass}
 					>
 						Lưu
 					</Button>
@@ -122,7 +150,7 @@ function Profile(props) {
 	const loadNullProfile = () => (
 		<Result
 			status="warning"
-			title="Trang không hợp lệ"
+			title="Vui lòng đăng nhập"
 			subTitle="Vui lòng đăng nhập để thực hiện chức năng"
 			extra={
 				<Button type="primary">

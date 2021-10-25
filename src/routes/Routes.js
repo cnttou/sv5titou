@@ -1,8 +1,9 @@
 import { lazy } from 'react';
+import Profile from '../pages/Profile';
 import User from '../pages/User';
 
 const Login = lazy(() => import('../pages/Login'));
-const Profile = lazy(() => import('../pages/Profile'));
+// const Profile = lazy(() => import('../pages/Profile'));
 const NewDetail = lazy(() => import('../pages/NewDetail'));
 const LoginAdmin = lazy(() => import('../pages/LoginAdmin'));
 const PageNotFound = lazy(() => import('../pages/PageNotFound'));

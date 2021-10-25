@@ -6,8 +6,12 @@ import {
 	registerActivityAction,
 } from '../store/actions';
 import SortItem from '../components/SortNewsItem';
-import { Layout, Button, BackTop, message, Input } from 'antd';
-import { CloudSyncOutlined, PlusCircleOutlined, UpOutlined } from '@ant-design/icons';
+import { Layout, Button, BackTop, message, Input, Typography } from 'antd';
+import {
+	CloudSyncOutlined,
+	PlusCircleOutlined,
+	UpOutlined,
+} from '@ant-design/icons';
 import useModel from '../hooks/useModel';
 import ListActivityFeed from '../components/ListActivityFeed';
 import SiderContent from '../components/SiderContent';
@@ -16,6 +20,7 @@ import styles from '../styles/Home.module.css';
 import Loading from '../components/Loading';
 import { useState } from 'react';
 
+const { Text } = Typography;
 const { Search } = Input;
 const { Content } = Layout;
 
@@ -57,13 +62,22 @@ function User() {
 			message.info('Hoạt động này đã đăng ký.');
 			return;
 		}
-        if (!user.uid){
-            message.info('Vui lòng đăng nhập để đăng ký hoạt động.');
-            return
-        }
+		if (!user.uid) {
+			message.info('Vui lòng đăng nhập để đăng ký hoạt động.');
+			return;
+		}
 		if (currentUser().uid) {
-			const { id, name, date, location, numPeople, summary, target } =
-				dataModel;
+			const {
+				id,
+				name,
+				date,
+				location,
+				numPeople,
+				summary,
+				target,
+				active,
+				level,
+			} = dataModel;
 			dispatch(
 				registerActivityAction({
 					id,
@@ -73,6 +87,8 @@ function User() {
 					numPeople,
 					summary,
 					target,
+					active,
+					level,
 				})
 			)
 				.then(() => {
@@ -95,6 +111,7 @@ function User() {
 			icon={<PlusCircleOutlined />}
 			type="primary"
 			onClick={handleRegister}
+			size="large"
 		>
 			Đăng ký
 		</Button>,
@@ -129,13 +146,16 @@ function User() {
 		<Layout>
 			<Content className={styles.content}>
 				<SortItem />
-				<Search
-					placeholder="Nhập tên chương trình cần tìm."
-					onSearch={onSearch}
-					enterButton
-					allowClear
-					className={styles.search}
-				/>
+				<div className={styles.wrapper}>
+					<Text className={styles.text}>Tìm kiếm</Text>
+					<Search
+						placeholder="Nhập tên chương trình cần tìm."
+						onSearch={onSearch}
+						enterButton
+						allowClear
+						className={styles.search}
+					/>
+				</div>
 				{resultSearch.length !== 0 ? (
 					loadList(resultSearch)
 				) : listNews?.length ? (

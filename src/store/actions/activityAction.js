@@ -13,14 +13,22 @@ import {
 	getRegisterActivityApi,
 	registerActivityApi,
 	removeRegisterActivity,
-	addImage,
-	deleteImage,
+	addUrlImageApi,
+	removeUrlImageApi,
+    getAllActivitiesApi,
 } from '../../api/firestore';
 
 export const fetchActivityAction = createAsyncThunk(
 	'news/fetchNews',
 	async (limit) => {
 		let respone = await getActivitiesApi(limit);
+		return respone;
+	}
+);
+export const fetchAllActivityAction = createAsyncThunk(
+	'news/fetchAllNews',
+	async (limit) => {
+		let respone = await getAllActivitiesApi(limit);
 		return respone;
 	}
 );
@@ -69,7 +77,7 @@ export const addImageAction = createAsyncThunk(
 	'registerActivity/updateImage',
 	async ({ file, acId }, thunkAPI) => {
 		await upFile(acId, file).then((fileName) => {
-			addImage(fileName, acId);
+			addUrlImageApi(fileName, acId);
 		});
 		return { fileName: file.name, acId };
 	}
@@ -93,7 +101,7 @@ export const deleteImageAction = createAsyncThunk(
 	'registerActivity/deleteImage',
 	async ({ fileName, acId }, thunkAPI) => {
 		await deleteFile(acId, fileName).then((fileName) => {
-			deleteImage(fileName, acId);
+			removeUrlImageApi(fileName, acId);
 		});
 		return { fileName, acId };
 	}

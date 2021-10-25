@@ -14,6 +14,7 @@ import {
 	addActivityAction,
 	deleteActivityAction,
 	fetchActivityAction,
+	fetchAllActivityAction,
 	getImageProofByActivityAction,
     logoutAction,
 } from '../actions';
@@ -52,6 +53,9 @@ export const activity = createSlice({
 			.addCase(fetchActivityAction.fulfilled, (state, action) => {
 				state.value = action.payload;
 			})
+			.addCase(fetchAllActivityAction.fulfilled, (state, action) => {
+				state.value = action.payload;
+			})
 			.addCase(deleteActivityAction.fulfilled, (state, action) => {
 				state.value = state.value.filter((c) => c.id != action.payload);
 			})
@@ -62,9 +66,10 @@ export const activity = createSlice({
 				newValue.push(action.payload);
 
 				state.value = newValue;
-			}).addCase(logoutAction, (state)=>{
-                state.value = [];
-            });
+			})
+			.addCase(logoutAction, (state) => {
+				state.value = [];
+			});
 		builder
 			.addMatcher(isPending, (state) => {
 				state.loading = state.loading + 1;

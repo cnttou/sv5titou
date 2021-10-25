@@ -61,6 +61,10 @@ function ActivityRegistered(props) {
 		});
     }
 	const handleUnregister = async () => {
+        if (dataModel.confirm === true) {
+            message.warning("Họat động đã được xác nhận nên không thể hủy.")
+            return;
+        }
 		return dispatch(removeRegisteredActivityAction(dataModel.id))
 			.then(() => {
 				deleteFolderImageActivityApi(dataModel.id)

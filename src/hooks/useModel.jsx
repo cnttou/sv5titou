@@ -16,7 +16,12 @@ function useModel({ title, action, checkRegister, loading, data }) {
 		return 'white';
 	};
 	const handleRemoveImage = (image) => {
+		if (data[indexData].confirm === true) {
+			message.warning('Họat động đã được xác nhận nên không xóa ảnh.');
+			return;
+		}
 		let acId = data[indexData]['id'];
+
 		console.log('remove image: ', image);
 		if (acId) {
 			dispatch(

@@ -4,7 +4,7 @@ import firebase from './firebase';
 
 const db = firebase.firestore();
 
-export const addImage = (fileName, acId = '') => {
+export const addUrlImageApi = (fileName, acId = '') => {
 	let uId = firebase.auth().currentUser.uid;
 	return db
 		.collection('register_activity')
@@ -15,7 +15,7 @@ export const addImage = (fileName, acId = '') => {
 			images: firebase.firestore.FieldValue.arrayUnion(fileName),
 		});
 };
-export const deleteImage = (fileName, acId = '') => {
+export const removeUrlImageApi = (fileName, acId = '') => {
 	let uId = firebase.auth().currentUser.uid;
 	return db
 		.collection('register_activity')
@@ -26,8 +26,27 @@ export const deleteImage = (fileName, acId = '') => {
 			images: firebase.firestore.FieldValue.arrayRemove(fileName),
 		});
 };
-
 export const getRegisterActivityApi = (userId) => {
+	let uId = userId || currentUser().uid;
+	return db
+		.collection('register_activity')
+		.doc(uId)
+		.collection('activities')
+		.where('active', '==', true)
+		.get()
+		.then((querySnapshot) => {
+			let data = [];
+			querySnapshot.forEach(async (doc) => {
+				data.push({
+					...doc.data(),
+					id: doc.id,
+				});
+			});
+			return data;
+		})
+		.catch((error) => console.log(error.message));
+};
+export const getAllRegisterActivityApi = (userId) => {
 	let uId = userId || currentUser().uid;
 	return db
 		.collection('register_activity')
@@ -76,11 +95,13 @@ export const removeRegisterActivity = (acId) => {
 export const registerActivityApi = (dataActivity) => {
 	let uId = currentUser().uid;
 	let acId = dataActivity.id;
+	let activityRef = db.collection('news').doc(uId);
 
 	let data = {
 		confirm: false,
 		proof: false,
 		...dataActivity,
+		activityRef,
 	};
 	return db
 		.collection('register_activity')
@@ -93,7 +114,6 @@ export const registerActivityApi = (dataActivity) => {
 			return data;
 		});
 };
-
 export const getDetailActivityApi = (docId = '') => {
 	return db
 		.collection('news')
@@ -107,10 +127,9 @@ export const getDetailActivityApi = (docId = '') => {
 			return data;
 		});
 };
-export const getActivitiesApi = (limit = 25) => {
+export const getAllActivitiesApi = (limit = 25) => {
 	return db
 		.collection('news')
-		.orderBy('date', 'desc')
 		.limit(limit)
 		.get()
 		.then((querySnapshot) => {
@@ -124,12 +143,23 @@ export const getActivitiesApi = (limit = 25) => {
 			return data;
 		});
 };
-/**
- *
- * @param {String} collection the collection of database
- * @param {String} docId the id for this document
- * @returns if it done return docId deleted
- */
+export const getActivitiesApi = (limit = 25) => {
+	return db
+		.collection('news')
+		.where('active', '==', true)
+		.limit(limit)
+		.get()
+		.then((querySnapshot) => {
+			let data = [];
+			querySnapshot.forEach((doc) => {
+				data.push({
+					...doc.data(),
+					id: doc.id,
+				});
+			});
+			return data;
+		});
+};
 export const deleteData = (collection, docId) => {
 	return db
 		.collection(collection || 'news')
@@ -140,38 +170,48 @@ export const deleteData = (collection, docId) => {
 export const addData = (collection = 'news', data, docId) => {
 	if (docId === null) {
 		return db
-        .collection(collection)
-        .add(data)
-        .then((doc) => ({ ...data, id: doc.id }));
-	} else{
+			.collection(collection)
+			.add(data)
+			.then((doc) => ({ ...data, id: doc.id }));
+	} else {
 		return db
 			.collection(collection)
 			.doc(docId)
 			.set(data)
 			.then(() => ({ ...data, id: docId }));
-    }
+	}
 };
 export const updateData = (collection = 'news', data, docId = '') => {
 	return db.collection(collection).doc(docId).update(data);
 };
 export const addUserDetail = (data) => {
-    console.log('data add :', {
+	console.log('data add :', {
 		email: currentUser().email,
 		userId: currentUser().uid,
 		...data,
 	});
-	return db.collection('register_activity')
+	return db
+		.collection('register_activity')
 		.doc(currentUser().uid)
 		.set(
 			{
 				email: currentUser().email,
 				userId: currentUser().uid,
-                ...data
+				...data,
 			},
 			{ merge: true }
-		).then(()=>({...data})).catch((err)=>console.log(err.message))
+		)
+		.then(() => ({ ...data }))
+		.catch((err) => console.log(err.message));
 };
-
+export const getUserDetailApi = () => {
+	return db
+		.collection('register_activity')
+		.doc(currentUser().uid)
+		.get()
+		.then((res) => res.data())
+		.catch((err) => console.log(err.message));
+};
 export const getUserActivity = () => {
 	return db
 		.collection('register_activity')
@@ -185,7 +225,7 @@ export const getUserActivity = () => {
 		})
 		.then((rs) => {
 			return Promise.all(
-				rs.map((c) => getRegisterActivityApi(c.userId))
+				rs.map((c) => getAllRegisterActivityApi(c.userId))
 			).then((res) => {
 				return rs.map((c, index) => ({ ...c, listData: res[index] }));
 			});
@@ -219,8 +259,8 @@ export const cancelConfirmProof = (uid, acId, confirm) => {
 			console.log(error.message);
 		});
 };
-export const cancelConfirmMyProofApi = ( acId ) => {
-    let uid = currentUser().uid
+export const cancelConfirmMyProofApi = (acId) => {
+	let uid = currentUser().uid;
 	return db
 		.collection('register_activity')
 		.doc(uid)

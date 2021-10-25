@@ -1,12 +1,13 @@
 import { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { deleteActivityAction, fetchActivityAction } from '../store/actions';
+import { deleteActivityAction, fetchAllActivityAction } from '../store/actions';
 import Loading from '../components/Loading';
 import {
 	Space,
 	Button,
 	Modal,
 	Layout,
+    Switch,
 } from 'antd';
 import { compareStringDate, compareStringName } from '../utils/compareFunction';
 import useCreateEditActivityModel from '../hooks/useCreateEditActivityModel';
@@ -36,7 +37,7 @@ export default function AdminManageNews() {
 
 	useEffect(() => {
 		if (listNews.length === 0) {
-			dispatch(fetchActivityAction(10));
+			dispatch(fetchAllActivityAction(50));
 		}
 	}, []);
 
@@ -72,6 +73,23 @@ export default function AdminManageNews() {
 
 	const columns = [
 		{
+			title: 'Trạng thái',
+			dataIndex: 'active',
+			key: 'active',
+			filters: [
+				{
+					text: 'Chưa kích hoạt',
+					value: 'false',
+				},
+				{
+					text: 'Đã kích hoạt',
+					value: 'true',
+				},
+			],
+			onFilter: (value, record) => record.active.toString() === value,
+			render: (text) => <Switch checked={text} size="small" />,
+		},
+		{
 			title: 'Tên',
 			dataIndex: 'name',
 			key: 'name',
@@ -86,23 +104,23 @@ export default function AdminManageNews() {
 			key: 'target',
 			filters: [
 				{
-					text: 'Hội nhập',
+					text: 'Hội nhập tốt',
 					value: 'hoi-nhap',
 				},
 				{
-					text: 'Đạo đức',
+					text: 'Đạo đức tốt',
 					value: 'dao-duc',
 				},
 				{
-					text: 'Học Tập',
+					text: 'Học tập tốt',
 					value: 'hoc-tap',
 				},
 				{
-					text: 'Tình Nguyện',
+					text: 'Tình nguyện tốt',
 					value: 'tinh-nguyen',
 				},
 				{
-					text: 'Sức khỏe',
+					text: 'Thể lực tốt',
 					value: 'suc-khoe',
 				},
 			],
