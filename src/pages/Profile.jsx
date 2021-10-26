@@ -23,24 +23,10 @@ import styles from '../styles/Profile.module.css';
 
 const { Content } = Layout;
 const { Meta } = Card;
-const { Option } = Select;
 
-export const nameClassUser = {
-	it81: 'DH18IT01',
-	it82: 'DH18IT02',
-	im81: 'DH18IM01',
-	im82: 'DH18IM02',
-	cs81: 'DH18CS01',
-	cs82: 'DH18CS02',
-};
-
-const nameClassUserOption = Object.entries(nameClassUser).map((v, k) => (
-	<Option key={v[0]}>{v[1]}</Option>
-));
 function Profile(props) {
 	const [inputClass, setInputClass] = useState('');
 	const [inputName, setInputName] = useState('');
-	const [showSaveBtn, setShowSaveBtn] = useState(false);
 
 	const dispatch = useDispatch();
 	const user = useSelector((s) => s.user.value);
@@ -59,9 +45,8 @@ function Profile(props) {
 		}
 	}, [user]);
 
-	const handleChangeInputClass = (value) => {
-		setInputClass(value);
-		setShowSaveBtn(true);
+	const handleChangeInputClass = (e) => {
+		setInputClass(e.target.value);
 	};
 	const saveClass = () => {
 		dispatch(addUserDetailAction({ classUser: inputClass })).then(
@@ -72,15 +57,13 @@ function Profile(props) {
 				message.warning('Thêm không thành công, vui lòng thử lại.');
 			}
 		);
-		console.log('saved: ', inputClass);
-		setShowSaveBtn(false);
 	};
 	const onChangeName = (e) => {
 		setInputName(e.target.value);
 	};
 	const saveName = () => {
 		dispatch(addUserDetailAction({ fullName: inputName })).then(
-			() => {
+			(res) => {
 				message.success('Thêm thành công');
 			},
 			() => {
@@ -99,8 +82,8 @@ function Profile(props) {
 			<p>
 				<strong>Họ và tên có dấu:</strong>
 				<Input
-					placeholder="Nhập để thêm"
-					defaultValue={user.fullName || user.displayName}
+					placeholder="Nhập họ và tên có dấu"
+					defaultValue={user.fullName || ""}
 					onChange={onChangeName}
 					value={inputName}
 					addonAfter={
@@ -126,24 +109,15 @@ function Profile(props) {
 				<p className={styles.labelClassName}>
 					<strong>Tên lớp:</strong>
 				</p>
-				<Select
-					className={styles.selectInput}
+				<Input
 					placeholder="Nhập tên lớp"
+					defaultValue={user.classUser || ''}
 					onChange={handleChangeInputClass}
 					value={inputClass}
-				>
-					{nameClassUserOption}
-				</Select>
-				{showSaveBtn && (
-					<Button
-						type="primary"
-						size={'middle'}
-						icon={<SaveOutlined />}
-						onClick={saveClass}
-					>
-						Lưu
-					</Button>
-				)}
+					addonAfter={
+						inputClass && <SaveOutlined onClick={saveClass} />
+					}
+				/>
 			</Space>
 		</Card>
 	);

@@ -29,9 +29,9 @@ const tailLayout = {
 };
 
 const initActivity = {
-    active: true,
+	active: true,
 	level: null,
-    name: '',
+	name: '',
 	date: null,
 	location: '',
 	summary: '',
@@ -48,9 +48,10 @@ export const nameLevelActivity = {
 function useCreateEditActivityModel({ title, action }) {
 	const [visible, setVisible] = useState(false);
 	const [dataModel, setDataModel] = useState(initActivity);
+	const [active, setActive] = useState(true);
+
 	const dispatch = useDispatch();
 
-	const formRef = useRef();
 	const [form] = Form.useForm();
 
 	useEffect(() => {
@@ -58,6 +59,7 @@ function useCreateEditActivityModel({ title, action }) {
 		if (dataModel.date) date = moment(dataModel.date, 'DD-MM-YYYY');
 
 		form.setFieldsValue({ ...dataModel, date });
+        setActive(dataModel.active)
 	}, [dataModel]);
 
 	const onFinish = () => {
@@ -78,10 +80,6 @@ function useCreateEditActivityModel({ title, action }) {
 			});
 	};
 
-	const onReset = () => {
-		if (formRef.current) formRef.current.resetFields();
-	};
-
 	const ui = () => (
 		<Modal
 			width={770}
@@ -94,18 +92,17 @@ function useCreateEditActivityModel({ title, action }) {
 			<Form
 				initialValues={initActivity}
 				{...layout}
-				ref={formRef}
 				form={form}
 				name="addActivity"
 				onFinish={onFinish}
-				validateMessages={{ required: "Bạn chưa điền '${name}'" }}
+				validateMessages={{ required: 'Vui lòng điền thông tin' }}
 			>
 				<Form.Item
 					name="active"
 					label="Kích hoạt"
 					rules={[{ required: true }]}
 				>
-					<Switch defaultChecked />
+					<Switch checked={active} onChange={setActive} />
 				</Form.Item>
 				<Form.Item
 					name="level"
@@ -118,9 +115,7 @@ function useCreateEditActivityModel({ title, action }) {
 						style={{ width: '100%' }}
 					>
 						{Object.entries(nameLevelActivity).map((c, index) => (
-							<Option key={c[0]}>
-								{c[1]}
-							</Option>
+							<Option key={c[0]}>{c[1]}</Option>
 						))}
 					</Select>
 				</Form.Item>
@@ -199,14 +194,6 @@ function useCreateEditActivityModel({ title, action }) {
 						marginBottom: 0,
 					}}
 				>
-					<Button
-						htmlType="button"
-						type="link"
-						block
-						onClick={onReset}
-					>
-						Đặt lại form
-					</Button>
 					<Button type="primary" block htmlType="submit">
 						GỬI
 					</Button>

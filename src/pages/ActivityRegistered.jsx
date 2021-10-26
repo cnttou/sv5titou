@@ -85,9 +85,13 @@ function ActivityRegistered(props) {
 			});
 	};
 	const handleBeforeUpload = (file) => {
-		const isLt5M = file.size / 1024 / 1024 < 5;
+        if (dataModel.confirm === true) {
+            message.warning('Không thể thêm khi hoạt động đã được xác nhận');
+            return false;
+        }
+		const isLt5M = file.size / 1024 / 1024 < 4;
 		if (!isLt5M) {
-			message.error('Ảnh phải nhỏ hơn 5MB!');
+			message.error('Ảnh phải nhỏ hơn 4MB!');
 		}
 		return isLt5M;
 	};

@@ -1,11 +1,13 @@
 .card {
-	max-width: 590px;
+	max-width: 520px;
 	max-height: 350px;
+    /* max-width: calc(100vw - 305px); */
 	overflow: hidden;
 }
 @media only screen and (max-width: 600px) {
 	.card {
-		width: 100%;
+		width: 100% !important;
+        max-width: 100vw;
 		overflow: hidden;
 	}
 }

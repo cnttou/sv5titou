@@ -7,12 +7,10 @@ import {
 	Redirect,
 } from 'react-router-dom';
 import pages from './routes/Routes';
-import PrivateRoute from './routes/PrivateRoute';
 import { ToastContainer } from 'react-toastify';
 import { Suspense } from 'react';
 import Loading from './components/Loading';
-import { useEffect } from 'react';
-import { auth, currentUser } from './api/authentication';
+import { auth } from './api/authentication';
 import { useDispatch } from 'react-redux';
 import { loginAction } from './store/actions';
 import { nameMajors } from './pages/Login';
@@ -49,13 +47,7 @@ function App() {
 	const showPage = (pages) => {
 		var result = null;
 		if (pages.length > 0) {
-			result = pages.map((page, i) =>
-				page?.private ? (
-					<PrivateRoute key={i} {...page} />
-				) : (
-					<Route key={i} {...page} />
-				)
-			);
+			result = pages.map((page, i) => <Route key={i} {...page} />);
 		}
 		return result;
 	};

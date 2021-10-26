@@ -67,7 +67,7 @@ export default class InputSelectWithAddItem extends React.Component {
 								}}
 								onClick={this.addItem}
 							>
-								<PlusOutlined /> Thêm
+								<PlusOutlined /> Thêm lý do
 							</a>
 						</div>
 					</div>

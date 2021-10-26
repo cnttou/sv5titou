@@ -8,50 +8,49 @@ const { Text } = Typography;
 const { Option } = Select;
 
 export default function SortItem() {
-	const [orderBy, setOrderBy] = useState('date');
-	const [typeSort, setTypeSort] = useState(false);
+	const [filter, setFilter] = useState([]);
+	const [sort, setSort] = useState();
 	const dispatch = useDispatch();
 
-	const handleOrderBy = (value) => {
-		setOrderBy(value);
-		dispatch(sortActivityByNameAction({ typeSort, orderBy: value }));
+	const handleSort = (value) => {
+		setSort(value);
+		dispatch(sortActivityByNameAction({ sort, filter }));
 	};
-	const handleTypeSort = (value) => {
-		setTypeSort(value);
-		dispatch(
-			sortActivityByNameAction({
-				typeSort: value,
-				orderBy,
-			})
-		);
+	const handleFilter = (value) => {
+		setFilter(value);
+		dispatch(sortActivityByNameAction({ sort, filter }));
 	};
 	return (
 		<div className={styles.wrapper}>
-			<Text className={styles.text}>Sắp xếp</Text>
 			<div className={styles.content}>
 				<Select
-					defaultValue="name"
-					value={orderBy}
-					onChange={handleOrderBy}
+					defaultValue="dateaz"
+					value={sort}
+					onChange={handleSort}
 					className={styles.item}
 					style={{ width: '50%' }}
-					
 				>
-					<Option value="name">Tên</Option>
-					<Option value="target">Tiêu chí</Option>
-					<Option value="date">Thời gian</Option>
-					<Option value="numPeople">Số người</Option>
+					<Option value="nameaz">Tên A-Z</Option>
+					<Option value="nameza">Tên Z-A</Option>
+					<Option value="dateaz">Thời gian gần-xa</Option>
+					<Option value="dateza">Thời gian xa-gần</Option>
 				</Select>
 				<Select
-					
-					defaultValue={true}
-					value={typeSort}
-					onChange={handleTypeSort}
+					placeholder="Lọc hoạt động"
+					mode="multiple"
+					value={filter}
+					onChange={handleFilter}
 					className={styles.item}
 					style={{ width: '50%' }}
 				>
-					<Option value={true}>Tăng dần</Option>
-					<Option value={false}>Giảm dần</Option>
+					<Option value={'lop'}>HĐ cấp chi</Option>
+					<Option value={'khoa'}>HĐ cấp khoa</Option>
+					<Option value={'truong'}>HĐ cấp trường</Option>
+					<Option value={'tinh-nguyen'}>Tiêu chí tình nguyện</Option>
+					<Option value={'hoi-nhap'}>Tiêu chí hội nhập</Option>
+					<Option value={'dao-duc'}>Tiêu chí đạo đức</Option>
+					<Option value={'suc-khoe'}>Tiêu chí thể lực</Option>
+					<Option value={'hoc-tap'}>Tiêu chí học tập</Option>
 				</Select>
 			</div>
 		</div>

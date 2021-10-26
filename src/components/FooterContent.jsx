@@ -5,8 +5,8 @@ const { Footer } = Layout;
 function FooterContent(props) {
 	return (
 		<Footer style={styles.footer}>
-			Trường Đại học Mở Tp.Hồ Chính Minh <br/>
-			<span>Design ©2021</span>
+			Copyright © 2021 Trường Đại học Mở Thành Phố Hồ Chí Minh
+			{/* <br /><span>Design ©2021</span> */}
 		</Footer>
 	);
 }
@@ -16,6 +16,7 @@ const styles = {
 		textAlign: 'center',
 		borderTop: '1px solid #5262a5',
 		marginTop: '10px',
+        height: "47px",
 		padding: '12px 50px',
 	},
 };

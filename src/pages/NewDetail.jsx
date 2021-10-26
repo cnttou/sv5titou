@@ -5,7 +5,6 @@ import { useHistory, useParams } from 'react-router';
 import { checkLogin } from '../api/authentication';
 import { getDetailActivityApi, registerActivityApi } from '../api/firestore';
 import ActivityFeed from '../components/ActivityFeed';
-import AlertLogin from '../components/AlertLogin';
 import Loading from '../components/Loading';
 import styles from '../styles/NewDetail.module.css';
 

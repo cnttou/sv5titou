@@ -4,11 +4,11 @@
 	flex-direction: column;
 	background-color: white;
 	padding-top: 5px;
-	min-height: calc(100vh - 144px);
+	min-height: calc(100vh - 121px);
 }
 .contentAdminManageUser {
-    min-width: 900px;
-    min-height: calc(100vh - 144px);
+	min-width: 900px;
+	min-height: calc(100vh - 121px);
 }
 .search {
 	width: 100%;

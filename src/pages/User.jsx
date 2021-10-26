@@ -5,13 +5,17 @@ import {
 	fetchRegisteredActivityAction,
 	registerActivityAction,
 } from '../store/actions';
-import SortItem from '../components/SortNewsItem';
-import { Layout, Button, BackTop, message, Input, Typography } from 'antd';
+
 import {
-	CloudSyncOutlined,
-	PlusCircleOutlined,
-	UpOutlined,
-} from '@ant-design/icons';
+	Layout,
+	Button,
+	BackTop,
+	message,
+	Input,
+	Typography,
+	Select,
+} from 'antd';
+import { PlusCircleOutlined, UpOutlined } from '@ant-design/icons';
 import useModel from '../hooks/useModel';
 import ListActivityFeed from '../components/ListActivityFeed';
 import SiderContent from '../components/SiderContent';
@@ -19,8 +23,9 @@ import { currentUser } from '../api/authentication';
 import styles from '../styles/Home.module.css';
 import Loading from '../components/Loading';
 import { useState } from 'react';
+import { sortActivityByNameAction } from '../store/reducers/activitySlide';
 
-const { Text } = Typography;
+const { Option } = Select;
 const { Search } = Input;
 const { Content } = Layout;
 
@@ -30,8 +35,30 @@ function User() {
 	const listNews = useSelector((state) => state.activity.value);
 	const listActivity = useSelector((state) => state.myActivity.value);
 	const user = useSelector((state) => state.user.value);
+	const [sort, setSort] = useState();
 
 	const dispatch = useDispatch();
+
+	const handleSort = (value) => {
+		setSort(value);
+		dispatch(sortActivityByNameAction({ sort: value }));
+	};
+
+	const handleFilter = (value) => {
+		let rs = [];
+		if (resultSearch.length === 0) {
+			rs = listNews.filter((c) => {
+				if (value.includes(c.target)) return true;
+				return false;
+			});
+		} else {
+			rs = resultSearch.filter((c) => {
+				if (value.includes(c.target)) return true;
+				return false;
+			});
+		}
+		setResultSearch(rs);
+	};
 
 	useEffect(() => {
 		if (user.uid !== undefined && listNews.length === 0) {
@@ -145,9 +172,7 @@ function User() {
 	return (
 		<Layout>
 			<Content className={styles.content}>
-				<SortItem />
 				<div className={styles.wrapper}>
-					<Text className={styles.text}>Tìm kiếm</Text>
 					<Search
 						placeholder="Nhập tên chương trình cần tìm."
 						onSearch={onSearch}
@@ -156,6 +181,33 @@ function User() {
 						className={styles.search}
 					/>
 				</div>
+				<Input.Group compact className={styles.wrapper}>
+					<Select
+						placeholder="Sắp xếp theo"
+						value={sort}
+						onChange={handleSort}
+						style={{ width: '50%' }}
+					>
+						<Option value="nameaz">Tên A-Z</Option>
+						<Option value="nameza">Tên Z-A</Option>
+						<Option value="dateaz">Thời gian xa-gần</Option>
+						<Option value="dateza">Thời gian gần-xa</Option>
+					</Select>
+					<Select
+						placeholder="Lọc hoạt động"
+						mode="multiple"
+						onChange={handleFilter}
+						style={{ width: '50%' }}
+					>
+						<Option value={'tinh-nguyen'}>
+							Tiêu chí tình nguyện
+						</Option>
+						<Option value={'hoi-nhap'}>Tiêu chí hội nhập</Option>
+						<Option value={'dao-duc'}>Tiêu chí đạo đức</Option>
+						<Option value={'suc-khoe'}>Tiêu chí thể lực</Option>
+						<Option value={'hoc-tap'}>Tiêu chí học tập</Option>
+					</Select>
+				</Input.Group>
 				{resultSearch.length !== 0 ? (
 					loadList(resultSearch)
 				) : listNews?.length ? (

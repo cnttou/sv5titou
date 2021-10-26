@@ -42,6 +42,7 @@ export default function AdminManageNews() {
 	}, []);
 
 	const handleShowModelToEdit = (item) => {
+        console.log(item);
 		setDataModel(item);
 		setVisible(true);
 	};
@@ -133,7 +134,7 @@ export default function AdminManageNews() {
 			key: 'date',
 			dateBeweenFilter: true,
 			defaultSortOrder: 'descend',
-			sorter: (a, b) => compareStringDate(a.date, b.date),
+			sorter: (a, b) => compareStringDate(a, b),
 		},
 		{
 			title: 'Địa điểm',

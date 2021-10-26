@@ -6,7 +6,7 @@ import { deleteImageByFullPathAction } from '../store/actions';
 
 function useModel({ title, action, checkRegister, loading, data }) {
 	const [visible, setVisible] = useState(false);
-	const [indexData, setIndexData] = useState(null);
+	const [indexData, setIndexData] = useState(0);
 	const dispatch = useDispatch();
 
 	const colorCard = (id, confirm) => {
@@ -33,6 +33,7 @@ function useModel({ title, action, checkRegister, loading, data }) {
 	};
 	const ui = () => (
 		<Modal
+			className="modeUseModel"
 			bodyStyle={{ padding: 0 }}
 			visible={visible}
 			title={title || 'Chi tiết'}

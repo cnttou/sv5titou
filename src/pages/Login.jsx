@@ -6,7 +6,6 @@ import { addUserDetailAction, loginAction, logoutAction } from '../store/actions
 import styles from '../styles/Login.module.css';
 import { useEffect } from 'react';
 import { useHistory } from 'react-router';
-import { addUserDetail } from '../api/firestore';
 
 const { Content } = Layout;
 

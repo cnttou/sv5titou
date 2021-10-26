@@ -40,6 +40,7 @@ export const getRegisterActivityApi = (userId) => {
 				data.push({
 					...doc.data(),
 					id: doc.id,
+					activityRef: doc.data()?.activityRef?.path || '',
 				});
 			});
 			return data;
@@ -59,6 +60,7 @@ export const getAllRegisterActivityApi = (userId) => {
 				data.push({
 					...doc.data(),
 					id: doc.id,
+                    activityRef: doc.data()?.activityRef?.path || ""
 				});
 			});
 			return data;

@@ -6,12 +6,11 @@ import {
 	confirmProofThunk,
 	fetchUserThunk,
 } from '../store/actions';
-import { Table, Layout, Button, Switch } from 'antd';
+import { Table, Layout, Button } from 'antd';
 import styles from '../styles/Admin.module.css';
 import { nameTarget } from '../components/ActivityFeed';
 import useModelOnlyShowActivity from '../hooks/useModelOnlyShowActivity';
 import InputSelectWithAddItem from '../components/InputSelectWithAddItem';
-import { nameClassUser } from './Profile';
 
 const { Content } = Layout;
 
@@ -107,6 +106,19 @@ export default function AdminManageUser() {
 			{
 				title: 'Trạng thái',
 				key: 'confirm',
+				filters: [
+					{
+						text: 'Đã xác nhận',
+						value: 'true',
+					},
+					{
+						text: 'Chưa xác nhận',
+						value: 'false',
+					},
+				],
+				onFilter: (value, record) =>
+					record.confirm.toString() === value,
+				defaultFilteredValue: ['false'],
 				render: (item) => {
 					return (
 						<InputSelectWithAddItem
@@ -141,6 +153,21 @@ export default function AdminManageUser() {
 		{
 			title: 'Tên',
 			key: 'name',
+			filters: [
+				{
+					text: 'Có đăng ký hoạt động',
+					value: true,
+				},
+				{
+					text: 'Không đăng ký hoạt động',
+					value: false,
+				},
+			],
+			onFilter: (value, record) =>
+				value
+					? record.listData.length !== 0
+					: record.listData.length === 0,
+			defaultFilteredValue: [true],
 			render: (item) => (
 				<p>
 					{item.fullName ||
@@ -156,22 +183,19 @@ export default function AdminManageUser() {
 		{
 			title: 'Lớp',
 			key: 'classUser',
-			render: (item) => (
-				<p>{nameClassUser[item.classUser] || 'Sv chưa điền'}</p>
-			),
+			render: (item) => <p>{item.classUser || 'Sv chưa điền'}</p>,
 		},
 	];
 
 	const loadTable = (listUser = []) => (
 		<Table
-			className="components-table-demo-nested"
 			columns={columns}
 			expandable={{
-				expandedRowRender,
 				rowExpandable: (record) => record.listData.length !== 0,
+				expandedRowRender,
 			}}
 			dataSource={listUser}
-			size="middle"
+			size="small"
 		/>
 	);
 	return (
