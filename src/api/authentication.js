@@ -1,6 +1,5 @@
-import { toast } from 'react-toastify';
 import firebase from './firebase';
-import { addUserDetail } from './firestore';
+
 
 export const checkLogin = () => {
 	if (firebase.auth()?.currentUser?.email) return true;

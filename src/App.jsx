@@ -7,7 +7,6 @@ import {
 	Redirect,
 } from 'react-router-dom';
 import pages from './routes/Routes';
-import { ToastContainer } from 'react-toastify';
 import { Suspense } from 'react';
 import Loading from './components/Loading';
 import { auth } from './api/authentication';
@@ -16,7 +15,8 @@ import { loginAction } from './store/actions';
 import { nameMajors } from './pages/Login';
 import { useSelector } from 'react-redux';
 import HeaderUser from './components/HeaderUser';
-import FooterContent from './components/FooterContent';
+import { lazy } from 'react';
+const FooterContent = lazy(() => import('./components/FooterContent'));
 
 function App() {
 	const dispatch = useDispatch();
@@ -54,7 +54,6 @@ function App() {
 	return (
 		<>
 			<Router>
-				<ToastContainer autoClose={1000} hideProgressBar />
 				<Suspense fallback={<Loading />}>
 					<HeaderUser />
 					<Switch>

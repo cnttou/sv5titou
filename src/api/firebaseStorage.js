@@ -1,4 +1,3 @@
-import { toast } from 'react-toastify';
 import { currentUser } from './authentication';
 import firebase from './firebase';
 
@@ -25,12 +24,10 @@ export const deleteFile = (acId, fileName) => {
 		.child(`/${fileName}`)
 		.delete()
 		.then((snapshot) => {
-			toast.success('Đã xóa ảnh.');
 			return fileName;
 		})
 		.catch((error) => {
 			console.log(error);
-			toast.warn('Xóa ảnh thất bại.');
 		});
 };
 export const deleteFileByFullPath = (fullPath = '') => {

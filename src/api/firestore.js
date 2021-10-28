@@ -1,4 +1,3 @@
-import { toast } from 'react-toastify';
 import { currentUser } from './authentication';
 import firebase from './firebase';
 
@@ -49,6 +48,7 @@ export const getRegisterActivityApi = (userId) => {
 };
 export const getAllRegisterActivityApi = (userId) => {
 	let uId = userId || currentUser().uid;
+
 	return db
 		.collection('register_activity')
 		.doc(uId)
@@ -60,7 +60,7 @@ export const getAllRegisterActivityApi = (userId) => {
 				data.push({
 					...doc.data(),
 					id: doc.id,
-                    activityRef: doc.data()?.activityRef?.path || ""
+					activityRef: doc.data()?.activityRef?.path || '',
 				});
 			});
 			return data;
@@ -76,12 +76,6 @@ export const updateConfirmActivity = (acId, proof) => {
 		.doc(acId)
 		.update({
 			proof,
-		})
-		.then(() => {
-			toast.success('Cập nhật thành công.');
-		})
-		.catch(() => {
-			toast.warn('Cập nhật thất bại, vui lòng thử lại.');
 		});
 };
 export const removeRegisterActivity = (acId) => {
@@ -113,7 +107,7 @@ export const registerActivityApi = (dataActivity) => {
 		.set(data)
 		.then((res) => {
 			console.log('res of register: ', res);
-			return data;
+			return { ...data, activityRef: activityRef.path || '' };
 		});
 };
 export const getDetailActivityApi = (docId = '') => {

@@ -1,4 +1,4 @@
-import { Upload, message, Button, Progress } from 'antd';
+import { Upload, Button, Progress } from 'antd';
 import { UploadOutlined } from '@ant-design/icons';
 
 function InputUpload({ text, inputUpload, handleUpload, handleBeforeUpload }) {

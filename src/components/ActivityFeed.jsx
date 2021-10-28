@@ -1,13 +1,17 @@
 import {
 	CloseCircleOutlined,
 	DeleteOutlined,
+	LinkOutlined,
 	PaperClipOutlined,
 } from '@ant-design/icons';
-import {Typography, Button, Card, Image, List } from 'antd';
-import ReactQuill from 'react-quill';
+import { Typography, Button, Card, Image, List } from 'antd';
+import { lazy } from 'react';
+const ReactQuill = lazy(() => import('react-quill'));
 import { nameLevelActivity } from '../hooks/useCreateEditActivityModel';
 import styles from '../styles/ActivityFeed.module.css';
 import Loading from './Loading';
+
+const { Text, Title } = Typography;
 
 export const nameTarget = {
 	'hoi-nhap': 'Hội nhập tốt',
@@ -41,8 +45,11 @@ function ActivityFeed(props) {
 		proof,
 		images,
 		confirm,
-        level,
+		level,
 	} = data;
+	const handleClick = () => {
+		if (handleClickDetail) handleClickDetail(props.index, data);
+	};
 	return (
 		<>
 			<Card
@@ -55,13 +62,22 @@ function ActivityFeed(props) {
 				headStyle={{ background: colorCard(id, confirm) }}
 				title={
 					<>
-						<Typography.Title level={5}>{name}</Typography.Title>
-						<Typography.Text type="secondary">
-							{nameLevelActivity[level]}
-						</Typography.Text>
+						<Title level={5}>{name}</Title>
+						<Text type="secondary">{nameLevelActivity[level]}</Text>
 					</>
 				}
-				onClick={() => handleClickDetail(props.index, data)}
+				extra={
+					showFull && (
+						<Text
+							copyable={{
+								text: `https://sv5titou.web.app/news/${id}`,
+							}}
+						>
+							<LinkOutlined />
+						</Text>
+					)
+				}
+				onClick={handleClick}
 			>
 				<p>
 					<strong>Thời gian:</strong> {date}

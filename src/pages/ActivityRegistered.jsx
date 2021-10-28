@@ -6,7 +6,6 @@ import useModel from '../hooks/useModel';
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import {
-    cancelConfirmProofThunk,
 	cancelMyConfirmProofAction,
 	fetchRegisteredActivityAction,
 	getImageProofByActivityAction,

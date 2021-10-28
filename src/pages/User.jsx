@@ -1,3 +1,4 @@
+import { lazy } from 'react';
 import { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import {
@@ -5,25 +6,22 @@ import {
 	fetchRegisteredActivityAction,
 	registerActivityAction,
 } from '../store/actions';
-
 import {
 	Layout,
 	Button,
 	BackTop,
 	message,
 	Input,
-	Typography,
 	Select,
 } from 'antd';
 import { PlusCircleOutlined, UpOutlined } from '@ant-design/icons';
-import useModel from '../hooks/useModel';
-import ListActivityFeed from '../components/ListActivityFeed';
-import SiderContent from '../components/SiderContent';
-import { currentUser } from '../api/authentication';
+const ListActivityFeed = lazy(() => import('../components/ListActivityFeed'));
+const SiderContent = lazy(() => import('../components/SiderContent'));
 import styles from '../styles/Home.module.css';
 import Loading from '../components/Loading';
 import { useState } from 'react';
 import { sortActivityByNameAction } from '../store/reducers/activitySlide';
+import useModel from '../hooks/useModel';
 
 const { Option } = Select;
 const { Search } = Input;
@@ -93,7 +91,7 @@ function User() {
 			message.info('Vui lòng đăng nhập để đăng ký hoạt động.');
 			return;
 		}
-		if (currentUser().uid) {
+		if (user.uid) {
 			const {
 				id,
 				name,
