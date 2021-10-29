@@ -6,31 +6,15 @@ var storageRef = storage.ref();
 
 var imagesRef = storageRef.child('images');
 
-var metadata = {
-	contentType: 'image/jpeg',
-};
-
 export const taskEvent = firebase.storage.TaskEvent.STATE_CHANGED;
 
-export const upFile = (acId, file) => {
+export const upFileApi = (acId, file) => {
 	let fileProofRef = imagesRef.child(currentUser().uid).child(acId);
 	console.log('file upload', file);
 	return fileProofRef.child(`/${file.name}`).put(file);
 };
 
-export const deleteFile = (acId, fileName) => {
-	let fileProofRef = imagesRef.child(currentUser().uid).child(acId);
-	return fileProofRef
-		.child(`/${fileName}`)
-		.delete()
-		.then((snapshot) => {
-			return fileName;
-		})
-		.catch((error) => {
-			console.log(error);
-		});
-};
-export const deleteFileByFullPath = (fullPath = '') => {
+export const deleteFileByFullPathApi = (fullPath = '') => {
 	let fileProofRef = storageRef.child(fullPath);
 
 	return fileProofRef.delete();
@@ -47,16 +31,7 @@ export const deleteFolderImageActivityApi = (acId = '') => {
 	});
 };
 
-export const getUrlImage = (acId, fileName, userId) => {
-	let uid = userId || currentUser().uid;
-	let fileProofRef = imagesRef.child(uid).child(acId);
-	return fileProofRef
-		.child(`/${fileName}`)
-		.getDownloadURL()
-		.then((url) => url);
-};
-
-export const getFileFromAActivity = (acId) => {
+export const getFileFromAActivityApi = (acId) => {
 	let uid = currentUser().uid;
 	let fileProofRef = imagesRef.child(uid).child(acId);
 	return fileProofRef.listAll().then(async (res) => {
@@ -71,7 +46,7 @@ export const getFileFromAActivity = (acId) => {
 	});
 };
 
-export const getFile = (uid, acId) => {
+export const getFileApi = (uid, acId) => {
 	let fileProofRef = imagesRef.child(uid).child(acId);
 	return fileProofRef
 		.listAll()

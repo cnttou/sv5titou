@@ -1,7 +1,5 @@
-import 'antd/dist/antd.css';
-import './App.css';
 import {
-	BrowserRouter as Router,
+    BrowserRouter as Router,
 	Switch,
 	Route,
 	Redirect,
@@ -17,6 +15,7 @@ import { useSelector } from 'react-redux';
 import HeaderUser from './components/HeaderUser';
 import { lazy } from 'react';
 const FooterContent = lazy(() => import('./components/FooterContent'));
+import './App.css';
 
 function App() {
 	const dispatch = useDispatch();

@@ -14,7 +14,7 @@ import {
 import {
 	deleteFolderImageActivityApi,
 	taskEvent,
-	upFile,
+	upFileApi,
 } from '../api/firebaseStorage';
 import { addImageToActivityAction } from '../store/reducers/myActivitySlice';
 import Loading from '../components/Loading';
@@ -98,7 +98,7 @@ function ActivityRegistered(props) {
         if (dataModel.confirm !== "false" || dataModel.confirm !== "false"){
             dispatch(cancelMyConfirmProofAction(dataModel.id));
         }
-		const task = upFile(dataModel.id, data.file);
+		const task = upFileApi(dataModel.id, data.file);
 		task.on(
 			taskEvent,
 			(snapshot) => {

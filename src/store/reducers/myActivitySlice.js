@@ -1,13 +1,6 @@
+import { createSlice } from '@reduxjs/toolkit';
 import {
-	createSlice,
-	isFulfilled,
-	isPending,
-	isRejected,
-} from '@reduxjs/toolkit';
-import {
-	addImageAction,
 	cancelMyConfirmProofAction,
-	deleteImageAction,
 	deleteImageByFullPathAction,
 	fetchRegisteredActivityAction,
 	getImageProofByActivityAction,
@@ -45,10 +38,12 @@ export const myActivitySlice = createSlice({
 				fetchRegisteredActivityAction.fulfilled,
 				(state, action) => {
 					state.value = action.payload;
+					state.loading = state.loading - 1;
 				}
 			)
 			.addCase(registerActivityAction.fulfilled, (state, action) => {
 				state.value.push(action.payload);
+				state.loading = state.loading - 1;
 			})
 			.addCase(
 				removeRegisteredActivityAction.fulfilled,
@@ -63,28 +58,6 @@ export const myActivitySlice = createSlice({
 				state.value = state.value.map((c) =>
 					c.id === acId ? { ...c, confirm } : c
 				);
-			})
-			.addCase(addImageAction.fulfilled, (state, action) => {
-				const { fileName, acId } = action.payload;
-				state.value = state.value.map((c) => {
-					if (c.id == acId) {
-						let images = c.images || [];
-						images.push(fileName);
-						return { ...c, images };
-					}
-					return c;
-				});
-			})
-			.addCase(deleteImageAction.fulfilled, (state, action) => {
-				const { fileName, acId } = action.payload;
-				state.value = state.value.map((c) => {
-					if (c.id == acId) {
-						let images = c.images;
-						images.splice(images.indexOf(fileName), 1);
-						return { ...c, images };
-					}
-					return c;
-				});
 			})
 			.addCase(deleteImageByFullPathAction.fulfilled, (state, action) => {
 				const { path, acId } = action.payload;
@@ -112,13 +85,16 @@ export const myActivitySlice = createSlice({
 				state.value = [];
 			});
 		builder
-			.addMatcher(isPending, (state, action) => {
+			.addCase(fetchRegisteredActivityAction.pending, (state) => {
 				state.loading = state.loading + 1;
 			})
-			.addMatcher(isRejected, (state, action) => {
+			.addCase(fetchRegisteredActivityAction.rejected, (state) => {
 				state.loading = state.loading - 1;
 			})
-			.addMatcher(isFulfilled, (state, action) => {
+			.addCase(registerActivityAction.pending, (state) => {
+				state.loading = state.loading + 1;
+			})
+			.addCase(registerActivityAction.rejected, (state) => {
 				state.loading = state.loading - 1;
 			});
 	},

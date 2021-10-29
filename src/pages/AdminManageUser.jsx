@@ -2,26 +2,27 @@ import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import Loading from '../components/Loading';
 import {
-	cancelConfirmProofThunk,
-	confirmProofThunk,
-	fetchUserThunk,
+	cancelConfirmProofAction,
+	confirmProofAction,
+	fetchUserActivityAction,
 } from '../store/actions';
 import { Table, Layout, Button } from 'antd';
 import styles from '../styles/Admin.module.css';
 import { nameTarget } from '../components/ActivityFeed';
 import useModelOnlyShowActivity from '../hooks/useModelOnlyShowActivity';
 import InputSelectWithAddItem from '../components/InputSelectWithAddItem';
+import 'antd/lib/dropdown/style/index.css';
 
 const { Content } = Layout;
 
 let option = [
-    {
-        key: 'false',
-        label: 'Chưa xác nhận',
-        style: {
-            backgroundColor: 'white',
-        },
-    },
+	{
+		key: 'false',
+		label: 'Chưa xác nhận',
+		style: {
+			backgroundColor: 'white',
+		},
+	},
 	{
 		key: 'true',
 		label: 'Đã xác nhận',
@@ -46,14 +47,16 @@ export default function AdminManageUser() {
 	});
 
 	useEffect(async () => {
-		dispatch(fetchUserThunk()).catch((error) => console.log(error.message));
+		dispatch(fetchUserActivityAction()).catch((error) =>
+			console.log(error.message)
+		);
 	}, []);
 
 	const handleConfirm = (uid, acId, confirm) => {
 		let isConfirm = confirm === 'true';
 		console.log('handle confirm: ', { uid, acId, confirm });
-		if (isConfirm) dispatch(confirmProofThunk({ uid, acId }));
-		else dispatch(cancelConfirmProofThunk({ uid, acId, confirm }));
+		if (isConfirm) dispatch(confirmProofAction({ uid, acId }));
+		else dispatch(cancelConfirmProofAction({ uid, acId, confirm }));
 	};
 
 	const handleClickNameActivity = (item, uid) => {
@@ -115,9 +118,19 @@ export default function AdminManageUser() {
 						text: 'Chưa xác nhận',
 						value: 'false',
 					},
+					{
+						text: 'MC không hợp lệ',
+						value: 'cancel',
+					},
 				],
-				onFilter: (value, record) =>
-					record.confirm.toString() === value,
+				onFilter: (value, record) => {
+					if (
+						record.confirm.toString().length > 5 &&
+						value === 'cancel'
+					)
+						return true;
+					else return record.confirm.toString() === value;
+				},
 				defaultFilteredValue: ['false'],
 				render: (item) => {
 					return (
@@ -156,18 +169,32 @@ export default function AdminManageUser() {
 			filters: [
 				{
 					text: 'Có đăng ký hoạt động',
-					value: true,
+					value: 'registered',
 				},
 				{
 					text: 'Không đăng ký hoạt động',
-					value: false,
+					value: 'unregistered',
+				},
+				{
+					text: 'Có hoạt động chưa xác nhận',
+					value: 'notConfirm',
 				},
 			],
-			onFilter: (value, record) =>
-				value
-					? record.listData.length !== 0
-					: record.listData.length === 0,
-			defaultFilteredValue: [true],
+			onFilter: (value, record) => {
+				if (value === 'registered' && record.listData.length !== 0)
+					return true;
+				else if (
+					value === 'unregistered' &&
+					record.listData.length === 0
+				)
+					return true;
+				else if (value === 'notConfirm')
+					return record.listData.filter((c) => c.confirm === 'false')
+						.length;
+
+				return false;
+			},
+			defaultFilteredValue: ['notConfirm'],
 			render: (item) => (
 				<p>
 					{item.fullName ||
@@ -189,6 +216,7 @@ export default function AdminManageUser() {
 
 	const loadTable = (listUser = []) => (
 		<Table
+			pagination={false}
 			columns={columns}
 			expandable={{
 				rowExpandable: (record) => record.listData.length !== 0,

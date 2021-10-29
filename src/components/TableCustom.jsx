@@ -2,6 +2,7 @@ import { Table, Input, Button, Space, DatePicker } from 'antd';
 import Highlighter from 'react-highlight-words';
 import { FilterOutlined, SearchOutlined } from '@ant-design/icons';
 import moment from 'moment';
+// import "antd/lib/dropdown/style/index.css"
 
 class TableCustom extends React.Component {
 	state = {

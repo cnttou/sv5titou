@@ -114,8 +114,11 @@ function User() {
 			});
 			return;
 		}
-
-		setIndexData(index);
+        listNews.forEach((c, index)=>{
+            if (c.id === obj.id){
+                setIndexData(index);
+            }
+        })
 		setVisible(true);
 	};
 

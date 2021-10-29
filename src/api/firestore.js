@@ -67,18 +67,7 @@ export const getAllRegisterActivityApi = (userId) => {
 		})
 		.catch((error) => console.log(error.message));
 };
-export const updateConfirmActivity = (acId, proof) => {
-	let uId = firebase.auth().currentUser.uid;
-	return db
-		.collection('register_activity')
-		.doc(uId)
-		.collection('activities')
-		.doc(acId)
-		.update({
-			proof,
-		});
-};
-export const removeRegisterActivity = (acId) => {
+export const removeRegisterActivityApi = (acId) => {
 	let uId = firebase.auth().currentUser.uid;
 	return db
 		.collection('register_activity')
@@ -156,14 +145,14 @@ export const getActivitiesApi = (limit = 25) => {
 			return data;
 		});
 };
-export const deleteData = (collection, docId) => {
+export const deleteDataApi = (collection, docId) => {
 	return db
 		.collection(collection || 'news')
 		.doc(docId)
 		.delete()
 		.then(() => docId);
 };
-export const addData = (collection = 'news', data, docId) => {
+export const addDataApi = (collection = 'news', data, docId) => {
 	if (docId === null) {
 		return db
 			.collection(collection)
@@ -177,10 +166,7 @@ export const addData = (collection = 'news', data, docId) => {
 			.then(() => ({ ...data, id: docId }));
 	}
 };
-export const updateData = (collection = 'news', data, docId = '') => {
-	return db.collection(collection).doc(docId).update(data);
-};
-export const addUserDetail = (data) => {
+export const addUserDetailApi = (data) => {
 	console.log('data add :', {
 		email: currentUser().email,
 		userId: currentUser().uid,
@@ -208,7 +194,7 @@ export const getUserDetailApi = () => {
 		.then((res) => res.data())
 		.catch((err) => console.log(err.message));
 };
-export const getUserActivity = () => {
+export const getUserActivityApi = () => {
 	return db
 		.collection('register_activity')
 		.get()
@@ -227,7 +213,7 @@ export const getUserActivity = () => {
 			});
 		});
 };
-export const confirmProof = (uid, acId) => {
+export const confirmProofApi = (uid, acId) => {
 	return db
 		.collection('register_activity')
 		.doc(uid)
@@ -241,7 +227,7 @@ export const confirmProof = (uid, acId) => {
 			console.log(error.message);
 		});
 };
-export const cancelConfirmProof = (uid, acId, confirm) => {
+export const cancelConfirmProofApi = (uid, acId, confirm) => {
 	return db
 		.collection('register_activity')
 		.doc(uid)

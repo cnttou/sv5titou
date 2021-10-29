@@ -1,8 +1,8 @@
 import { createSlice } from '@reduxjs/toolkit';
 import {
-	cancelConfirmProofThunk,
-	confirmProofThunk,
-	fetchUserThunk,
+	cancelConfirmProofAction,
+	confirmProofAction,
+	fetchUserActivityAction,
 	getImageProofAction,
     logoutAction,
 } from '../actions';
@@ -26,11 +26,11 @@ export const userActivity = createSlice({
 					return c;
 				});
 			})
-			.addCase(fetchUserThunk.fulfilled, (state, action) => {
+			.addCase(fetchUserActivityAction.fulfilled, (state, action) => {
 				state.value = action.payload;
 				state.loading = state.loading - 1;
 			})
-			.addCase(confirmProofThunk.fulfilled, (state, action) => {
+			.addCase(confirmProofAction.fulfilled, (state, action) => {
 				const { uid, acId, confirm } = action.payload;
 
 				state.value = state.value.map((c) => {
@@ -44,7 +44,7 @@ export const userActivity = createSlice({
 
 				state.loading = state.loading - 1;
 			})
-			.addCase(cancelConfirmProofThunk.fulfilled, (state, action) => {
+			.addCase(cancelConfirmProofAction.fulfilled, (state, action) => {
 				const { uid, acId, confirm } = action.payload;
 
 				state.value = state.value.map((c) => {
@@ -57,22 +57,22 @@ export const userActivity = createSlice({
 				});
 				state.loading = state.loading - 1;
 			})
-			.addCase(fetchUserThunk.pending, (state) => {
+			.addCase(fetchUserActivityAction.pending, (state) => {
 				state.loading = state.loading + 1;
 			})
-			.addCase(cancelConfirmProofThunk.pending, (state) => {
+			.addCase(cancelConfirmProofAction.pending, (state) => {
 				state.loading = state.loading + 1;
 			})
-			.addCase(confirmProofThunk.pending, (state) => {
+			.addCase(confirmProofAction.pending, (state) => {
 				state.loading = state.loading + 1;
 			})
-			.addCase(fetchUserThunk.rejected, (state) => {
+			.addCase(fetchUserActivityAction.rejected, (state) => {
 				state.loading = state.loading - 1;
 			})
-			.addCase(cancelConfirmProofThunk.rejected, (state) => {
+			.addCase(cancelConfirmProofAction.rejected, (state) => {
 				state.loading = state.loading - 1;
 			})
-			.addCase(confirmProofThunk.rejected, (state) => {
+			.addCase(confirmProofAction.rejected, (state) => {
 				state.loading = state.loading - 1;
 			})
 			.addCase(logoutAction, (state) => {

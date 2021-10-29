@@ -10,6 +10,7 @@ const ReactQuill = lazy(() => import('react-quill'));
 import { nameLevelActivity } from '../hooks/useCreateEditActivityModel';
 import styles from '../styles/ActivityFeed.module.css';
 import Loading from './Loading';
+import 'antd/lib/tooltip/style/index.css'
 
 const { Text, Title } = Typography;
 

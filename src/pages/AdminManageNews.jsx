@@ -15,6 +15,7 @@ import { nameTarget } from '../components/ActivityFeed';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
 import styles from '../styles/Admin.module.css';
 import TableCustom from '../components/TableCustom';
+import "antd/lib/dropdown/style/index.css";
 
 const { confirm } = Modal;
 const { Content } = Layout;
@@ -166,12 +167,12 @@ export default function AdminManageNews() {
 		<TableCustom
 			columns={columns}
 			dataSource={listNews}
-			// scroll={{ y: 'calc(100vh-144px)' }}
-			footer={()=>
+			pagination={false}
+			footer={() => (
 				<Button type="primary" block onClick={handleShowModelToAddNew}>
 					Thêm hoạt động
 				</Button>
-			}
+			)}
 		/>
 	);
 	return (

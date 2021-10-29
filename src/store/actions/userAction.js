@@ -1,10 +1,10 @@
 import { createAction, createAsyncThunk } from '@reduxjs/toolkit';
 import {
-	addUserDetail,
+	addUserDetailApi,
 	cancelConfirmMyProofApi,
-	cancelConfirmProof,
-	confirmProof,
-	getUserActivity,
+	cancelConfirmProofApi,
+	confirmProofApi,
+	getUserActivityApi,
     getUserDetailApi,
 } from '../../api/firestore';
 
@@ -15,7 +15,7 @@ export const logoutAction = createAction('LOGOUT');
 export const addUserDetailAction = createAsyncThunk(
 	'user/addUserDetail',
 	async (data) => {
-		let response = await addUserDetail(data);
+		let response = await addUserDetailApi(data);
 		return response;
 	}
 );
@@ -28,23 +28,23 @@ export const getUserDetailAction = createAsyncThunk(
 	}
 );
 
-export const fetchUserThunk = createAsyncThunk(
+export const fetchUserActivityAction = createAsyncThunk(
 	'user/fetchUserActivity',
 	async () => {
-		let response = await getUserActivity();
+		let response = await getUserActivityApi();
 		return response;
 	}
 );
-export const confirmProofThunk = createAsyncThunk(
+export const confirmProofAction = createAsyncThunk(
 	'user/confirmProof',
 	async ({ uid, acId }) => {
-		return await confirmProof(uid, acId);
+		return await confirmProofApi(uid, acId);
 	}
 );
-export const cancelConfirmProofThunk = createAsyncThunk(
+export const cancelConfirmProofAction = createAsyncThunk(
 	'user/cancelConfirmProof',
 	async ({ uid, acId, confirm }) => {
-		return await cancelConfirmProof(uid, acId, confirm);
+		return await cancelConfirmProofApi(uid, acId, confirm);
 	}
 );
 export const cancelMyConfirmProofAction = createAsyncThunk(
