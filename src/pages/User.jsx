@@ -6,14 +6,7 @@ import {
 	fetchRegisteredActivityAction,
 	registerActivityAction,
 } from '../store/actions';
-import {
-	Layout,
-	Button,
-	BackTop,
-	message,
-	Input,
-	Select,
-} from 'antd';
+import { Layout, Button, BackTop, message, Input, Select } from 'antd';
 import { PlusCircleOutlined, UpOutlined } from '@ant-design/icons';
 const ListActivityFeed = lazy(() => import('../components/ListActivityFeed'));
 const SiderContent = lazy(() => import('../components/SiderContent'));
@@ -34,6 +27,7 @@ function User() {
 	const listActivity = useSelector((state) => state.myActivity.value);
 	const user = useSelector((state) => state.user.value);
 	const [sort, setSort] = useState();
+	const [filter, setFilter] = useState({ level: null, target: null });
 
 	const dispatch = useDispatch();
 
@@ -42,22 +36,23 @@ function User() {
 		dispatch(sortActivityByNameAction({ sort: value }));
 	};
 
-	const handleFilter = (value) => {
-		let rs = [];
-		if (resultSearch.length === 0) {
-			rs = listNews.filter((c) => {
-				if (value.includes(c.target)) return true;
-				return false;
-			});
-		} else {
-			rs = resultSearch.filter((c) => {
-				if (value.includes(c.target)) return true;
-				return false;
-			});
-		}
-		setResultSearch(rs);
-	};
+	const handleFilter = (value, type) => {
+		let rs = listNews;
 
+		if (value) {
+			rs = rs.filter((c) => value === c[type]);
+		}
+		setFilter((state) => ({ ...state, [type]: value }));
+		type = type === 'target' ? 'level' : 'target';
+		if (filter[type]) {
+			rs = rs.filter((c) => filter[type] === c[type]);
+		}
+		if (rs.length === 0) {
+			message.info('Không có hoạt động nào thỏa điều kiện!!');
+		} else setResultSearch(rs);
+	};
+	const handleFilterLevel = (value) => handleFilter(value, 'level');
+	const handleFilterTarget = (value) => handleFilter(value, 'target');
 	useEffect(() => {
 		if (user.uid !== undefined && listNews.length === 0) {
 			dispatch(fetchRegisteredActivityAction());
@@ -181,10 +176,10 @@ function User() {
 				</div>
 				<Input.Group compact className={styles.wrapper}>
 					<Select
-						placeholder="Sắp xếp theo"
+						placeholder="Sắp xếp"
 						value={sort}
 						onChange={handleSort}
-						style={{ width: '50%' }}
+						style={{ width: '33%' }}
 					>
 						<Option value="nameaz">Tên A-Z</Option>
 						<Option value="nameza">Tên Z-A</Option>
@@ -192,18 +187,28 @@ function User() {
 						<Option value="dateza">Thời gian gần-xa</Option>
 					</Select>
 					<Select
-						placeholder="Lọc hoạt động"
-						mode="multiple"
-						onChange={handleFilter}
-						style={{ width: '50%' }}
+						placeholder="Lọc tiêu chí"
+						onChange={handleFilterTarget}
+						style={{ width: '33%' }}
+						value={filter.target}
 					>
-						<Option value={'tinh-nguyen'}>
-							Tiêu chí tình nguyện
-						</Option>
-						<Option value={'hoi-nhap'}>Tiêu chí hội nhập</Option>
-						<Option value={'dao-duc'}>Tiêu chí đạo đức</Option>
-						<Option value={'suc-khoe'}>Tiêu chí thể lực</Option>
-						<Option value={'hoc-tap'}>Tiêu chí học tập</Option>
+						<Option value={null}> -- </Option>
+						<Option value={'tinh-nguyen'}>Tình nguyện</Option>
+						<Option value={'hoi-nhap'}>Hội nhập</Option>
+						<Option value={'dao-duc'}>Đạo đức</Option>
+						<Option value={'suc-khoe'}>Thể lực</Option>
+						<Option value={'hoc-tap'}>Học tập</Option>
+					</Select>
+					<Select
+						placeholder="Lọc cấp HĐ"
+						onChange={handleFilterLevel}
+						value={filter.level}
+						style={{ width: '33%' }}
+					>
+						<Option value={null}> -- </Option>
+						<Option value={'truong'}>Cấp trường</Option>
+						<Option value={'khoa'}>Cấp khoa</Option>
+						<Option value={'lop'}>Cấp chi</Option>
 					</Select>
 				</Input.Group>
 				{resultSearch.length !== 0 ? (

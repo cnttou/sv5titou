@@ -11,7 +11,7 @@ function ListRowActivityRegistered(props) {
 			return <Text>Minh chứng chưa xác nhận</Text>;
 		else if (confirm === true || confirm === 'true')
 			return <Text type="success">Đã xác nhận</Text>;
-		return <Text type="danger">{`Không hợp lệ vì ${confirm}`}</Text>;
+		return <Text type="danger">{confirm}</Text>;
 	};
 	return (
 		<>

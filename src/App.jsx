@@ -54,8 +54,8 @@ function App() {
 	return (
 		<>
 			<Router>
+				<HeaderUser />
 				<Suspense fallback={<Loading />}>
-					<HeaderUser />
 					<Switch>
 						<Redirect from="/" to="/news" exact />
 						{showPage(pages)}
