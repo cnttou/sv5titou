@@ -12,7 +12,6 @@ import {
     Switch,
 } from 'antd';
 import { nameTarget } from '../components/ActivityFeed';
-import { useRef } from 'react';
 import { useEffect } from 'react';
 import InputRichText from '../components/InputRichText';
 import { useDispatch } from 'react-redux';

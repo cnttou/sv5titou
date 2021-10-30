@@ -54,9 +54,6 @@ a {
 	object-fit: contain;
 	width: 100%;
 }
-.ql-clipboard {
-	display: none;
-}
 .ql-editor {
 	padding-left: 0 !important;
 	padding-right: 0 !important;
