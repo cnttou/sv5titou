@@ -2,6 +2,7 @@ import { createSlice } from '@reduxjs/toolkit';
 import {
 	cancelMyConfirmProofAction,
 	deleteImageByFullPathAction,
+	editProofActivityAction,
 	fetchRegisteredActivityAction,
 	getImageProofByActivityAction,
 	logoutAction,
@@ -57,6 +58,12 @@ export const myActivitySlice = createSlice({
 				const { acId, confirm } = action.payload;
 				state.value = state.value.map((c) =>
 					c.id === acId ? { ...c, confirm } : c
+				);
+			})
+			.addCase(editProofActivityAction.fulfilled, (state, action) => {
+				const { number, acId } = action.payload;
+				state.value = state.value.map((c) =>
+					c.id === acId ? { ...c, proof: c.proof + number } : c
 				);
 			})
 			.addCase(deleteImageByFullPathAction.fulfilled, (state, action) => {

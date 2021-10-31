@@ -7,6 +7,7 @@ import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import {
 	cancelMyConfirmProofAction,
+	editProofActivityAction,
 	fetchRegisteredActivityAction,
 	getImageProofByActivityAction,
 	removeRegisteredActivityAction,
@@ -46,24 +47,24 @@ function ActivityRegistered(props) {
 			dispatch(fetchRegisteredActivityAction());
 	}, [user]);
 
-    const showBoxQuestion = ()=>{
-        confirm({
+	const showBoxQuestion = () => {
+		confirm({
 			title: 'Bạn có chắc muốn hủy hoạt động?',
 			icon: <ExclamationCircleOutlined />,
 			content:
 				'Tất cả những file minh chứng của hoạt động này cũng bị xóa theo.',
 			onOk() {
-                console.log('clicked unregister', dataModel);
+				console.log('clicked unregister', dataModel);
 				return handleUnregister();
 			},
 			onCancel() {},
 		});
-    }
+	};
 	const handleUnregister = async () => {
-        if (dataModel.confirm === true) {
-            message.warning("Họat động đã được xác nhận nên không thể hủy.")
-            return;
-        }
+		if (dataModel.confirm === true) {
+			message.warning('Họat động đã được xác nhận nên không thể hủy.');
+			return;
+		}
 		return dispatch(removeRegisteredActivityAction(dataModel.id))
 			.then(() => {
 				deleteFolderImageActivityApi(dataModel.id)
@@ -84,10 +85,10 @@ function ActivityRegistered(props) {
 			});
 	};
 	const handleBeforeUpload = (file) => {
-        if (dataModel.confirm === true) {
-            message.warning('Không thể thêm khi hoạt động đã được xác nhận');
-            return false;
-        }
+		if (dataModel.confirm === true) {
+			message.warning('Không thể thêm khi hoạt động đã được xác nhận');
+			return false;
+		}
 		const isLt5M = file.size / 1024 / 1024 < 4;
 		if (!isLt5M) {
 			message.error('Ảnh phải nhỏ hơn 4MB!');
@@ -95,9 +96,9 @@ function ActivityRegistered(props) {
 		return isLt5M;
 	};
 	const handleUpload = (data) => {
-        if (dataModel.confirm !== "false" || dataModel.confirm !== "false"){
-            dispatch(cancelMyConfirmProofAction(dataModel.id));
-        }
+		if (dataModel.confirm !== false) {
+			dispatch(cancelMyConfirmProofAction(dataModel.id));
+		}
 		const task = upFileApi(dataModel.id, data.file);
 		task.on(
 			taskEvent,
@@ -123,8 +124,13 @@ function ActivityRegistered(props) {
 		);
 		task.then((snapshot) => {
 			message.success('Tải lên hoàn tất!!');
+			dispatch(
+				editProofActivityAction({
+					number: 1,
+					acId: dataModel.id,
+				})
+			);
 			data.file.status = 'done';
-
 			snapshot.ref.getDownloadURL().then((url) => {
 				let image = {
 					url,
@@ -165,7 +171,8 @@ function ActivityRegistered(props) {
 		if (visible === true) {
 			setInputUpload(initInputUpload);
 			console.log('Show model', dataModel);
-			dispatch(getImageProofByActivityAction(dataModel.id));
+			if (!dataModel.images && dataModel.proof !== 0)
+				dispatch(getImageProofByActivityAction(dataModel.id));
 		}
 	}, [visible]);
 	const handleClickActivityFeed = (index, obj) => {

@@ -16,12 +16,8 @@ const reducer = createReducer(initialState, (builder) => {
         state.value = Object.assign(state.value, action.payload)
     })
     builder.addCase(getUserDetailAction.fulfilled, (state, action)=>{
-        if (action.payload.fullName) {
-            state.value.fullName = action.payload.fullName;
-        }
-        if (action.payload.classUser) {
-            state.value.classUser = action.payload.classUser;
-        }
+        const data = {...action.payload}
+        state.value = Object.assign(state.value, data)
     });
 });
 

@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { message, Modal } from 'antd';
 import ActivityFeed from '../components/ActivityFeed';
 import { useDispatch } from 'react-redux';
-import { deleteImageByFullPathAction } from '../store/actions';
+import { deleteImageByFullPathAction, editProofActivityAction } from '../store/actions';
 
 function useModel({ title, action, checkRegister, loading, data }) {
 	const [visible, setVisible] = useState(false);
@@ -28,6 +28,12 @@ function useModel({ title, action, checkRegister, loading, data }) {
 				deleteImageByFullPathAction({ path: image.fullPath, acId })
 			).then(() => {
 				message.success('Xóa ảnh thành công');
+                dispatch(
+					editProofActivityAction({
+						number: -1,
+						acId,
+					})
+				);
 			});
 		}
 	};

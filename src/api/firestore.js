@@ -25,24 +25,49 @@ export const removeUrlImageApi = (fileName, acId = '') => {
 			images: firebase.firestore.FieldValue.arrayRemove(fileName),
 		});
 };
+const getActivityByListId = (listId) => {
+	return db
+		.collection('news')
+		.where('active', '==', true)
+		.where(firebase.firestore.FieldPath.documentId(), 'in', listId)
+		.get()
+		.then((querySnapshot) => {
+			let listData = [];
+			querySnapshot.forEach(async (doc) => {
+				listData.push({
+					...doc.data(),
+					id: doc.id,
+				});
+			});
+			return listData;
+		});
+};
 export const getRegisterActivityApi = (userId) => {
 	let uId = userId || currentUser().uid;
 	return db
 		.collection('register_activity')
 		.doc(uId)
 		.collection('activities')
-		.where('active', '==', true)
 		.get()
-		.then((querySnapshot) => {
-			let data = [];
-			querySnapshot.forEach(async (doc) => {
-				data.push({
+		.then(async (querySnapshot) => {
+			let dataUser = [];
+			querySnapshot.forEach((doc) => {
+				dataUser.push({
 					...doc.data(),
 					id: doc.id,
-					activityRef: doc.data()?.activityRef?.path || '',
 				});
 			});
-			return data;
+
+			if (dataUser.length === 0) return dataUser;
+
+			let activities = await getActivityByListId(
+				dataUser.map((c) => c.id)
+			);
+
+			return activities.map((c) => ({
+				...dataUser.find((d) => d.id === c.id),
+				...c,
+			}));
 		})
 		.catch((error) => console.log(error.message));
 };
@@ -60,7 +85,6 @@ export const getAllRegisterActivityApi = (userId) => {
 				data.push({
 					...doc.data(),
 					id: doc.id,
-					activityRef: doc.data()?.activityRef?.path || '',
 				});
 			});
 			return data;
@@ -80,13 +104,10 @@ export const removeRegisterActivityApi = (acId) => {
 export const registerActivityApi = (dataActivity) => {
 	let uId = currentUser().uid;
 	let acId = dataActivity.id;
-	let activityRef = db.collection('news').doc(uId);
 
 	let data = {
 		confirm: false,
-		proof: false,
-		...dataActivity,
-		activityRef,
+		proof: 0,
 	};
 	return db
 		.collection('register_activity')
@@ -96,7 +117,23 @@ export const registerActivityApi = (dataActivity) => {
 		.set(data)
 		.then((res) => {
 			console.log('res of register: ', res);
-			return { ...data, activityRef: activityRef.path || '' };
+			return { ...data, ...dataActivity };
+		});
+};
+export const editProofActivityApi = (acId, number) => {
+	let uId = currentUser().uid;
+
+	return db
+		.collection('register_activity')
+		.doc(uId)
+		.collection('activities')
+		.doc(acId)
+		.update({
+			proof: firebase.firestore.FieldValue.increment(number),
+		})
+		.then((res) => {
+			console.log('res of register: ', res);
+			return { number, acId };
 		});
 };
 export const getDetailActivityApi = (docId = '') => {

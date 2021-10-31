@@ -28,8 +28,12 @@ function User() {
 		if (user.uid !== undefined && listNews.length === 0) {
 			dispatch(fetchRegisteredActivityAction());
 		}
-		if (listNews.length === 0) dispatch(fetchActivityAction(10));
 	}, [user]);
+	
+    useEffect(() => {
+		if (listNews.length === 0) 
+            dispatch(fetchActivityAction(10));
+	}, []);
 
 	const checkRegister = (acId) => {
 		if (

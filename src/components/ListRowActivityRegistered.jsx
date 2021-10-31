@@ -6,8 +6,9 @@ const { Text } = Typography;
 function ListRowActivityRegistered(props) {
 	const { data, handleClick } = props;
 
-	const getStatusProof = (confirm) => {
-		if (confirm === 'false' || confirm === false)
+	const getStatusProof = (confirm, proof) => {
+		if (proof === 0) return <Text>Chưa thêm minh chứng</Text>;
+		else if (confirm === 'false' || confirm === false)
 			return <Text>Minh chứng chưa xác nhận</Text>;
 		else if (confirm === true || confirm === 'true')
 			return <Text type="success">Đã xác nhận</Text>;
@@ -30,7 +31,9 @@ function ListRowActivityRegistered(props) {
 							>
 								{item.name}
 							</Button>
-							<Text>{getStatusProof(item.confirm)}</Text>
+							<Text>
+								{getStatusProof(item.confirm, item.proof)}
+							</Text>
 						</List.Item>
 					)}
 				/>

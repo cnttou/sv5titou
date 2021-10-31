@@ -3,6 +3,14 @@ export const nameLevelActivity = {
 	khoa: 'Cấp khoa',
 	truong: 'Cấp trường',
 };
+export const nameLevelRegister = {
+	'xet-cap-khoa': 'Xét cấp khoa',
+	'xet-cap-truong': 'Xét cấp trường',
+};
+export const nameSex = {
+	male: 'Nam',
+	female: 'Nữ',
+};
 
 export const nameDepartmentActivity = {
 	cntt: 'Công Nghệ Thông Tin',
