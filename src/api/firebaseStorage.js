@@ -45,23 +45,3 @@ export const getFileFromAActivityApi = (acId) => {
 		return extraRs.map((c, index) => ({ ...c, url: images[index] }));
 	});
 };
-
-export const getFileApi = (uid, acId) => {
-	let fileProofRef = imagesRef.child(uid).child(acId);
-	return fileProofRef
-		.listAll()
-		.then(async (res) => {
-			let kq = [];
-			let extraRs = [];
-			res.items.forEach((itemRef) => {
-				extraRs.push({
-					name: itemRef.name,
-					fullPath: itemRef.fullPath,
-				});
-				kq.push(itemRef.getDownloadURL());
-			});
-			let images = await Promise.all(kq);
-			return extraRs.map((c, index) => ({ ...c, url: images[index] }));
-		})
-		.catch((error) => console.log(error.message));
-};

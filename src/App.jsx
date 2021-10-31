@@ -10,12 +10,12 @@ import Loading from './components/Loading';
 import { auth } from './api/authentication';
 import { useDispatch } from 'react-redux';
 import { loginAction } from './store/actions';
-import { nameMajors } from './pages/Login';
 import { useSelector } from 'react-redux';
 import HeaderUser from './components/HeaderUser';
 import { lazy } from 'react';
 const FooterContent = lazy(() => import('./components/FooterContent'));
 import './App.css';
+import { nameMajors } from './config';
 
 function App() {
 	const dispatch = useDispatch();

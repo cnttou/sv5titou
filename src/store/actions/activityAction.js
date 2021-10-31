@@ -1,6 +1,5 @@
 import {
 	deleteFileByFullPathApi,
-	getFileApi,
 	getFileFromAActivityApi,
 } from '../../api/firebaseStorage';
 import { createAsyncThunk } from '@reduxjs/toolkit';
@@ -74,14 +73,6 @@ export const getImageProofByActivityAction = createAsyncThunk(
 	async (acId, thunkAPI) => {
 		let response = await getFileFromAActivityApi(acId);
 		return { images: response, acId };
-	}
-);
-export const getImageProofAction = createAsyncThunk(
-	'registerActivity/getImageProofAction',
-	async ({ uid, acId }, thunkAPI) => {
-		let response = await getFileApi(uid, acId);
-		console.log('typeof response', typeof response);
-		return { images: response, uid, acId };
 	}
 );
 

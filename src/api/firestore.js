@@ -194,53 +194,7 @@ export const getUserDetailApi = () => {
 		.then((res) => res.data())
 		.catch((err) => console.log(err.message));
 };
-export const getUserActivityApi = () => {
-	return db
-		.collection('register_activity')
-		.get()
-		.then((querySnapshot) => {
-			let list = [];
-			querySnapshot.forEach((doc) => {
-				list.push(doc.data());
-			});
-			return list;
-		})
-		.then((rs) => {
-			return Promise.all(
-				rs.map((c) => getAllRegisterActivityApi(c.userId))
-			).then((res) => {
-				return rs.map((c, index) => ({ ...c, listData: res[index] }));
-			});
-		});
-};
-export const confirmProofApi = (uid, acId) => {
-	return db
-		.collection('register_activity')
-		.doc(uid)
-		.collection('activities')
-		.doc(acId)
-		.update({ confirm: true })
-		.then(() => {
-			return { uid, acId, confirm: true };
-		})
-		.catch((error) => {
-			console.log(error.message);
-		});
-};
-export const cancelConfirmProofApi = (uid, acId, confirm) => {
-	return db
-		.collection('register_activity')
-		.doc(uid)
-		.collection('activities')
-		.doc(acId)
-		.update({ confirm })
-		.then(() => {
-			return { uid, acId, confirm: false };
-		})
-		.catch((error) => {
-			console.log(error.message);
-		});
-};
+
 export const cancelConfirmMyProofApi = (acId) => {
 	let uid = currentUser().uid;
 	return db

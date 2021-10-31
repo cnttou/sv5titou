@@ -7,20 +7,14 @@ import {
 import { Typography, Button, Card, Image, List } from 'antd';
 import { lazy } from 'react';
 const ReactQuill = lazy(() => import('react-quill'));
-import { nameLevelActivity } from '../hooks/useCreateEditActivityModel';
 import styles from '../styles/ActivityFeed.module.css';
 import Loading from './Loading';
+import { nameLevelActivity } from '../config';
 import 'antd/lib/tooltip/style/index.css'
+import { nameTarget } from '../config';
 
 const { Text, Title } = Typography;
 
-export const nameTarget = {
-	'hoi-nhap': 'Hội nhập tốt',
-	'hoc-tap': 'Học tập tốt',
-	'dao-duc': 'Đạo đức tốt',
-	'tinh-nguyen': 'Tình nguyện tốt',
-	'suc-khoe': 'Thể lực tốt',
-};
 export const typeFileimage = ['.jpeg', '.jpg', '.png'];
 
 function ActivityFeed(props) {
