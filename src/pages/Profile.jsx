@@ -26,6 +26,7 @@ import { addUserDetailAction, getUserDetailAction } from '../store/actions';
 import styles from '../styles/Profile.module.css';
 import dayjs from 'dayjs';
 import { useState } from 'react';
+import { nameTarget } from '../config';
 
 const { Content } = Layout;
 const { Meta } = Card;
@@ -56,7 +57,13 @@ const optionLevelRegister = Object.entries(nameLevelRegister).map(
 		</Option>
 	)
 );
-
+const colorOption = {
+	'hoc-tap': '#ff9c6e',
+	'tinh-nguyen': '#ffc53d',
+	'the-luc': '#bae637',
+	'dao-duc': '#f759ab',
+	'hoi-nhap': '#40a9ff',
+};
 const rules = [{ required: true, message: 'Vui lòng điền thông tin' }];
 
 function Profile(props) {
@@ -122,8 +129,12 @@ function Profile(props) {
 			</p>
 			<p>
 				<strong>Các tiêu chí đã hoàn thành:</strong>
-				<Tag color="#2db7f5">Học tập tốt</Tag>
-				<Tag color="#87d068">Hội nhập tốt</Tag>
+				{user.targetSuccess &&
+					user.targetSuccess.map((c, i) => (
+						<Tag color={colorOption[c]} key={i}>
+							{nameTarget[c]}
+						</Tag>
+					))}
 			</p>
 			<Divider plain></Divider>
 			<Form

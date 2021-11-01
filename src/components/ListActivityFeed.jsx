@@ -109,7 +109,7 @@ function ListActivityFeed(props) {
 					<Option value={'tinh-nguyen'}>Tình nguyện</Option>
 					<Option value={'hoi-nhap'}>Hội nhập</Option>
 					<Option value={'dao-duc'}>Đạo đức</Option>
-					<Option value={'suc-khoe'}>Thể lực</Option>
+					<Option value={'the-luc'}>Thể lực</Option>
 					<Option value={'hoc-tap'}>Học tập</Option>
 				</Select>
 				<Select

@@ -30,7 +30,7 @@ export const nameTarget = {
 	'hoc-tap': 'Học tập tốt',
 	'dao-duc': 'Đạo đức tốt',
 	'tinh-nguyen': 'Tình nguyện tốt',
-	'suc-khoe': 'Thể lực tốt',
+	'the-luc': 'Thể lực tốt',
 };
 export const nameMajors = {
 	7220201: 'Ngôn ngữ Anh',

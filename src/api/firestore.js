@@ -214,6 +214,7 @@ export const addUserDetailApi = (data) => {
 		.doc(currentUser().uid)
 		.set(
 			{
+                studentCode: currentUser().email.slice(0, 10),
 				email: currentUser().email,
 				userId: currentUser().uid,
 				...data,
