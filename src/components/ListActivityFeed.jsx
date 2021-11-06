@@ -15,9 +15,9 @@ function ListActivityFeed(props) {
 
 	const [filter, setFilter] = useState({ level: null, target: null });
 	const colorCard = (id, confirm) => {
+		if (confirm === true) return '#73d13d';
 		if ((checkRegister && checkRegister(id)) || confirm === false)
 			return '#69c0ff';
-		else if (confirm === true) return '#73d13d';
 		return 'white';
 	};
 	const handleSort = (value) => {
