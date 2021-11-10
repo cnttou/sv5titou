@@ -28,7 +28,7 @@ export const removeUrlImageApi = (fileName, acId = '') => {
 const getActivityByListId = (listId) => {
 	return db
 		.collection('news')
-		.where('active', '==', true)
+		.where('active', '==', true) //.where('typeActivity', '==', 'register')
 		.where(firebase.firestore.FieldPath.documentId(), 'in', listId)
 		.get()
 		.then((querySnapshot) => {
@@ -107,7 +107,7 @@ export const registerActivityApi = (dataActivity) => {
 
 	let data = {
 		confirm: false,
-		proof: 0,
+		proof: dataActivity.proof || 0,
 	};
 	return db
 		.collection('register_activity')
@@ -149,10 +149,11 @@ export const getDetailActivityApi = (docId = '') => {
 			return data;
 		});
 };
-export const getAllActivitiesApi = (limit = 25) => {
+export const getOtherActivitiesApi = () => {
 	return db
 		.collection('news')
-		.limit(limit)
+		.where('active', '==', true)
+		.where('typeActivity', '==', 'other')
 		.get()
 		.then((querySnapshot) => {
 			let data = [];
@@ -169,6 +170,7 @@ export const getActivitiesApi = (limit = 25) => {
 	return db
 		.collection('news')
 		.where('active', '==', true)
+		.where('typeActivity', '==', 'register')
 		.limit(limit)
 		.get()
 		.then((querySnapshot) => {
@@ -214,7 +216,7 @@ export const addUserDetailApi = (data) => {
 		.doc(currentUser().uid)
 		.set(
 			{
-                studentCode: currentUser().email.slice(0, 10),
+				studentCode: currentUser().email.slice(0, 10),
 				email: currentUser().email,
 				userId: currentUser().uid,
 				...data,

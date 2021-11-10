@@ -4,7 +4,6 @@ import {
 	addActivityAction,
 	deleteActivityAction,
 	fetchActivityAction,
-	fetchAllActivityAction,
 	logoutAction,
 } from '../actions';
 
@@ -24,16 +23,6 @@ export const activity = createSlice({
 				state.loading = state.loading + 1;
 			})
 			.addCase(fetchActivityAction.rejected, (state) => {
-				state.loading = state.loading - 1;
-			})
-			.addCase(fetchAllActivityAction.pending, (state) => {
-				state.loading = state.loading + 1;
-			})
-			.addCase(fetchAllActivityAction.rejected, (state) => {
-				state.loading = state.loading - 1;
-			})
-			.addCase(fetchAllActivityAction.fulfilled, (state, action) => {
-				state.value = action.payload;
 				state.loading = state.loading - 1;
 			})
 			.addCase(deleteActivityAction.fulfilled, (state, action) => {

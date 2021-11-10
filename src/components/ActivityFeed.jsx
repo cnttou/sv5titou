@@ -91,7 +91,8 @@ function ActivityFeed(props) {
 					</p>
 				)}
 				<p>
-					<strong>Tiêu chí xét SV5T:</strong> {nameTarget[target]}
+					<strong>Tiêu chí xét SV5T:</strong>{' '}
+					{target.map((c) => nameTarget[c]).join(', ')}
 				</p>
 				{showFull && (
 					<p style={{ marginBottom: 0 }}>
@@ -105,12 +106,12 @@ function ActivityFeed(props) {
 						/>
 					</p>
 				)}
-                {images && (
-                    <ShowProof
-                        images={images}
-                        handleRemoveImage={handleRemoveImage}
-                    />
-                )}
+				{images && (
+					<ShowProof
+						images={images}
+						handleRemoveImage={handleRemoveImage}
+					/>
+				)}
 				{loading === true && images === undefined ? (
 					<Loading size="default" />
 				) : null}
@@ -119,7 +120,7 @@ function ActivityFeed(props) {
 	);
 }
 
-const ShowProof = ({ images, handleRemoveImage }) => (
+export const ShowProof = ({ images, handleRemoveImage }) => (
 	<>
 		<div>
 			<strong>Minh chứng đã thêm:</strong>

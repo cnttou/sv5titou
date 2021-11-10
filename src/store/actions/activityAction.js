@@ -10,8 +10,8 @@ import {
 	getRegisterActivityApi,
 	registerActivityApi,
 	removeRegisterActivityApi,
-    getAllActivitiesApi,
-    editProofActivityApi,
+	editProofActivityApi,
+	getOtherActivitiesApi,
 } from '../../api/firestore';
 
 export const fetchActivityAction = createAsyncThunk(
@@ -23,15 +23,8 @@ export const fetchActivityAction = createAsyncThunk(
 );
 export const editProofActivityAction = createAsyncThunk(
 	'news/editProofActivity',
-	async ({acId, number}) => {
+	async ({ acId, number }) => {
 		let respone = await editProofActivityApi(acId, number);
-		return respone;
-	}
-);
-export const fetchAllActivityAction = createAsyncThunk(
-	'news/fetchAllNews',
-	async (limit) => {
-		let respone = await getAllActivitiesApi(limit);
 		return respone;
 	}
 );

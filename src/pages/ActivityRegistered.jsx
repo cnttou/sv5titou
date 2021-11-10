@@ -20,6 +20,7 @@ import {
 import { addImageToActivityAction } from '../store/reducers/myActivitySlice';
 import Loading from '../components/Loading';
 import ListRowActivityRegistered from '../components/ListRowActivityRegistered';
+import ListRowOtherActivity from '../components/ListRowOtherActivity';
 
 const { Content } = Layout;
 const { confirm } = Modal;
@@ -39,7 +40,10 @@ function ActivityRegistered(props) {
 	};
 
 	const dispatch = useDispatch();
-	let { value: data, loading } = useSelector((state) => state.myActivity);
+	let data = useSelector((s) =>
+		s.myActivity.value.filter((c) => c.typeActivity === 'register')
+	);
+	let { loading } = useSelector((s) => s.myActivity);
 	const user = useSelector((state) => state.user.value);
 
 	useEffect(() => {
@@ -197,6 +201,7 @@ function ActivityRegistered(props) {
 			) : (
 				<Loading />
 			)}
+			<ListRowOtherActivity />
 			{ui()}
 		</Content>
 	);
