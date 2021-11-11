@@ -14,25 +14,23 @@ import styles from '../styles/Home.module.css';
 import Loading from '../components/Loading';
 import useModel from '../hooks/useModel';
 
-
 const { Content } = Layout;
 
 function User() {
 	const listNews = useSelector((state) => state.activity.value);
 	const listActivity = useSelector((state) => state.myActivity.value);
 	const user = useSelector((state) => state.user.value);
-	
+
 	const dispatch = useDispatch();
-	
+
 	useEffect(() => {
 		if (user.uid !== undefined && listNews.length === 0) {
 			dispatch(fetchRegisteredActivityAction());
 		}
 	}, [user]);
-	
-    useEffect(() => {
-		if (listNews.length === 0) 
-            dispatch(fetchActivityAction(10));
+
+	useEffect(() => {
+		if (listNews.length === 0) dispatch(fetchActivityAction(10));
 	}, []);
 
 	const checkRegister = (acId) => {
@@ -118,11 +116,11 @@ function User() {
 			});
 			return;
 		}
-        listNews.forEach((c, index)=>{
-            if (c.id === obj.id){
-                setIndexData(index);
-            }
-        })
+		listNews.forEach((c, index) => {
+			if (c.id === obj.id) {
+				setIndexData(index);
+			}
+		});
 		setVisible(true);
 	};
 
@@ -142,7 +140,7 @@ function User() {
 			<SiderContent />
 			<BackTop>
 				<div className={styles.backTopButton}>
-					<UpOutlined size="30" />
+					<UpOutlined size="30" style={{ color: 'white' }} />
 				</div>
 			</BackTop>
 			{visible && ui()}

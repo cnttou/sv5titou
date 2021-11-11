@@ -14,9 +14,10 @@ import {
 import { addImageToActivityAction } from '../store/reducers/myActivitySlice';
 import { ShowProof } from './ActivityFeed';
 import InputUpload from './InputUpload';
+import styles from '../styles/ListRowOtherActivity.module.css';
 
 const { Panel } = Collapse;
-const { Text } = Typography;
+const { Text, Title } = Typography;
 
 const initInputUpload = {
 	onUploadSuccess: true,
@@ -184,13 +185,32 @@ const ListRowOtherActivity = () => {
 	};
 
 	return (
-		<Collapse onChange={handleChangeCollapse} accordion={true}>
+		<Collapse
+			onChange={handleChangeCollapse}
+			accordion={true}
+			style={{ backgroundColor: 'white' }}
+		>
+			<Panel
+				collapsible="disabled"
+				header={
+					<div className={styles.wrapperHeader}>
+						<Title level={5}>Danh sách các hoạt động khác</Title>
+					</div>
+				}
+				key="0"
+				showArrow={false}
+			></Panel>
 			{otherActivity.length &&
 				otherActivity.map((c, i) => (
 					<Panel
-						header={c.name}
+						showArrow={false}
+						header={
+							<div className={styles.wrapperHeader}>
+								<Text>{c.name}</Text>
+								<Text>{getStatusProof(c.id)}</Text>
+							</div>
+						}
 						key={c.id}
-						extra={getStatusProof(c.id)}
 					>
 						<p>{c.summary}</p>
 						{dataModel.images && (

@@ -1,5 +1,6 @@
 .card {
-	max-width: 520px;
+	min-width: 453px;
+    max-width: 520px;
 	max-height: 350px;
     /* max-width: calc(100vw - 305px); */
 	overflow: hidden;
@@ -7,6 +8,7 @@
 @media only screen and (max-width: 600px) {
 	.card {
 		width: 100% !important;
+        min-width: auto;
         max-width: 100vw;
 		overflow: hidden;
 	}

@@ -1,0 +1,14 @@
+.wrapperHeader {
+    display: flex;
+    padding-left: 12px;
+    padding-right: 8px;
+    justify-content: space-between;
+}
+
+@media only screen and (max-width: 750px) {
+	.wrapperHeader {
+		flex-direction: column;
+                align-items: flex-start;
+
+	}
+}

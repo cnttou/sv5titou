@@ -1,7 +1,7 @@
 import { Space, List, Typography, Button } from 'antd';
 import styles from '../styles/ListActivityFeed.module.css';
 
-const { Text } = Typography;
+const { Text, Title } = Typography;
 
 function ListRowActivityRegistered(props) {
 	const { data, handleClick } = props;
@@ -18,19 +18,18 @@ function ListRowActivityRegistered(props) {
 		<>
 			<Space direction="vertical" className={styles.content}>
 				<List
-					header={<div>Danh sách hoạt động đã đăng ký</div>}
+					header={
+						<Title level={5}>Danh sách hoạt động đã đăng ký</Title>
+					}
 					bordered
 					className={styles.list}
 					dataSource={data}
 					renderItem={(item, index) => (
-						<List.Item>
-							<Button
-								type="link"
-								onClick={() => handleClick(index, item)}
-								style={{ paddingLeft: 0 }}
-							>
-								{item.name}
-							</Button>
+						<List.Item
+							onClick={() => handleClick(index, item)}
+							className={styles.listItem}
+						>
+							<Text ellipsis={true}>{item.name}</Text>
 							<Text>
 								{getStatusProof(item.confirm, item.proof)}
 							</Text>

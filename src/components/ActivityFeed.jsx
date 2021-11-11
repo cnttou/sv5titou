@@ -56,13 +56,20 @@ function ActivityFeed(props) {
 				style={
 					showFull ? { maxHeight: '75vh', overflow: 'scroll' } : null
 				}
-				headStyle={{ background: colorCard(id, confirm) }}
+				headStyle={{
+					background: colorCard(id, confirm),
+				}}
+                
+				bodyStyle={{ paddingBottom: 0 }}
 				title={
 					<>
-						<Title level={5}>{name}</Title>
+						<Title ellipsis={true} level={5}>
+							{name}
+						</Title>
 						<Text type="secondary">{nameLevelActivity[level]}</Text>
 					</>
 				}
+                size="small"
 				extra={
 					showFull && (
 						<Text

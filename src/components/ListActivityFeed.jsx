@@ -78,7 +78,7 @@ function ListActivityFeed(props) {
 	};
 	return (
 		<>
-			<div className={styles.wrapper}>
+			<div className={styles.wrapperSearch}>
 				<Search
 					placeholder="Nhập tên chương trình cần tìm."
 					onSearch={onSearch}
@@ -92,7 +92,7 @@ function ListActivityFeed(props) {
 					placeholder="Sắp xếp"
 					value={sort}
 					onChange={handleSort}
-					style={{ width: '33%' }}
+					style={{ width: 'calc(100% / 3)' }}
 				>
 					<Option value="nameaz">Tên A-Z</Option>
 					<Option value="nameza">Tên Z-A</Option>
@@ -102,7 +102,7 @@ function ListActivityFeed(props) {
 				<Select
 					placeholder="Lọc tiêu chí"
 					onChange={handleFilterTarget}
-					style={{ width: '33%' }}
+					style={{ width: 'calc(100% / 3)' }}
 					value={filter.target}
 				>
 					<Option value={null}> -- </Option>
@@ -116,7 +116,7 @@ function ListActivityFeed(props) {
 					placeholder="Lọc cấp HĐ"
 					onChange={handleFilterLevel}
 					value={filter.level}
-					style={{ width: '33%' }}
+					style={{ width: 'calc(100% / 3)' }}
 				>
 					<Option value={null}> -- </Option>
 					<Option value={'truong'}>Cấp trường</Option>
@@ -124,7 +124,9 @@ function ListActivityFeed(props) {
 					<Option value={'lop'}>Cấp chi</Option>
 				</Select>
 			</Input.Group>
-			<Space direction="vertical">{loadListActivity()}</Space>
+			<Space direction="vertical" className={styles.listActivity}>
+				{loadListActivity()}
+			</Space>
 		</>
 	);
 }

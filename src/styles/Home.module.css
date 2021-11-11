@@ -15,16 +15,16 @@
 	/* margin: 5px 0; */
 }
 
-.wrapperFilter{
-    width: 100%;
-    padding: 0 50px;
-    display: flex;
-    margin: 5px 0;
+.wrapperFilter {
+	width: 100%;
+	padding: 0 50px;
+	display: flex;
+	margin: 5px 0;
 }
 
 .item {
 	flex: 1;
-    width: 50%;
+	width: 50%;
 }
 
 .backTopButton {
@@ -33,7 +33,7 @@
 	display: flex;
 	justify-content: center;
 	align-items: center;
-	background: antiquewhite;
+	background: rgb(71, 88, 159) none repeat scroll 0% 0%;
 	border-radius: 100px;
 }
 
