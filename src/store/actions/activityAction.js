@@ -53,6 +53,13 @@ export const fetchRegisteredActivityAction = createAsyncThunk(
 		return response;
 	}
 );
+export const fetchOtherActivityAction = createAsyncThunk(
+	'otherActivity/fetchOtherActivity',
+	async () => {
+		let response = await getOtherActivitiesApi();
+		return response;
+	}
+);
 
 export const registerActivityAction = createAsyncThunk(
 	'registerActivity/registerActivity',

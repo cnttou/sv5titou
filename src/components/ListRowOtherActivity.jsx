@@ -3,11 +3,11 @@ import { useState } from 'react';
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { taskEvent, upFileApi } from '../api/firebaseStorage';
-import { getOtherActivitiesApi } from '../api/firestore';
 import {
 	cancelMyConfirmProofAction,
 	deleteImageByFullPathAction,
 	editProofActivityAction,
+	fetchOtherActivityAction,
 	getImageProofByActivityAction,
 	registerActivityAction,
 } from '../store/actions';
@@ -15,6 +15,8 @@ import { addImageToActivityAction } from '../store/reducers/myActivitySlice';
 import { ShowProof } from './ActivityFeed';
 import InputUpload from './InputUpload';
 import styles from '../styles/ListRowOtherActivity.module.css';
+import { addConfirmOtherActivity } from '../store/reducers/otherActivity';
+import Loading from './Loading';
 
 const { Panel } = Collapse;
 const { Text, Title } = Typography;
@@ -27,11 +29,11 @@ const initInputUpload = {
 };
 
 const ListRowOtherActivity = () => {
-	const [otherActivity, setOtherActivity] = useState([]);
 	const [dataModel, setDataModel] = useState({});
 	const [inputUpload, setInputUpload] = useState(initInputUpload);
 
 	const dispatch = useDispatch();
+    const {value: otherActivity, loading} = useSelector(s=>s.otherActivity)
 	const registerActivity = useSelector((s) =>
 		s.myActivity.value.filter((c) => c.typeActivity === 'other')
 	);
@@ -53,9 +55,7 @@ const ListRowOtherActivity = () => {
 	};
 
 	useEffect(() => {
-		getOtherActivitiesApi().then((data) => {
-			setOtherActivity(data);
-		});
+        dispatch(fetchOtherActivityAction());
 	}, []);
 
 	const handleBeforeUpload = (file) => {
@@ -175,11 +175,7 @@ const ListRowOtherActivity = () => {
 			} else {
 				setDataModel({ ...t2, ...t });
 			}
-			setOtherActivity((preState) =>
-				preState.map((c, i) =>
-					c.id === id ? { ...c, confirm: t.confirm } : c
-				)
-			);
+            dispatch(addConfirmOtherActivity({ confirm: t.confirm, id }));
 			console.log({ ...t2, ...t });
 		}
 	};
@@ -200,7 +196,7 @@ const ListRowOtherActivity = () => {
 				key="0"
 				showArrow={false}
 			></Panel>
-			{otherActivity.length &&
+			{otherActivity.length ?
 				otherActivity.map((c, i) => (
 					<Panel
 						showArrow={false}
@@ -234,7 +230,9 @@ const ListRowOtherActivity = () => {
 							/>
 						)}
 					</Panel>
-				))}
+				))
+            : <Loading />
+            }
 		</Collapse>
 	);
 };

@@ -1,5 +1,5 @@
-import { Space, List, Typography, Button } from 'antd';
-import styles from '../styles/ListActivityFeed.module.css';
+import { Space, List, Typography } from 'antd';
+import styles from '../styles/ListRowActivityRegistered.module.css';
 
 const { Text, Title } = Typography;
 
@@ -16,7 +16,7 @@ function ListRowActivityRegistered(props) {
 	};
 	return (
 		<>
-			<Space direction="vertical" className={styles.content}>
+			<Space direction="vertical">
 				<List
 					header={
 						<Title level={5}>Danh sách hoạt động đã đăng ký</Title>

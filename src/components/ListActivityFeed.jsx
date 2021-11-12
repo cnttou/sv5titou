@@ -27,41 +27,63 @@ function ListActivityFeed(props) {
 		else if (value === 'nameza') rs.sort((a, b) => compareStringName(b, a));
 		else if (value === 'dateaz') rs.sort((a, b) => compareStringDate(a, b));
 		else rs.sort((a, b) => compareStringDate(b, a));
-
-		setSort(value);
+		
+        setSort(value);
 		setResultSort(rs);
+		
+        rs = rs.filter((c) => {
+			let rs1 = filter.level ? filter.level === c.level : true;
+			let rs2 = filter.target ? c.target.includes(filter.target) : true;
+			return rs1 && rs2;
+		});
 		setResultSearch(rs);
 	};
-
-	const handleFilter = (value, type) => {
+	const handleFilterLevel = (value) => {
 		let rs = resultSort.length !== 0 ? resultSort : data;
 
 		if (value) {
-			rs = rs.filter((c) => value === c[type]);
+			rs = rs.filter((c) => value === c.level);
 		}
-		setFilter((state) => ({ ...state, [type]: value }));
-		type = type === 'target' ? 'level' : 'target';
-		if (filter[type]) {
-			rs = rs.filter((c) => filter[type] === c[type]);
+
+		setFilter((state) => ({ ...state, level: value }));
+
+		if (filter.target) {
+			rs = rs.filter((c) => c.target.includes(filter.target));
 		}
 		if (rs.length === 0) {
 			message.info('Không có hoạt động nào thỏa điều kiện!!');
 		} else setResultSearch(rs);
 	};
+	const handleFilterTarget = (value) => {
+		let rs = resultSort.length !== 0 ? resultSort : data;
 
-	const handleFilterLevel = (value) => handleFilter(value, 'level');
-	const handleFilterTarget = (value) => handleFilter(value, 'target');
+		if (value) {
+			rs = rs.filter((c) => c.target.includes(value));
+		}
+
+		setFilter((state) => ({ ...state, target: value }));
+		if (filter.level) rs = rs.filter((c) => filter.level === c.level);
+		if (rs.length === 0) {
+			message.info('Không có hoạt động nào thỏa điều kiện!!');
+		} else setResultSearch(rs);
+	};
 	const onSearch = (value) => {
 		let kw = value.toLowerCase();
 		let rs = data.filter((c) => {
 			return c.name.toLowerCase().indexOf(kw) !== -1;
 		});
-		setResultSearch(rs);
+		if (rs.length === 0) {
+            message.info('Tìm không thấy!!');
+		} else {
+            setResultSearch(rs);
+            setSort(null)
+            setFilter({target: null, level: null})
+        }
 	};
 	const loadListActivity = () => {
 		let list = [];
 		if (resultSearch.length !== 0) list = resultSearch;
-		else list = data;
+		else list = resultSort.length !== 0 ? resultSort : data;
 
 		return list.map((c, index) => (
 			<ActivityFeed
@@ -87,43 +109,45 @@ function ListActivityFeed(props) {
 					className={styles.search}
 				/>
 			</div>
-			<Input.Group compact className={styles.wrapper}>
-				<Select
-					placeholder="Sắp xếp"
-					value={sort}
-					onChange={handleSort}
-					style={{ width: 'calc(100% / 3)' }}
-				>
-					<Option value="nameaz">Tên A-Z</Option>
-					<Option value="nameza">Tên Z-A</Option>
-					<Option value="dateaz">Thời gian xa-gần</Option>
-					<Option value="dateza">Thời gian gần-xa</Option>
-				</Select>
-				<Select
-					placeholder="Lọc tiêu chí"
-					onChange={handleFilterTarget}
-					style={{ width: 'calc(100% / 3)' }}
-					value={filter.target}
-				>
-					<Option value={null}> -- </Option>
-					<Option value={'tinh-nguyen'}>Tình nguyện</Option>
-					<Option value={'hoi-nhap'}>Hội nhập</Option>
-					<Option value={'dao-duc'}>Đạo đức</Option>
-					<Option value={'the-luc'}>Thể lực</Option>
-					<Option value={'hoc-tap'}>Học tập</Option>
-				</Select>
-				<Select
-					placeholder="Lọc cấp HĐ"
-					onChange={handleFilterLevel}
-					value={filter.level}
-					style={{ width: 'calc(100% / 3)' }}
-				>
-					<Option value={null}> -- </Option>
-					<Option value={'truong'}>Cấp trường</Option>
-					<Option value={'khoa'}>Cấp khoa</Option>
-					<Option value={'lop'}>Cấp chi</Option>
-				</Select>
-			</Input.Group>
+			<div className={styles.wrapperSearch}>
+				<Input.Group compact>
+					<Select
+						placeholder="Sắp xếp"
+						value={sort}
+						onChange={handleSort}
+						style={{ width: 'calc(100% / 3)' }}
+					>
+						<Option value="nameaz">Tên A-Z</Option>
+						<Option value="nameza">Tên Z-A</Option>
+						<Option value="dateaz">Thời gian xa-gần</Option>
+						<Option value="dateza">Thời gian gần-xa</Option>
+					</Select>
+					<Select
+						placeholder="Lọc tiêu chí"
+						onChange={handleFilterTarget}
+						style={{ width: 'calc(100% / 3)' }}
+						value={filter.target}
+					>
+						<Option value={null}> -- </Option>
+						<Option value={'tinh-nguyen'}>Tình nguyện</Option>
+						<Option value={'hoi-nhap'}>Hội nhập</Option>
+						<Option value={'dao-duc'}>Đạo đức</Option>
+						<Option value={'the-luc'}>Thể lực</Option>
+						<Option value={'hoc-tap'}>Học tập</Option>
+					</Select>
+					<Select
+						placeholder="Lọc cấp HĐ"
+						onChange={handleFilterLevel}
+						value={filter.level}
+						style={{ width: 'calc(100% / 3)' }}
+					>
+						<Option value={null}> -- </Option>
+						<Option value={'truong'}>Cấp trường</Option>
+						<Option value={'khoa'}>Cấp khoa</Option>
+						<Option value={'lop'}>Cấp chi</Option>
+					</Select>
+				</Input.Group>
+			</div>
 			<Space direction="vertical" className={styles.listActivity}>
 				{loadListActivity()}
 			</Space>
