@@ -21,6 +21,7 @@ import { addImageToActivityAction } from '../store/reducers/myActivitySlice';
 import Loading from '../components/Loading';
 import ListRowActivityRegistered from '../components/ListRowActivityRegistered';
 import ListRowOtherActivity from '../components/ListRowOtherActivity';
+import ListRowRequireActivity from '../components/ListRowRequireActivity';
 
 const { Content } = Layout;
 const { confirm } = Modal;
@@ -201,6 +202,7 @@ function ActivityRegistered(props) {
 			) : (
 				<Loading />
 			)}
+			<ListRowRequireActivity />
 			<ListRowOtherActivity />
 			{ui()}
 		</Content>

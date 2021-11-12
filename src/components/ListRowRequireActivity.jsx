@@ -30,16 +30,16 @@ const initInputUpload = {
 	uploadProgress: 0,
 };
 
-const ListRowOtherActivity = () => {
+const ListRowRequireActivity = () => {
 	const [dataModel, setDataModel] = useState({});
 	const [inputUpload, setInputUpload] = useState(initInputUpload);
 
 	const dispatch = useDispatch();
-	const otherActivity = useSelector((s) =>
-		s.otherActivity.value.filter((c) => c.typeActivity === 'other')
+	const otherActivity = useSelector(
+		(s) => s.otherActivity.value.filter(c=> c.typeActivity === 'require')
 	);
 	const registerActivity = useSelector((s) =>
-		s.myActivity.value.filter((c) => c.typeActivity === 'other')
+		s.myActivity.value.filter((c) => c.typeActivity === 'require')
 	);
 
 	const getStatusProof = (id) => {
@@ -57,10 +57,6 @@ const ListRowOtherActivity = () => {
 	const setState = (name, value) => {
 		setInputUpload((s) => ({ ...s, [name]: value }));
 	};
-
-	useEffect(() => {
-		dispatch(fetchOtherActivityAction());
-	}, []);
 
 	const handleBeforeUpload = (file) => {
 		if (dataModel?.confirm && dataModel.confirm === true) {
@@ -194,7 +190,7 @@ const ListRowOtherActivity = () => {
 				collapsible="disabled"
 				header={
 					<div className={styles.wrapperHeader}>
-						<Title level={5}>Danh sách các minh chứng khác</Title>
+						<Title level={5}>Danh sách các minh chứng bắt buộc</Title>
 					</div>
 				}
 				key="0"
@@ -254,4 +250,4 @@ const ListRowOtherActivity = () => {
 	);
 };
 
-export default ListRowOtherActivity;
+export default ListRowRequireActivity;

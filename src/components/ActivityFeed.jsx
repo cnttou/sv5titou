@@ -102,7 +102,7 @@ function ActivityFeed(props) {
 					{target.map((c) => nameTarget[c]).join(', ')}
 				</p>
 				{showFull && (
-					<p style={{ marginBottom: 0 }}>
+					<div style={{ marginBottom: 0 }}>
 						<strong>Thông tin chi tiết:</strong>
 						<ReactQuill
 							theme={null}
@@ -111,7 +111,7 @@ function ActivityFeed(props) {
 							className={showFull ? '' : styles.editer}
 							style={{ height: '100%' }}
 						/>
-					</p>
+					</div>
 				)}
 				{images && (
 					<ShowProof

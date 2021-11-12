@@ -153,7 +153,7 @@ export const getOtherActivitiesApi = () => {
 	return db
 		.collection('news')
 		.where('active', '==', true)
-		.where('typeActivity', '==', 'other')
+		.where('typeActivity', 'in', ['require', 'other'])
 		.get()
 		.then((querySnapshot) => {
 			let data = [];
