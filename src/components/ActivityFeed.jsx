@@ -97,10 +97,10 @@ function ActivityFeed(props) {
 						<strong>Số lượng tối đa:</strong> {numPeople}
 					</p>
 				)}
-				<p>
+				{target && <p>
 					<strong>Tiêu chí xét SV5T:</strong>{' '}
 					{target.map((c) => nameTarget[c]).join(', ')}
-				</p>
+				</p>}
 				{showFull && (
 					<div style={{ marginBottom: 0 }}>
 						<strong>Thông tin chi tiết:</strong>

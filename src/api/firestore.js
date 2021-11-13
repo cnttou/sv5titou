@@ -93,6 +93,7 @@ export const getAllRegisterActivityApi = (userId) => {
 };
 export const removeRegisterActivityApi = (acId) => {
 	let uId = firebase.auth().currentUser.uid;
+    db.collection('news').doc(acId).collection('users').doc(uId).delete();
 	return db
 		.collection('register_activity')
 		.doc(uId)
@@ -108,21 +109,29 @@ export const registerActivityApi = (dataActivity) => {
 	let data = {
 		confirm: false,
 		proof: dataActivity.proof || 0,
+		studentCode: currentUser().email.slice(0, 10),
+		displayName: currentUser().displayName,
 	};
+	db.collection('news').doc(acId).collection('users').doc(uId).set(data);
 	return db
 		.collection('register_activity')
 		.doc(uId)
 		.collection('activities')
 		.doc(acId)
 		.set(data)
-		.then((res) => {
-			console.log('res of register: ', res);
+		.then(() => {
 			return { ...data, ...dataActivity };
 		});
 };
 export const editProofActivityApi = (acId, number) => {
 	let uId = currentUser().uid;
-
+	db.collection('news')
+		.doc(acId)
+		.collection('users')
+		.doc(uId)
+		.update({
+			proof: firebase.firestore.FieldValue.increment(number),
+		});
 	return db
 		.collection('register_activity')
 		.doc(uId)
@@ -131,8 +140,7 @@ export const editProofActivityApi = (acId, number) => {
 		.update({
 			proof: firebase.firestore.FieldValue.increment(number),
 		})
-		.then((res) => {
-			console.log('res of register: ', res);
+		.then(() => {
 			return { number, acId };
 		});
 };
@@ -234,12 +242,16 @@ export const getUserDetailApi = () => {
 		.then((res) => res.data())
 		.catch((err) => console.log(err.message));
 };
-
 export const cancelConfirmMyProofApi = (acId) => {
-	let uid = currentUser().uid;
+	let uId = currentUser().uid;
+	db.collection('news')
+		.doc(acId)
+		.collection('users')
+		.doc(uId)
+		.update({ confirm: false });
 	return db
 		.collection('register_activity')
-		.doc(uid)
+		.doc(uId)
 		.collection('activities')
 		.doc(acId)
 		.update({ confirm: false })

@@ -6,7 +6,10 @@ import { useParams } from 'react-router';
 import { getDetailActivityApi } from '../api/firestore';
 import ActivityFeed from '../components/ActivityFeed';
 import Loading from '../components/Loading';
-import { fetchRegisteredActivityAction, registerActivityAction } from '../store/actions';
+import {
+	fetchRegisteredActivityAction,
+	registerActivityAction,
+} from '../store/actions';
 import styles from '../styles/NewDetail.module.css';
 
 const { Content } = Layout;
@@ -22,7 +25,7 @@ export default function NewDetail() {
 		if (id !== '' && news.id === undefined) {
 			getDetailActivityApi(id).then((data) => setNews(data));
 		}
-        if (user.uid !== undefined && listActivity.length === 0) {
+		if (user.uid !== undefined && listActivity.length === 0) {
 			dispatch(fetchRegisteredActivityAction());
 		}
 	}, [id, user]);
@@ -46,19 +49,9 @@ export default function NewDetail() {
 			return;
 		}
 		if (user.uid) {
-			const { id, name, date, location, numPeople } = news;
-			const { summary, target, active, level } = news;
 			dispatch(
 				registerActivityAction({
-					id,
-					name,
-					date,
-					location,
-					numPeople,
-					summary,
-					target,
-					active,
-					level,
+					...news,
 				})
 			)
 				.then(() => {

@@ -53,28 +53,9 @@ function User() {
 			return;
 		}
 		if (user.uid) {
-			const {
-				id,
-				name,
-				date,
-				location,
-				numPeople,
-				summary,
-				target,
-				active,
-				level,
-			} = dataModel;
 			dispatch(
 				registerActivityAction({
-					id,
-					name,
-					date,
-					location,
-					numPeople,
-					summary,
-					target,
-					active,
-					level,
+					...dataModel,
 				})
 			)
 				.then(() => {
@@ -102,7 +83,7 @@ function User() {
 			Đăng ký
 		</Button>,
 	];
-	const { dataModel, setIndexData, ui, setVisible, visible } = useModel({
+	const { dataModel, setIndexData, ui, setVisible } = useModel({
 		action,
 		title: 'Chi tiết bài viết',
 		data: listNews,
@@ -110,10 +91,7 @@ function User() {
 	});
 	const handleClickActivityFeed = (index, obj) => {
 		if (index === null || index === undefined) {
-			Modal.error({
-				title: 'Lỗi',
-				content: 'Vui lòng tải lại trang và thử lại',
-			});
+			message.error('Vui lòng tải lại trang và thử lại');
 			return;
 		}
 		listNews.forEach((c, index) => {
@@ -143,7 +121,7 @@ function User() {
 					<UpOutlined size="30" style={{ color: 'white' }} />
 				</div>
 			</BackTop>
-			{visible && ui()}
+			{ui()}
 		</Layout>
 	);
 }
