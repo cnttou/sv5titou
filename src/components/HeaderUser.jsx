@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { Menu, Layout, Image } from 'antd';
 import {
 	AppstoreAddOutlined,
@@ -15,6 +15,7 @@ const { Header } = Layout;
 
 export default function HeaderUser() {
 	const user = useSelector((s) => s.user.value);
+	let location = useLocation();
 
 	return (
 		<>
@@ -30,12 +31,13 @@ export default function HeaderUser() {
 				</div>
 				<Menu
 					defaultSelectedKeys={['home']}
+					selectedKeys={[location.pathname.slice(1)]}
 					mode="horizontal"
 					className={styles.menu}
 					expandIcon={false}
 				>
 					<Menu.Item
-						key="home"
+						key="news"
 						icon={
 							<Link to="/news">
 								<HomeOutlined />
