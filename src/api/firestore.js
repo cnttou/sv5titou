@@ -130,6 +130,7 @@ export const editProofActivityApi = (acId, number) => {
 		.collection('users')
 		.doc(uId)
 		.update({
+            confirm: false,
 			proof: firebase.firestore.FieldValue.increment(number),
 		});
 	return db
@@ -138,6 +139,7 @@ export const editProofActivityApi = (acId, number) => {
 		.collection('activities')
 		.doc(acId)
 		.update({
+			confirm: false,
 			proof: firebase.firestore.FieldValue.increment(number),
 		})
 		.then(() => {

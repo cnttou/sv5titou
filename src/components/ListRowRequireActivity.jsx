@@ -1,26 +1,21 @@
-import { Collapse, message, Typography } from 'antd';
+import { Space, List, Typography, message, Modal } from 'antd';
 import { useState } from 'react';
-import { useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { taskEvent, upFileApi } from '../api/firebaseStorage';
+import useModel from '../hooks/useModel';
+import InputUpload from '../components/InputUpload';
+import styles from '../styles/ListRowActivityRegistered.module.css';
 import {
-	cancelMyConfirmProofAction,
-	deleteImageByFullPathAction,
+    addConfirmActivityAction,
 	editProofActivityAction,
-	fetchOtherActivityAction,
 	getImageProofByActivityAction,
-	registerActivityAction,
 } from '../store/actions';
+import {
+	taskEvent,
+	upFileApi,
+} from '../api/firebaseStorage';
 import { addImageToActivityAction } from '../store/reducers/myActivitySlice';
-import { ShowProof } from './ActivityFeed';
-import InputUpload from './InputUpload';
-import styles from '../styles/ListRowOtherActivity.module.css';
-import { addConfirmOtherActivity } from '../store/reducers/otherActivity';
-import Loading from './Loading';
-import ReactQuill from 'react-quill';
-import { nameLevelActivity } from '../config';
+import { useDispatch, useSelector } from 'react-redux';
+import { useEffect } from 'react';
 
-const { Panel } = Collapse;
 const { Text, Title } = Typography;
 
 const initInputUpload = {
@@ -30,36 +25,20 @@ const initInputUpload = {
 	uploadProgress: 0,
 };
 
-const ListRowRequireActivity = () => {
-	const [dataModel, setDataModel] = useState({});
+function ListRowRequireActivity() {
 	const [inputUpload, setInputUpload] = useState(initInputUpload);
 
 	const dispatch = useDispatch();
-	const otherActivity = useSelector(
-		(s) => s.otherActivity.value.filter(c=> c.typeActivity === 'require')
-	);
-	const registerActivity = useSelector((s) =>
+	let data = useSelector((s) =>
 		s.myActivity.value.filter((c) => c.typeActivity === 'require')
 	);
-
-	const getStatusProof = (id) => {
-		let current = registerActivity.find((c) => c.id === id);
-		if (!current) return;
-		const { confirm, proof } = current;
-		if (confirm === undefined || proof === 0) return;
-		else if (confirm === 'false' || confirm === false)
-			return <Text>Minh chứng chưa xác nhận</Text>;
-		else if (confirm === true || confirm === 'true')
-			return <Text type="success">Đã xác nhận</Text>;
-		return <Text type="danger">{confirm}</Text>;
-	};
+	let { loading } = useSelector((s) => s.myActivity);
 
 	const setState = (name, value) => {
 		setInputUpload((s) => ({ ...s, [name]: value }));
 	};
-
 	const handleBeforeUpload = (file) => {
-		if (dataModel?.confirm && dataModel.confirm === true) {
+		if (dataModel.confirm && dataModel.confirm === true) {
 			message.warning('Không thể thêm khi hoạt động đã được xác nhận');
 			return false;
 		}
@@ -70,9 +49,6 @@ const ListRowRequireActivity = () => {
 		return isLt5M;
 	};
 	const handleUpload = (data) => {
-		if (dataModel?.confirm && dataModel.confirm !== false) {
-			dispatch(cancelMyConfirmProofAction(dataModel.id));
-		}
 		const task = upFileApi(dataModel.id, data.file);
 		task.on(
 			taskEvent,
@@ -98,22 +74,9 @@ const ListRowRequireActivity = () => {
 		);
 		task.then((snapshot) => {
 			message.success('Tải lên hoàn tất!!');
-			if (dataModel.confirm !== undefined)
-				dispatch(
-					editProofActivityAction({
-						number: 1,
-						acId: dataModel.id,
-					})
-				);
-			else {
-				dispatch(
-					registerActivityAction({
-						id: dataModel.id,
-						proof: 1,
-						...dataModel,
-					})
-				);
-			}
+			let dataAction = { ...dataModel, number: 1, acId: dataModel.id };
+			if (dataModel.proof) dispatch(editProofActivityAction(dataAction));
+			else dispatch(addConfirmActivityAction({ ...dataAction, proof: 1 }));
 			data.file.status = 'done';
 			snapshot.ref.getDownloadURL().then((url) => {
 				let image = {
@@ -124,130 +87,80 @@ const ListRowRequireActivity = () => {
 				dispatch(
 					addImageToActivityAction({ acId: dataModel.id, image })
 				);
-				setDataModel((preState) => ({
-					...preState,
-					images: preState.images
-						? [...preState.images, image]
-						: [image],
-				}));
 			});
 		});
 	};
-	const handleRemoveImage = (image) => {
-		if (dataModel.confirm === true) {
-			message.warning('Họat động đã được xác nhận nên không xóa ảnh.');
+	const action = [
+		<InputUpload
+			inputUpload={inputUpload}
+			text="Thêm minh chứng"
+			key={'proof'}
+			handleUpload={handleUpload}
+			handleBeforeUpload={handleBeforeUpload}
+		/>,
+	];
+	const { dataModel, setIndexData, ui, setVisible, visible } = useModel({
+		action,
+		title: 'Chi tiết bài viết',
+		data,
+		loading,
+	});
+
+	useEffect(() => {
+		if (visible === true) {
+			setInputUpload(initInputUpload);
+			console.log('Show model', dataModel);
+			if (dataModel.proof && !dataModel.images)
+				dispatch(getImageProofByActivityAction(dataModel.id));
+		}
+	}, [visible]);
+
+	const handleClickActivityFeed = (index, obj) => {
+		if (index === null || index === undefined) {
+			Modal.error({
+				title: 'Lỗi',
+				content: 'Vui lòng tải lại trang và thử lại',
+			});
 			return;
 		}
-		let acId = dataModel['id'];
 
-		console.log('remove image: ', image);
-		if (acId) {
-			dispatch(
-				deleteImageByFullPathAction({ path: image.fullPath, acId })
-			).then(() => {
-				message.success('Xóa ảnh thành công');
-				setDataModel((preState) => ({
-					...preState,
-					images: preState.images.filter(
-						(c) => c.name !== image.name
-					),
-				}));
-				dispatch(
-					editProofActivityAction({
-						number: -1,
-						acId,
-					})
-				);
-			});
-		}
+		setIndexData(index);
+		setVisible(true);
 	};
-	const handleChangeCollapse = (id) => {
-		if (id) {
-			const t = registerActivity.find((c) => c.id == id) || {};
-			const t2 = otherActivity.find((c) => c.id === id);
-			if (t && t.proof && !t.images && t.proof !== 0) {
-				dispatch(getImageProofByActivityAction(id)).then((res) => {
-					setDataModel((preState) => ({
-						...preState,
-						images: res.payload.images,
-					}));
-				});
-			} else {
-				setDataModel({ ...t2, ...t });
-			}
-			dispatch(addConfirmOtherActivity({ confirm: t.confirm, id }));
-			console.log({ ...t2, ...t });
-		}
+	const getStatusProof = (confirm, proof) => {
+		if (proof === 0) return;
+		else if (confirm === false)
+			return <Text>Minh chứng chưa xác nhận</Text>;
+		else if (confirm === true)
+			return <Text type="success">Đã xác nhận</Text>;
+		return <Text type="danger">{confirm}</Text>;
 	};
-
 	return (
-		<Collapse
-			onChange={handleChangeCollapse}
-			accordion={true}
-			style={{ backgroundColor: 'white' }}
-		>
-			<Panel
-				collapsible="disabled"
-				header={
-					<div className={styles.wrapperHeader}>
-						<Title level={5}>Danh sách các minh chứng bắt buộc</Title>
-					</div>
-				}
-				key="0"
-				showArrow={false}
-			></Panel>
-			{otherActivity.length ? (
-				otherActivity.map((c, i) => (
-					<Panel
-						showArrow={false}
-						header={
-							<div className={styles.wrapperHeader}>
-								<Text>
-									{c.name}{' '}
-									<Text mark>
-										{nameLevelActivity[c.level]}
-									</Text>
-								</Text>
-								<Text>{getStatusProof(c.id)}</Text>
-							</div>
-						}
-						key={c.id}
-					>
-						<ReactQuill
-							theme={null}
-							defaultValue={c.summary}
-							readOnly={true}
-							// className={showFull ? '' : styles.editer}
-							// style={{ height: '100%' }}
-						/>
-
-						{dataModel.images && (
-							<ShowProof
-								images={dataModel.images}
-								handleRemoveImage={
-									c.confirm === true
-										? null
-										: handleRemoveImage
-								}
-							/>
-						)}
-						<br />
-						{c.confirm === true ? null : (
-							<InputUpload
-								inputUpload={inputUpload}
-								text="Thêm minh chứng"
-								key={'proof'}
-								handleUpload={handleUpload}
-								handleBeforeUpload={handleBeforeUpload}
-							/>
-						)}
-					</Panel>
-				))
-			) : (
-				<Loading />
-			)}
-		</Collapse>
+		<>
+			<Space direction="vertical">
+				<List
+					header={
+						<Title level={5}>Danh sách minh chứng bắt buộc</Title>
+					}
+					bordered
+					className={styles.list}
+					dataSource={data}
+					renderItem={(item, index) => (
+						<List.Item
+							onClick={() => handleClickActivityFeed(index, item)}
+							className={styles.listItem}
+						>
+							<Text ellipsis={true}>{item.name}</Text>
+							<Text>
+								{getStatusProof(item.confirm, item.proof)}
+							</Text>
+						</List.Item>
+					)}
+				/>
+			</Space>
+			{ui()}
+		</>
 	);
-};
+}
 
 export default ListRowRequireActivity;

@@ -5,8 +5,7 @@ import {
 	PaperClipOutlined,
 } from '@ant-design/icons';
 import { Typography, Button, Card, Image, List } from 'antd';
-import { lazy } from 'react';
-const ReactQuill = lazy(() => import('react-quill'));
+import ReactQuill from 'react-quill';
 import styles from '../styles/ActivityFeed.module.css';
 import Loading from './Loading';
 import { nameLevelActivity } from '../config';
@@ -59,7 +58,6 @@ function ActivityFeed(props) {
 				headStyle={{
 					background: colorCard(id, confirm),
 				}}
-                
 				bodyStyle={{ paddingBottom: 0 }}
 				title={
 					<>
@@ -69,7 +67,7 @@ function ActivityFeed(props) {
 						<Text type="secondary">{nameLevelActivity[level]}</Text>
 					</>
 				}
-                size="small"
+				size="small"
 				extra={
 					showFull && (
 						<Text
@@ -83,30 +81,39 @@ function ActivityFeed(props) {
 				}
 				onClick={handleClick}
 			>
-				<p>
-					<strong>Khoa:</strong> {nameDepartmentActivity[department]}
-				</p>
-				<p>
-					<strong>Thời gian:</strong> {date}
-				</p>
-				<p>
-					<strong>Địa điểm:</strong> {location}
-				</p>
+				{department && (
+					<p>
+						<strong>Khoa:</strong>{' '}
+						{nameDepartmentActivity[department]}
+					</p>
+				)}
+				{date && (
+					<p>
+						<strong>Thời gian:</strong> {date}
+					</p>
+				)}
+				{location && (
+					<p>
+						<strong>Địa điểm:</strong> {location}
+					</p>
+				)}
 				{numPeople && (
 					<p>
 						<strong>Số lượng tối đa:</strong> {numPeople}
 					</p>
 				)}
-				{target && <p>
-					<strong>Tiêu chí xét SV5T:</strong>{' '}
-					{target.map((c) => nameTarget[c]).join(', ')}
-				</p>}
-				{showFull && (
+				{target && (
+					<p>
+						<strong>Tiêu chí xét SV5T:</strong>{' '}
+						{target.map((c) => nameTarget[c]).join(', ')}
+					</p>
+				)}
+				{showFull && summary && (
 					<div style={{ marginBottom: 0 }}>
 						<strong>Thông tin chi tiết:</strong>
 						<ReactQuill
 							theme={null}
-							defaultValue={summary}
+							value={summary}
 							readOnly={true}
 							className={showFull ? '' : styles.editer}
 							style={{ height: '100%' }}

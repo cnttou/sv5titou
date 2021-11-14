@@ -1,5 +1,6 @@
 import { createSlice } from '@reduxjs/toolkit';
 import {
+	addConfirmActivityAction,
 	cancelMyConfirmProofAction,
 	deleteImageByFullPathAction,
 	editProofActivityAction,
@@ -19,18 +20,18 @@ export const myActivitySlice = createSlice({
 	reducers: {
 		addImageToActivityAction: (state, action) => {
 			const { acId, image } = action.payload;
-			let images = state.value.find((c) => c.id === acId)['images'] || [];
-			images.push(image);
 
-			let newValue = state.value.map((c) =>
+			state.value = state.value.map((c) =>
 				c.id === acId
 					? {
 							...c,
-							images,
+							images: c.images ? [...c.images, image] : [image],
 					  }
 					: c
 			);
-			state.value = newValue;
+		},
+		addMoreMyActivityAction: (state, action) => {
+			state.value = [...state.value, ...action.payload];
 		},
 	},
 	extraReducers: (builder) => {
@@ -45,6 +46,12 @@ export const myActivitySlice = createSlice({
 			.addCase(registerActivityAction.fulfilled, (state, action) => {
 				state.value.push(action.payload);
 				state.loading = state.loading - 1;
+			})
+			.addCase(addConfirmActivityAction.fulfilled, (state, action) => {
+				const { acId, proof, confirm } = action.payload;
+				state.value = state.value.map((c) =>
+					c.id === acId ? { ...c, proof, confirm } : c
+				);
 			})
 			.addCase(
 				removeRegisteredActivityAction.fulfilled,
@@ -107,6 +114,7 @@ export const myActivitySlice = createSlice({
 	},
 });
 
-export const { addImageToActivityAction } = myActivitySlice.actions;
+export const { addImageToActivityAction, addMoreMyActivityAction } =
+	myActivitySlice.actions;
 
 export default myActivitySlice.reducer;

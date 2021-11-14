@@ -29,7 +29,7 @@ function ListActivityFeed(props) {
 		else rs.sort((a, b) => compareStringDate(b, a));
 		
         setSort(value);
-		setResultSort(rs);
+		// setResultSort(rs);
 		
         rs = rs.filter((c) => {
 			let rs1 = filter.level ? filter.level === c.level : true;

@@ -6,7 +6,7 @@ const { Title } = Typography;
 const { Sider } = Layout;
 
 function SiderContent(props) {
-    const listActivity = useSelector((state) => state.myActivity.value);
+    const listActivity = useSelector((state) => state.myActivity.value.filter(c=> c.typeActivity === 'register'));
 
 	return (
 		<Sider

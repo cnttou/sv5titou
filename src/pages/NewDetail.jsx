@@ -3,13 +3,14 @@ import { Button, Layout, message } from 'antd';
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useParams } from 'react-router';
-import { getDetailActivityApi } from '../api/firestore';
+import { getDetailActivityApi, getOtherActivitiesApi } from '../api/firestore';
 import ActivityFeed from '../components/ActivityFeed';
 import Loading from '../components/Loading';
 import {
 	fetchRegisteredActivityAction,
 	registerActivityAction,
 } from '../store/actions';
+import { addMoreMyActivityAction } from '../store/reducers/myActivitySlice';
 import styles from '../styles/NewDetail.module.css';
 
 const { Content } = Layout;
@@ -26,7 +27,15 @@ export default function NewDetail() {
 			getDetailActivityApi(id).then((data) => setNews(data));
 		}
 		if (user.uid !== undefined && listActivity.length === 0) {
-			dispatch(fetchRegisteredActivityAction());
+			dispatch(fetchRegisteredActivityAction()).then((res) => {
+				let listId = res.payload.map((c) => c.id);
+				getOtherActivitiesApi().then((data) => {
+					const addData = data.filter(
+						(d) => listId.includes(d.id) === false
+					);
+					dispatch(addMoreMyActivityAction(addData));
+				});
+			});
 		}
 	}, [id, user]);
 

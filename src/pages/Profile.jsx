@@ -117,7 +117,7 @@ function Profile(props) {
 				description={user.studentCode}
 			/>
 			<Divider plain></Divider>
-			<p>
+			<div>
 				<strong>Đăng ký xét SV5T cấp: </strong>
 				<Select
 					placeholder="Chọn cấp xét"
@@ -126,8 +126,8 @@ function Profile(props) {
 				>
 					{optionLevelRegister}
 				</Select>
-			</p>
-			<p>
+			</div>
+			<div>
 				<strong>Các tiêu chí đã hoàn thành:</strong>
 				{user.targetSuccess &&
 					user.targetSuccess.map((c, i) => (
@@ -135,7 +135,7 @@ function Profile(props) {
 							{nameTarget[c]}
 						</Tag>
 					))}
-			</p>
+			</div>
 			<Divider plain></Divider>
 			<Form
 				form={form}
