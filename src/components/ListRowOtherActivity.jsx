@@ -143,10 +143,9 @@ function ListRowOtherActivity() {
 		<>
 			<Space direction="vertical">
 				<List
-					header={
-						<Title level={5}>Danh sách minh chứng khác</Title>
-					}
+					header={<Title level={5}>Danh sách minh chứng khác</Title>}
 					bordered
+					style={{ cursor: 'pointer' }}
 					className={styles.list}
 					dataSource={data}
 					renderItem={(item, index) => (

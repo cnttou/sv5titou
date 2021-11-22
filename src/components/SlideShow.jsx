@@ -3,7 +3,6 @@ import { CloseCircleTwoTone } from '@ant-design/icons';
 import { useDispatch, useSelector } from 'react-redux';
 import { addSlideShow, hideSlideShow } from '../store/reducers/otherSlide';
 import { useHistory } from 'react-router';
-import { s } from '../../dist/assets/vendor.1ae3cce0';
 import { useEffect } from 'react';
 import { getImageSlideShowApi } from '../api/firestore';
 
@@ -63,7 +62,7 @@ export default function SlideShow() {
 						<Card.Meta
 							style={{ textAlign: 'center' }}
 							title={c.title}
-							description={s.description}
+							description={c.description}
 						/>
 					</Card>
 				))}

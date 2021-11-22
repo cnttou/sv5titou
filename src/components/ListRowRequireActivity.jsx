@@ -145,6 +145,7 @@ function ListRowRequireActivity() {
 					bordered
 					className={styles.list}
 					dataSource={data}
+					style={{ cursor: 'pointer' }}
 					renderItem={(item, index) => (
 						<List.Item
 							onClick={() => handleClickActivityFeed(index, item)}

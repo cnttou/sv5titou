@@ -115,6 +115,7 @@ function User() {
 
 	return (
 		<Layout>
+            <SlideShow />
 			<Content className={styles.content}>
 				{listNews.length !== 0 ? (
 					<ListActivityFeed
@@ -133,7 +134,6 @@ function User() {
 				</div>
 			</BackTop>
 			{ui()}
-			<SlideShow />
 		</Layout>
 	);
 }

@@ -203,8 +203,11 @@ function ListRowActivityRegistered() {
 						<List.Item
 							onClick={() => handleClickActivityFeed(index, item)}
 							className={styles.listItem}
+							style={{ cursor: 'pointer' }}
 						>
-							<Text ellipsis={true}>{item.name}</Text>
+							<Text ellipsis={true}>
+								{item.name}
+							</Text>
 							<Text>
 								{getStatusProof(item.confirm, item.proof)}
 							</Text>
