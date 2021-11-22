@@ -15,6 +15,7 @@ import Loading from '../components/Loading';
 import useModel from '../hooks/useModel';
 import { getOtherActivitiesApi } from '../api/firestore';
 import { addMoreMyActivityAction } from '../store/reducers/myActivitySlice';
+import SlideShow from '../components/SlideShow';
 
 const { Content } = Layout;
 
@@ -132,6 +133,7 @@ function User() {
 				</div>
 			</BackTop>
 			{ui()}
+			<SlideShow />
 		</Layout>
 	);
 }

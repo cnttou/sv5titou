@@ -146,6 +146,20 @@ export const editProofActivityApi = (acId, number) => {
 			return { number, acId };
 		});
 };
+export const getImageSlideShowApi = () => {
+	return db.collection('slide_show')
+		.get()
+		.then((querySnapshot) => {
+			let data = [];
+			querySnapshot.forEach((doc) => {
+				data.push({
+					...doc.data(),
+					id: doc.id,
+				});
+			});
+			return data;
+		});
+};
 export const getDetailActivityApi = (docId = '') => {
 	return db
 		.collection('news')

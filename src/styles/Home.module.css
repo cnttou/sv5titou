@@ -26,7 +26,9 @@
 	flex: 1;
 	width: 50%;
 }
-
+.itemSlide{
+    background-color: rgb(71, 88, 159) none repeat scroll 0% 0%;
+}
 .backTopButton {
 	width: 45px;
 	height: 45px;
@@ -42,6 +44,11 @@
 	margin-bottom: 5px;
 	margin-left: 5px;
 }
+
+.modalSlideShow{
+    background-color: transparent;
+}
+
 @media only screen and (max-width: 750px) {
 	.search {
 		padding: 0;

@@ -3,9 +3,24 @@ import ActivityFeed from './ActivityFeed';
 import styles from '../styles/ListActivityFeed.module.css';
 import { useState } from 'react';
 import { compareStringDate, compareStringName } from '../utils/compareFunction';
+import { nameTarget } from '../config';
+import { nameLevelActivity } from '../config';
 
 const { Option } = Select;
 const { Search } = Input;
+
+const optionNameTarget = Object.entries(nameTarget).map(([key, value]) => (
+	<Option key={key} value={key}>
+		{value}
+	</Option>
+));
+
+const getOption = (nameList) =>
+	Object.entries(nameList).map(([key, value]) => (
+		<Option key={key} value={key}>
+			{value}
+		</Option>
+	));
 
 function ListActivityFeed(props) {
 	const { data, checkRegister, handleClick } = props;
@@ -27,11 +42,11 @@ function ListActivityFeed(props) {
 		else if (value === 'nameza') rs.sort((a, b) => compareStringName(b, a));
 		else if (value === 'dateaz') rs.sort((a, b) => compareStringDate(a, b));
 		else rs.sort((a, b) => compareStringDate(b, a));
-		
-        setSort(value);
+
+		setSort(value);
 		// setResultSort(rs);
-		
-        rs = rs.filter((c) => {
+
+		rs = rs.filter((c) => {
 			let rs1 = filter.level ? filter.level === c.level : true;
 			let rs2 = filter.target ? c.target.includes(filter.target) : true;
 			return rs1 && rs2;
@@ -73,12 +88,12 @@ function ListActivityFeed(props) {
 			return c.name.toLowerCase().indexOf(kw) !== -1;
 		});
 		if (rs.length === 0) {
-            message.info('Tìm không thấy!!');
+			message.info('Tìm không thấy!!');
 		} else {
-            setResultSearch(rs);
-            setSort(null)
-            setFilter({target: null, level: null})
-        }
+			setResultSearch(rs);
+			setSort(null);
+			setFilter({ target: null, level: null });
+		}
 	};
 	const loadListActivity = () => {
 		let list = [];
@@ -129,11 +144,7 @@ function ListActivityFeed(props) {
 						value={filter.target}
 					>
 						<Option value={null}> -- </Option>
-						<Option value={'tinh-nguyen'}>Tình nguyện</Option>
-						<Option value={'hoi-nhap'}>Hội nhập</Option>
-						<Option value={'dao-duc'}>Đạo đức</Option>
-						<Option value={'the-luc'}>Thể lực</Option>
-						<Option value={'hoc-tap'}>Học tập</Option>
+						{getOption(nameTarget)}
 					</Select>
 					<Select
 						placeholder="Lọc cấp HĐ"
@@ -142,9 +153,7 @@ function ListActivityFeed(props) {
 						style={{ width: 'calc(100% / 3)' }}
 					>
 						<Option value={null}> -- </Option>
-						<Option value={'truong'}>Cấp trường</Option>
-						<Option value={'khoa'}>Cấp khoa</Option>
-						<Option value={'lop'}>Cấp chi</Option>
+						{getOption(nameLevelActivity)}
 					</Select>
 				</Input.Group>
 			</div>

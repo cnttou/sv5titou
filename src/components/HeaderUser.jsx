@@ -24,7 +24,7 @@ export default function HeaderUser() {
 					<Image
 						width={75}
 						preview={false}
-						src="/logo.png"
+						src="/logo-header.png"
 						alt="logo menu bar"
 						className={styles.logo}
 					/>
