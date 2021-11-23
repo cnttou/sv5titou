@@ -1,10 +1,26 @@
 .content {
-	display: flex;
-	justify-content: center;
-	align-items: center;
-	min-height: calc(100vh - 121px);
+	min-height: calc(100vh - 109px);
 	width: 100%;
+	background: rgb(255, 255, 255) bottom no-repeat scroll
+		url('/svg/login-baclground.jpg');
+	background-size: 70%;
 }
 .btnLoginGG {
 	height: 50px;
+	z-index: 5;
+	border: 1px solid #5262a5;
+	position: absolute;
+	top: 25%;
+	left: 50%;
+	transform: translate(-50%, -75%);
+}
+
+@media only screen and (max-width: 600px) {
+	.btnLoginGG {
+		top: 30%;
+		transform: translate(-50%, -70%);
+	}
+	.content {
+		background-size: 100%;
+	}
 }

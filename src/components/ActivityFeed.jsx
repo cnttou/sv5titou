@@ -42,6 +42,7 @@ function ActivityFeed(props) {
 		images,
 		confirm,
 		level,
+        image
 	} = data;
 	const handleClick = () => {
 		if (handleClickDetail) handleClickDetail(props.index, data);
@@ -53,7 +54,7 @@ function ActivityFeed(props) {
 				bordered={bordered || false}
 				className={styles.card}
 				style={
-					showFull ? { maxHeight: '75vh', overflow: 'scroll' } : null
+					showFull ? { maxHeight: '75vh', overflow: 'auto' } : null
 				}
 				headStyle={{
 					background: colorCard(id, confirm),
@@ -79,6 +80,19 @@ function ActivityFeed(props) {
 						</Text>
 					)
 				}
+				cover={
+					image && (
+						<>
+							<img
+								style={{
+									objectFit: 'cover',
+								}}
+								alt={image}
+								src={image}
+							/>
+						</>
+					)
+				}
 				onClick={handleClick}
 			>
 				{department && (
@@ -97,7 +111,7 @@ function ActivityFeed(props) {
 						<strong>Địa điểm:</strong> {location}
 					</p>
 				)}
-				{numPeople && (
+				{showFull && numPeople && (
 					<p>
 						<strong>Số lượng tối đa:</strong> {numPeople}
 					</p>

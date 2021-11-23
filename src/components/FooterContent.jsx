@@ -1,24 +1,16 @@
 import { Layout } from 'antd';
+import styles from '../styles/Footer.module.css'
 
 const { Footer } = Layout;
 
 function FooterContent(props) {
 	return (
-		<Footer style={styles.footer}>
-			Copyright © 2021 Trường Đại học Mở Thành Phố Hồ Chí Minh
-			{/* <br /><span>Design ©2021</span> */}
+		<Footer className={styles.footer}>
+			<span className={styles.copyright}>Copyright © 2021</span> Trường Đại học Mở Thành Phố Hồ Chí
+			Minh
 		</Footer>
 	);
 }
 
-const styles = {
-	footer: {
-		textAlign: 'center',
-		borderTop: '1px solid #5262a5',
-		marginTop: '10px',
-        height: "47px",
-		padding: '12px 50px',
-	},
-};
 
 export default FooterContent;

@@ -1,7 +1,7 @@
 .card {
 	min-width: 453px;
     max-width: 520px;
-	max-height: 350px;
+	/* max-height: 350px; */
     /* max-width: calc(100vw - 305px); */
 	overflow: hidden;
 }

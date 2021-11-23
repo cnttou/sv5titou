@@ -2,7 +2,11 @@ import { GoogleOutlined } from '@ant-design/icons';
 import { Button, Layout, message } from 'antd';
 import { loginByGoogle, logoutApi } from '../api/authentication';
 import { useDispatch } from 'react-redux';
-import { addUserDetailAction, loginAction, logoutAction } from '../store/actions';
+import {
+	addUserDetailAction,
+	loginAction,
+	logoutAction,
+} from '../store/actions';
 import styles from '../styles/Login.module.css';
 import { useEffect } from 'react';
 import { useHistory } from 'react-router';
@@ -19,18 +23,18 @@ const Login = () => {
 	const dispatch = useDispatch();
 
 	useEffect(() => {
-		logoutApi()
-        dispatch(logoutAction())
+		logoutApi();
+		dispatch(logoutAction());
 	}, []);
 
 	const handleLoginWithGmail = async () => {
-        await logoutApi();
+		await logoutApi();
 		loginByGoogle()
 			.then((result) => {
 				const user = result.user;
 				if (user.email.slice(-9) === 'ou.edu.vn') {
 					router.replace('/');
-                    dispatch(addUserDetailAction({}));
+					dispatch(addUserDetailAction({}));
 				} else if (user.email) {
 					message.warning('Vui lòng đăng nhập email trường cấp!');
 					logoutApi();

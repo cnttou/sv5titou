@@ -1,10 +1,11 @@
-import { Modal, Carousel, Card } from 'antd';
+import { Modal, Carousel, Card, Typography } from 'antd';
 import { CloseCircleTwoTone } from '@ant-design/icons';
 import { useDispatch, useSelector } from 'react-redux';
 import { addSlideShow, hideSlideShow } from '../store/reducers/otherSlide';
 import { useHistory } from 'react-router';
 import { useEffect } from 'react';
 import { getImageSlideShowApi } from '../api/firestore';
+import styles from '../styles/SlideShow.module.css';
 
 export default function SlideShow() {
 	const { isShowSlide, slideShowItems } = useSelector((state) => state.other);
@@ -36,36 +37,31 @@ export default function SlideShow() {
 			bodyStyle={{ padding: 0 }}
 			closeIcon={
 				<CloseCircleTwoTone
-					style={{ fontSize: '25px', marginRight: 5 }}
+					style={{ fontSize: '25px', marginRight: 1 }}
 				/>
 			}
 			footer={null}
 			onCancel={handleCLick}
 		>
-			<Carousel autoplay={true} dotPosition="top">
-				{slideShowItems.length && slideShowItems.map((c, index) => (
-					<Card
-                        key={index}
-						hoverable
-						bodyStyle={{ padding: 5 }}
-						onClick={() => handleCLick(c.link)}
-						cover={
-							<>
-								<img
-									style={{ maxHeight: '70vh', objectFit: 'cover'}}
-									alt="example"
-									src={c.image}
-								/>
-							</>
-						}
-					>
-						<Card.Meta
-							style={{ textAlign: 'center' }}
-							title={c.title}
-							description={c.description}
-						/>
-					</Card>
-				))}
+			<Carousel autoplay={true} dotPosition="top" effect="fade">
+				{slideShowItems.length &&
+					slideShowItems.map((c, index) => (
+						<Card
+                            key={index}
+							bodyStyle={{ maxHeight: 560, padding: 0 }}
+							onClick={() => handleCLick(c.url)}
+						>
+							<img
+								style={{
+									objectFit: 'cover',
+									width: '100%',
+									maxWidth: 1000,
+								}}
+								alt={index}
+								src={c.image}
+							/>
+						</Card>
+					))}
 			</Carousel>
 		</Modal>
 	);

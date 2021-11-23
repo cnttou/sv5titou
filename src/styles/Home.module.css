@@ -4,7 +4,7 @@
 	flex-direction: column;
 	background-color: #f0f2f5;
 	padding-top: 5px;
-	min-height: calc(100vh - 121px);
+	min-height: calc(100vh - 109px);
 	max-width: calc(100vw - 305px);
 }
 
@@ -26,8 +26,8 @@
 	flex: 1;
 	width: 50%;
 }
-.itemSlide{
-    background-color: rgb(71, 88, 159) none repeat scroll 0% 0%;
+.itemSlide {
+	background-color: rgb(71, 88, 159) none repeat scroll 0% 0%;
 }
 .backTopButton {
 	width: 45px;
@@ -45,8 +45,8 @@
 	margin-left: 5px;
 }
 
-.modalSlideShow{
-    background-color: transparent;
+.modalSlideShow {
+	background-color: transparent;
 }
 
 @media only screen and (max-width: 750px) {
