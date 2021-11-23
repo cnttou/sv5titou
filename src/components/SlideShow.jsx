@@ -2,15 +2,13 @@ import { Modal, Carousel, Card, Typography } from 'antd';
 import { CloseCircleTwoTone } from '@ant-design/icons';
 import { useDispatch, useSelector } from 'react-redux';
 import { addSlideShow, hideSlideShow } from '../store/reducers/otherSlide';
-import { useHistory } from 'react-router';
 import { useEffect } from 'react';
 import { getImageSlideShowApi } from '../api/firestore';
-import styles from '../styles/SlideShow.module.css';
+
 
 export default function SlideShow() {
 	const { isShowSlide, slideShowItems } = useSelector((state) => state.other);
 	const dispatch = useDispatch();
-	const history = useHistory();
 
 	useEffect(() => {
 		if (slideShowItems.length === 0)
@@ -23,9 +21,6 @@ export default function SlideShow() {
 	}, []);
 
 	const handleCLick = (url) => {
-		if (url) {
-			history.push(url);
-		}
 		dispatch(hideSlideShow());
 	};
 
@@ -43,23 +38,39 @@ export default function SlideShow() {
 			footer={null}
 			onCancel={handleCLick}
 		>
-			<Carousel autoplay={true} dotPosition="top" effect="fade">
+			<Carousel autoplay={false} dotPosition="top" effect="fade">
 				{slideShowItems.length &&
 					slideShowItems.map((c, index) => (
 						<Card
-                            key={index}
-							bodyStyle={{ maxHeight: 560, padding: 0 }}
-							onClick={() => handleCLick(c.url)}
+							key={index}
+							style={{ padding: 0 }}
+							bodyStyle={{
+								maxHeight: 560,
+								padding: 0,
+								maxWidth: 1000,
+							}}
 						>
-							<img
-								style={{
-									objectFit: 'cover',
-									width: '100%',
-									maxWidth: 1000,
-								}}
-								alt={index}
-								src={c.image}
-							/>
+							{c.url ? (
+								<a href={c.url} target="_blank">
+									<img
+										style={{
+											objectFit: 'cover',
+											width: '100%',
+										}}
+										alt={''}
+										src={c.image}
+									/>
+								</a>
+							) : (
+								<img
+									style={{
+										objectFit: 'cover',
+										width: '100%',
+									}}
+									alt={''}
+									src={c.image}
+								/>
+							)}
 						</Card>
 					))}
 			</Carousel>

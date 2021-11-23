@@ -8,6 +8,7 @@ import {
 } from '../store/actions';
 import { Layout, Button, BackTop, message } from 'antd';
 import { PlusCircleOutlined, UpOutlined } from '@ant-design/icons';
+import SlideShow from '../components/SlideShow';
 const ListActivityFeed = lazy(() => import('../components/ListActivityFeed'));
 const SiderContent = lazy(() => import('../components/SiderContent'));
 import styles from '../styles/Home.module.css';
@@ -15,7 +16,6 @@ import Loading from '../components/Loading';
 import useModel from '../hooks/useModel';
 import { getOtherActivitiesApi } from '../api/firestore';
 import { addMoreMyActivityAction } from '../store/reducers/myActivitySlice';
-import SlideShow from '../components/SlideShow';
 
 const { Content } = Layout;
 

@@ -42,7 +42,7 @@ function ActivityFeed(props) {
 		images,
 		confirm,
 		level,
-        image
+		image,
 	} = data;
 	const handleClick = () => {
 		if (handleClickDetail) handleClickDetail(props.index, data);
@@ -84,10 +84,17 @@ function ActivityFeed(props) {
 					image && (
 						<>
 							<img
-								style={{
-									objectFit: 'cover',
-								}}
-								alt={image}
+								style={
+									showFull
+										? {
+												objectFit: 'cover',
+										  }
+										: {
+												objectFit: 'cover',
+												maxHeight: 320,
+										  }
+								}
+								alt={""}
 								src={image}
 							/>
 						</>
