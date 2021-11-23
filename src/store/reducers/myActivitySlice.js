@@ -16,6 +16,8 @@ export const myActivitySlice = createSlice({
 	initialState: {
 		value: [],
 		loading: 0,
+		unregistering: 0,
+		registering: 0,
 	},
 	reducers: {
 		addImageToActivityAction: (state, action) => {
@@ -36,31 +38,12 @@ export const myActivitySlice = createSlice({
 	},
 	extraReducers: (builder) => {
 		builder
-			.addCase(
-				fetchRegisteredActivityAction.fulfilled,
-				(state, action) => {
-					state.value = action.payload;
-					state.loading = state.loading - 1;
-				}
-			)
-			.addCase(registerActivityAction.fulfilled, (state, action) => {
-				state.value.push(action.payload);
-				state.loading = state.loading - 1;
-			})
 			.addCase(addConfirmActivityAction.fulfilled, (state, action) => {
 				const { acId, proof, confirm } = action.payload;
 				state.value = state.value.map((c) =>
 					c.id === acId ? { ...c, proof, confirm } : c
 				);
 			})
-			.addCase(
-				removeRegisteredActivityAction.fulfilled,
-				(state, action) => {
-					state.value = state.value.filter(
-						(c) => c.id != action.payload
-					);
-				}
-			)
 			.addCase(cancelMyConfirmProofAction.fulfilled, (state, action) => {
 				const { acId, confirm } = action.payload;
 				state.value = state.value.map((c) =>
@@ -99,17 +82,45 @@ export const myActivitySlice = createSlice({
 				state.value = [];
 			});
 		builder
+			.addCase(
+				removeRegisteredActivityAction.fulfilled,
+				(state, action) => {
+					state.value = state.value.filter(
+						(c) => c.id != action.payload
+					);
+					state.unregistering = state.unregistering - 1;
+				}
+			)
+			.addCase(removeRegisteredActivityAction.pending, (state) => {
+				state.unregistering = state.unregistering + 1;
+			})
+			.addCase(removeRegisteredActivityAction.rejected, (state) => {
+				state.unregistering = state.unregistering - 1;
+			});
+		builder
+			.addCase(
+				fetchRegisteredActivityAction.fulfilled,
+				(state, action) => {
+					state.value = action.payload;
+					state.loading = state.loading - 1;
+				}
+			)
 			.addCase(fetchRegisteredActivityAction.pending, (state) => {
 				state.loading = state.loading + 1;
 			})
 			.addCase(fetchRegisteredActivityAction.rejected, (state) => {
 				state.loading = state.loading - 1;
+			});
+		builder
+			.addCase(registerActivityAction.fulfilled, (state, action) => {
+				state.value.push(action.payload);
+				state.registering = state.registering - 1;
 			})
 			.addCase(registerActivityAction.pending, (state) => {
-				state.loading = state.loading + 1;
+				state.registering = state.registering + 1;
 			})
 			.addCase(registerActivityAction.rejected, (state) => {
-				state.loading = state.loading - 1;
+				state.registering = state.registering - 1;
 			});
 	},
 });

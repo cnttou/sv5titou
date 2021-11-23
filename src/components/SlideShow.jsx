@@ -13,7 +13,7 @@ export default function SlideShow() {
 	useEffect(() => {
 		if (slideShowItems.length === 0)
 			getImageSlideShowApi().then((res) => {
-				dispatch(addSlideShow(res));
+                dispatch(addSlideShow(res));
 				if (res.length === 0) {
 					dispatch(hideSlideShow());
 				}

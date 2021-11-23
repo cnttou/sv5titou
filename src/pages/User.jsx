@@ -7,7 +7,10 @@ import {
 	registerActivityAction,
 } from '../store/actions';
 import { Layout, Button, BackTop, message } from 'antd';
-import { PlusCircleOutlined, UpOutlined } from '@ant-design/icons';
+import {
+	PlusCircleOutlined,
+	UpOutlined,
+} from '@ant-design/icons';
 import SlideShow from '../components/SlideShow';
 const ListActivityFeed = lazy(() => import('../components/ListActivityFeed'));
 const SiderContent = lazy(() => import('../components/SiderContent'));
@@ -23,6 +26,7 @@ function User() {
 	const listNews = useSelector((state) => state.activity.value);
 	const listActivity = useSelector((state) => state.myActivity.value);
 	const user = useSelector((state) => state.user.value);
+    const { registering } = useSelector((s) => s.myActivity);
 
 	const dispatch = useDispatch();
 
@@ -68,14 +72,10 @@ function User() {
 				registerActivityAction({
 					...dataModel,
 				})
-			)
-				.then(() => {
-					message.success('Đăng kí thành công.');
-				})
-				.catch((err) => {
-					message.warning('Đăng kí thất bại, vui lòng thử lại.');
-					console.log('Đăng ký lỗi: ', err);
-				});
+			).catch((err) => {
+				message.warning('Đăng kí thất bại, vui lòng thử lại.');
+				console.log('Đăng ký lỗi: ', err);
+			});
 		} else
 			message.warning(
 				'Bạn phải đăng nhập để thực hiện được chức năng này'
@@ -83,19 +83,23 @@ function User() {
 		console.log('clicked register', dataModel);
 	};
 
-	const action = [
-		<Button
-			key={'đăng ký'}
-			icon={<PlusCircleOutlined />}
-			type="primary"
-			onClick={handleRegister}
-			size="large"
-		>
-			Đăng ký
-		</Button>,
-	];
-	const { dataModel, setIndexData, ui, setVisible } = useModel({
-		action,
+	const getAction = () =>
+		checkRegister(dataModel.id)
+			? null
+			: [
+					<Button
+						key={'đăng ký'}
+						icon={<PlusCircleOutlined />}
+						type="primary"
+						onClick={handleRegister}
+						size="large"
+						loading={registering !== 0}
+					>
+						Đăng ký
+					</Button>,
+			  ];
+	const { visible, dataModel, setIndexData, ui, setVisible } = useModel({
+		getAction,
 		title: 'Chi tiết bài viết',
 		data: listNews,
 		checkRegister,
@@ -115,7 +119,7 @@ function User() {
 
 	return (
 		<Layout>
-            <SlideShow />
+			<SlideShow />
 			<Content className={styles.content}>
 				{listNews.length !== 0 ? (
 					<ListActivityFeed
@@ -133,7 +137,7 @@ function User() {
 					<UpOutlined size="30" style={{ color: 'white' }} />
 				</div>
 			</BackTop>
-			{ui()}
+			{visible && ui()}
 		</Layout>
 	);
 }

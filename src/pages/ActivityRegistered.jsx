@@ -5,7 +5,6 @@ import { useDispatch, useSelector } from 'react-redux';
 import {
 	fetchRegisteredActivityAction,
 } from '../store/actions';
-import Loading from '../components/Loading';
 import ListRowActivityRegistered from '../components/ListRowActivityRegistered';
 import ListRowOtherActivity from '../components/ListRowOtherActivity';
 import ListRowRequireActivity from '../components/ListRowRequireActivity';

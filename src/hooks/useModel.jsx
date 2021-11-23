@@ -4,7 +4,7 @@ import ActivityFeed from '../components/ActivityFeed';
 import { useDispatch } from 'react-redux';
 import { deleteImageByFullPathAction, editProofActivityAction } from '../store/actions';
 
-function useModel({ title, action, checkRegister, loading, data }) {
+function useModel({ title, getAction, checkRegister, loading, data }) {
 	const [visible, setVisible] = useState(false);
 	const [indexData, setIndexData] = useState(0);
 	const dispatch = useDispatch();
@@ -43,7 +43,7 @@ function useModel({ title, action, checkRegister, loading, data }) {
 			bodyStyle={{ padding: 0 }}
 			visible={visible}
 			title={title || 'Chi tiết'}
-			footer={action || null}
+			footer={getAction() || null}
 			centered={true}
 			onCancel={() => setVisible(false)}
 		>

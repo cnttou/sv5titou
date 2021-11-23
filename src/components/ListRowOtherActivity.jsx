@@ -1,35 +1,24 @@
 import { Space, List, Typography, Button, message, Modal } from 'antd';
 import { useState } from 'react';
-import useModel from '../hooks/useModel';
 import InputUpload from '../components/InputUpload';
-import { DeleteOutlined, ExclamationCircleOutlined } from '@ant-design/icons';
 import styles from '../styles/ListRowActivityRegistered.module.css';
 import {
 	addConfirmActivityAction,
+	deleteImageByFullPathAction,
 	editProofActivityAction,
 	getImageProofByActivityAction,
-	removeRegisteredActivityAction,
 } from '../store/actions';
-import {
-	deleteFolderImageActivityApi,
-	taskEvent,
-	upFileApi,
-} from '../api/firebaseStorage';
 import { addImageToActivityAction } from '../store/reducers/myActivitySlice';
 import { useDispatch, useSelector } from 'react-redux';
 import { useEffect } from 'react';
+import ActivityFeed from './ActivityFeed';
+import { colorCard } from './ListRowActivityRegistered';
 
 const { Text, Title } = Typography;
-const { confirm } = Modal;
-const initInputUpload = {
-	onUploadSuccess: true,
-	onUploadStart: false,
-	onUploadError: null,
-	uploadProgress: 0,
-};
 
 function ListRowOtherActivity() {
-	const [inputUpload, setInputUpload] = useState(initInputUpload);
+	const [visible, setVisible] = useState(false);
+	const [indexData, setIndexData] = useState(0);
 
 	const dispatch = useDispatch();
 	let data = useSelector((s) =>
@@ -37,85 +26,35 @@ function ListRowOtherActivity() {
 	);
 	let { loading } = useSelector((s) => s.myActivity);
 
-	const setState = (name, value) => {
-		setInputUpload((s) => ({ ...s, [name]: value }));
-	};
 	const handleBeforeUpload = (file) => {
-		if (dataModel.confirm && dataModel.confirm === true) {
+		if (data[indexData].confirm && data[indexData].confirm === true) {
 			message.warning('Không thể thêm khi hoạt động đã được xác nhận');
 			return false;
 		}
-		const isLt5M = file.size / 1024 / 1024 < 4;
-		if (!isLt5M) {
-			message.error('Ảnh phải nhỏ hơn 4MB!');
-		}
-		return isLt5M;
+		return true;
 	};
-	const handleUpload = (data) => {
-		const task = upFileApi(dataModel.id, data.file);
-		task.on(
-			taskEvent,
-			(snapshot) => {
-				const progress = Math.round(
-					(100 * snapshot.bytesTransferred) / snapshot.totalBytes
-				);
-				data.file.percent = progress;
-				setState('onUploadStart', true);
-				setState('uploadProgress', progress);
-			},
-			(error) => {
-				data.file.status = 'error';
-				message.error('Có lỗi xảy ra vui lòng thử lại');
-				setState('onUploadError', error);
-				setState('onUploadSuccess', false);
-			},
-			() => {
-				data.file.status = 'success';
-				setState('onUploadSuccess', true);
-				setState('onUploadStart', false);
-			}
-		);
-		task.then((snapshot) => {
-			message.success('Tải lên hoàn tất!!');
-			let dataAction = { ...dataModel, number: 1, acId: dataModel.id };
-			if (dataModel.proof) dispatch(editProofActivityAction(dataAction));
-			else
-				dispatch(addConfirmActivityAction({ ...dataAction, proof: 1 }));
-			data.file.status = 'done';
-			snapshot.ref.getDownloadURL().then((url) => {
-				let image = {
-					url,
-					fullPath: snapshot.ref.fullPath,
-					name: snapshot.ref.name,
-				};
-				dispatch(
-					addImageToActivityAction({ acId: dataModel.id, image })
-				);
-			});
-		});
+	const handleAfterUpload = (url, snapshot) => {
+		let dataAction = {
+			...data[indexData],
+			number: 1,
+			acId: data[indexData].id,
+		};
+		if (data[indexData].proof)
+			dispatch(editProofActivityAction(dataAction));
+		else dispatch(addConfirmActivityAction({ ...dataAction, proof: 1 }));
+		let image = {
+			url,
+			fullPath: snapshot.ref.fullPath,
+			name: snapshot.ref.name,
+		};
+		dispatch(addImageToActivityAction({ acId: data[indexData].id, image }));
 	};
-	const action = [
-		<InputUpload
-			inputUpload={inputUpload}
-			text="Thêm minh chứng"
-			key={'proof'}
-			handleUpload={handleUpload}
-			handleBeforeUpload={handleBeforeUpload}
-		/>,
-	];
-	const { dataModel, setIndexData, ui, setVisible, visible } = useModel({
-		action,
-		title: 'Chi tiết bài viết',
-		data,
-		loading,
-	});
 
 	useEffect(() => {
 		if (visible === true) {
-			setInputUpload(initInputUpload);
-			console.log('Show model', dataModel);
-			if (dataModel.proof && !dataModel.images)
-				dispatch(getImageProofByActivityAction(dataModel.id));
+			console.log('Show model', data[indexData]);
+			if (data[indexData].proof && !data[indexData].images)
+				dispatch(getImageProofByActivityAction(data[indexData].id));
 		}
 	}, [visible]);
 
@@ -139,6 +78,43 @@ function ListRowOtherActivity() {
 			return <Text type="success">Đã xác nhận</Text>;
 		return <Text type="danger">{confirm}</Text>;
 	};
+	const getActionModal = () =>
+		visible && data[indexData].confirm !== true
+			? [
+					<InputUpload
+						text="Thêm minh chứng"
+						key={'proof'}
+						id={data[indexData].id}
+						handleAfterUpload={handleAfterUpload}
+						handleBeforeUpload={handleBeforeUpload}
+					/>,
+			  ]
+			: null;
+	const handleRemoveImage = (image) => {
+		if (data[indexData].confirm === true) {
+			message.warning('Họat động đã được xác nhận nên không xóa ảnh.');
+			return;
+		}
+		let acId = data[indexData]['id'];
+
+		console.log('remove image: ', image);
+		if (acId) {
+			dispatch(
+				deleteImageByFullPathAction({
+					path: image.fullPath,
+					acId,
+				})
+			).then(() => {
+				dispatch(
+					editProofActivityAction({
+						number: -1,
+						acId,
+					})
+				);
+			});
+		}
+	};
+
 	return (
 		<>
 			<Space direction="vertical">
@@ -148,6 +124,7 @@ function ListRowOtherActivity() {
 					style={{ cursor: 'pointer' }}
 					className={styles.list}
 					dataSource={data}
+                    loading={loading!==0}
 					renderItem={(item, index) => (
 						<List.Item
 							onClick={() => handleClickActivityFeed(index, item)}
@@ -161,7 +138,30 @@ function ListRowOtherActivity() {
 					)}
 				/>
 			</Space>
-			{ui()}
+			{data[indexData] && (
+				<Modal
+					className="modeUseModel"
+					bodyStyle={{ padding: 0 }}
+					visible={visible}
+					title="Chi tiết"
+					footer={getActionModal() || null}
+					centered={true}
+					onCancel={() => setVisible(false)}
+				>
+					<ActivityFeed
+						{...data[indexData]}
+						showFull={true}
+						colorCard={colorCard}
+						btnDetail={false}
+						loading={false}
+						handleRemoveImage={
+							data[indexData].confirm === true
+								? null
+								: handleRemoveImage
+						}
+					/>
+				</Modal>
+			)}
 		</>
 	);
 }
