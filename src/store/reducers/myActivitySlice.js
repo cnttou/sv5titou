@@ -10,6 +10,32 @@ import {
 	registerActivityAction,
 	removeRegisteredActivityAction,
 } from '../actions';
+const pointSort = {
+	typeActivity: {
+		require: 300,
+		other: 200,
+		register: 100,
+	},
+	target: {
+		'dao-duc': 100,
+		'hoc-tap': 90,
+		'the-luc': 80,
+		'tinh-nguyen': 70,
+		've-ngoai-ngu': 60,
+		've-ky-nang': 50,
+		'hoi-nhap': 40,
+		'tieu-bieu-khac': 30,
+	},
+};
+const handleSort = (activity1, activity2) => {
+	let point1 = pointSort.typeActivity[activity1.typeActivity];
+	let point2 = pointSort.typeActivity[activity2.typeActivity];
+
+	// if (activity1.target.length > 1) point1 = 5 - activity1.target.length;
+	// if (activity2.target.length > 1) point2 = 5 - activity2.target.length;
+	console.log(point1, point2);
+	return point1 - point2;
+};
 
 export const myActivitySlice = createSlice({
 	name: 'myActivity',
@@ -33,7 +59,9 @@ export const myActivitySlice = createSlice({
 			);
 		},
 		addMoreMyActivityAction: (state, action) => {
-			state.value = [...state.value, ...action.payload];
+			state.value = [...state.value, ...action.payload].sort((a, b) =>
+				handleSort(b, a)
+			);
 		},
 	},
 	extraReducers: (builder) => {
@@ -113,7 +141,17 @@ export const myActivitySlice = createSlice({
 			});
 		builder
 			.addCase(registerActivityAction.fulfilled, (state, action) => {
-				state.value.push(action.payload);
+				let flagExsit = false;
+				const { id: acId, ...restData } = action.payload;
+
+				state.value = state.value.map((c) => {
+					if (c.id === acId) {
+						flagExsit = true;
+						return { ...c, ...restData };
+					} else return c;
+				});
+                
+				if (flagExsit === false) state.value.push(action.payload);
 				state.registering = state.registering - 1;
 			})
 			.addCase(registerActivityAction.pending, (state) => {

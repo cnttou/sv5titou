@@ -19,8 +19,8 @@ export const addUserDetailAction = createAsyncThunk(
 
 export const getUserDetailAction = createAsyncThunk(
 	'user/getUserDetail',
-	async (data) => {
-		let response = await getUserDetailApi(data);
+	async () => {
+		let response = await getUserDetailApi();
 		return response;
 	}
 );

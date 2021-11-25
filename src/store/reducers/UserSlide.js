@@ -3,7 +3,8 @@ import { addUserDetailAction, getUserDetailAction, loginAction, logoutAction } f
 
 const initialState = {
 	error: '',
-	value: {}, //uid, email, full_name, class, student_code
+	value: {},
+    loading: 0, //uid, email, full_name, class, student_code
 };
 const reducer = createReducer(initialState, (builder) => {
 	builder.addCase(loginAction, (state, action) => {
@@ -15,10 +16,18 @@ const reducer = createReducer(initialState, (builder) => {
     builder.addCase(addUserDetailAction.fulfilled, (state, action)=>{
         state.value = Object.assign(state.value, action.payload)
     })
-    builder.addCase(getUserDetailAction.fulfilled, (state, action)=>{
-        const data = {...action.payload}
-        state.value = Object.assign(state.value, data)
-    });
+    builder
+		.addCase(getUserDetailAction.fulfilled, (state, action) => {
+			const data = { ...action.payload };
+			state.value = Object.assign(state.value, data);
+            state.loading = state.loading - 1;
+		})
+		.addCase(getUserDetailAction.pending, (state) => {
+			state.loading = state.loading + 1;
+		})
+		.addCase(getUserDetailAction.rejected, (state) => {
+			state.loading = state.loading - 1;
+		});
 });
 
 export default reducer;

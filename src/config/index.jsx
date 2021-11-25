@@ -33,13 +33,14 @@ export const nameDepartmentActivity = {
 	xd: 'Xây Dựng.',
 };
 export const nameTarget = {
-	'hoi-nhap': 'Hội nhập tốt',
-	'hoc-tap': 'Học tập tốt',
 	'dao-duc': 'Đạo đức tốt',
-	'tinh-nguyen': 'Tình nguyện tốt',
+	'hoc-tap': 'Học tập tốt',
 	'the-luc': 'Thể lực tốt',
+	'tinh-nguyen': 'Tình nguyện tốt',
+	'hoi-nhap': 'Hội nhập tốt',
 	've-ngoai-ngu': 'Về ngoại ngữ',
 	've-ky-nang': 'Về kỹ năng',
+	'tieu-bieu-khac': 'Các thành tích tiêu biểu khác',
 };
 export const nameMajors = {
 	7220201: 'Ngôn ngữ Anh',

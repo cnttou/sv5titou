@@ -3,17 +3,20 @@ import ActivityFeed from './ActivityFeed';
 import styles from '../styles/ListActivityFeed.module.css';
 import { useState } from 'react';
 import { compareStringDate, compareStringName } from '../utils/compareFunction';
-import { nameTarget } from '../config';
 import { nameLevelActivity } from '../config';
 
 const { Option } = Select;
 const { Search } = Input;
 
-const optionNameTarget = Object.entries(nameTarget).map(([key, value]) => (
-	<Option key={key} value={key}>
-		{value}
-	</Option>
-));
+const nameTarget = {
+	'dao-duc': 'Đạo đức tốt',
+	'hoc-tap': 'Học tập tốt',
+	'the-luc': 'Thể lực tốt',
+	'tinh-nguyen': 'Tình nguyện tốt',
+	'hoi-nhap': 'Hội nhập tốt',
+	've-ngoai-ngu': 'Về ngoại ngữ',
+	've-ky-nang': 'Về kỹ năng',
+};
 
 const getOption = (nameList) =>
 	Object.entries(nameList).map(([key, value]) => (

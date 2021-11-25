@@ -65,9 +65,40 @@ const colorOption = {
 	'hoi-nhap': '#40a9ff',
 };
 const rules = [{ required: true, message: 'Vui lòng điền thông tin' }];
+const rulesPointLearn = [
+	{
+		required: true,
+		message: 'Vui lòng điền thông tin',
+		type: 'string',
+		max: 2,
+		mix: 1,
+	},
+];
+const rulesPointTraing = [
+	{
+		required: true,
+		message: 'Vui lòng điền thông tin',
+		type: 'string',
+		max: 2,
+		mix: 1,
+	},
+];
+const rulesPhone = [
+	{
+		required: true,
+		message: 'Vui lòng điền thông tin',
+		type: 'string',
+		max: 11,
+		mix: 10,
+	},
+];
+const rulesStudentCode = [
+	{ required: true, message: 'Vui lòng điền thông tin', len: 10 },
+];
 
 function Profile(props) {
 	const [levelReview, setLevelReview] = useState(null);
+	const [loading, setLoading] = useState(false);
 	const [form] = Form.useForm();
 
 	const dispatch = useDispatch();
@@ -87,13 +118,15 @@ function Profile(props) {
 	}, [user]);
 
 	const onFinish = (values) => {
+		setLoading(true);
 		let birthday = dayjs(values.birthday).format('DD-MM-YYYY');
 		console.log({ ...values, birthday });
 		dispatch(addUserDetailAction({ ...values, birthday })).then(
 			(res) => {
-				message.success('Thêm thành công');
+				setLoading(false);
 			},
 			() => {
+				setLoading(false);
 				message.warning('Thêm không thành công, vui lòng thử lại.');
 			}
 		);
@@ -151,6 +184,13 @@ function Profile(props) {
 				<Item label="Lớp" name="classUser" rules={rules}>
 					<Input placeholder="Thêm tên lớp vd: DH18IT01" />
 				</Item>
+				<Item
+					label="Mã số sinh viên"
+					name="studentCode"
+					rules={rulesStudentCode}
+				>
+					<Input placeholder="Nhập mssv" />
+				</Item>
 				<Item label="Ngày sinh" name="birthday" rules={rules}>
 					<DatePicker
 						format="DD-MM-YYYY"
@@ -171,7 +211,11 @@ function Profile(props) {
 						{majorsOption}
 					</Select>
 				</Item>
-				<Item label="Số điện thoại:" name="phoneNumber" rules={rules}>
+				<Item
+					label="Số điện thoại:"
+					name="phoneNumber"
+					rules={rulesPhone}
+				>
 					<Input placeholder="Thêm số đt liên lạc" />
 				</Item>
 				<Item label="Số CMND" name="idCard" rules={rules}>
@@ -180,15 +224,13 @@ function Profile(props) {
 				<Item label="Số ngân hàng" name="bankNumber" rules={rules}>
 					<Input placeholder="Số tài khoản Nam Á bank" />
 				</Item>
-				<Item label="Điểm rèn luyện" name="pointTraining" rules={rules}>
-					<Input placeholder="Điểm rèn luyện" />
-				</Item>
-				<Item label="Điểm trung bình" name="gpa" rules={rules}>
-					<Input placeholder="Điểm tb theo thang điểm 10" />
-				</Item>
-
 				<Item wrapperCol={{ span: 24 }}>
-					<Button type="primary" htmlType="submit" block>
+					<Button
+						type="primary"
+						htmlType="submit"
+						block
+						loading={loading}
+					>
 						Lưu
 					</Button>
 				</Item>

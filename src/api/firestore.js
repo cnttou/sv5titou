@@ -1,3 +1,4 @@
+import dayjs from 'dayjs';
 import { currentUser } from './authentication';
 import firebase from './firebase';
 
@@ -93,7 +94,7 @@ export const getAllRegisterActivityApi = (userId) => {
 };
 export const removeRegisterActivityApi = (acId) => {
 	let uId = firebase.auth().currentUser.uid;
-    db.collection('news').doc(acId).collection('users').doc(uId).delete();
+	db.collection('news').doc(acId).collection('users').doc(uId).delete();
 	return db
 		.collection('register_activity')
 		.doc(uId)
@@ -130,7 +131,7 @@ export const editProofActivityApi = (acId, number) => {
 		.collection('users')
 		.doc(uId)
 		.update({
-            confirm: false,
+			confirm: false,
 			proof: firebase.firestore.FieldValue.increment(number),
 		});
 	return db
@@ -147,7 +148,9 @@ export const editProofActivityApi = (acId, number) => {
 		});
 };
 export const getImageSlideShowApi = () => {
-	return db.collection('slide_show')
+	return db
+		.collection('slide_show')
+		.where('deadline', '>=', dayjs().unix())
 		.get()
 		.then((querySnapshot) => {
 			let data = [];
@@ -255,7 +258,7 @@ export const getUserDetailApi = () => {
 		.collection('register_activity')
 		.doc(currentUser().uid)
 		.get()
-		.then((res) => res.data())
+		.then((res) => ({...res.data(), uid: res.id}))
 		.catch((err) => console.log(err.message));
 };
 export const cancelConfirmMyProofApi = (acId) => {

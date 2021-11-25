@@ -94,10 +94,10 @@ function InputUpload({ text, id, ...props }) {
 				customRequest={handleUpload}
 				beforeUpload={handleBeforeUpload}
 				listType="picture"
-				multiple={true}
+				multiple={false}
 				showUploadList={false}
 			>
-				<Button type="primary" icon={<UploadOutlined />}>
+				<Button type="primary" icon={<UploadOutlined />} loading={inputUpload.onUploadStart}>
 					{text || 'Thêm file'}
 				</Button>
 			</Upload>

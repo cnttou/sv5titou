@@ -25,6 +25,7 @@ export default function SlideShow() {
 	};
 
 	return (
+        slideShowItems.length !== 0?
 		<Modal
 			visible={isShowSlide}
 			width={1000}
@@ -74,6 +75,6 @@ export default function SlideShow() {
 						</Card>
 					))}
 			</Carousel>
-		</Modal>
+		</Modal>: null
 	);
 }

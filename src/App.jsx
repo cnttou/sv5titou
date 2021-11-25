@@ -1,5 +1,5 @@
 import {
-    BrowserRouter as Router,
+	BrowserRouter as Router,
 	Switch,
 	Route,
 	Redirect,
@@ -9,7 +9,7 @@ import { Suspense } from 'react';
 import Loading from './components/Loading';
 import { auth } from './api/authentication';
 import { useDispatch } from 'react-redux';
-import { loginAction } from './store/actions';
+import { getUserDetailAction, loginAction } from './store/actions';
 import { useSelector } from 'react-redux';
 import HeaderUser from './components/HeaderUser';
 import { lazy } from 'react';
@@ -33,13 +33,7 @@ function App() {
 			let studentCode = usr.email.slice(0, 10);
 			let majorsCode = usr.email.slice(3, 6);
 
-			dispatch(
-				loginAction({
-					...usr,
-					studentCode,
-					majors: nameMajors[majorsCode],
-				})
-			);
+			dispatch(getUserDetailAction());
 		}
 	});
 

@@ -5,17 +5,15 @@ import { useDispatch, useSelector } from 'react-redux';
 import {
 	fetchRegisteredActivityAction,
 } from '../store/actions';
-import ListRowActivityRegistered from '../components/ListRowActivityRegistered';
-import ListRowOtherActivity from '../components/ListRowOtherActivity';
-import ListRowRequireActivity from '../components/ListRowRequireActivity';
 import { getOtherActivitiesApi } from '../api/firestore';
 import { addMoreMyActivityAction } from '../store/reducers/myActivitySlice';
+import ListActivityUser from '../components/ListActivityUser';
 
 const { Content } = Layout;
 
 function ActivityRegistered() {
 	const dispatch = useDispatch();
-	let { loading, value: data } = useSelector((s) => s.myActivity);
+	let { value: data } = useSelector((s) => s.myActivity);
 
 	const user = useSelector((state) => state.user.value);
 
@@ -35,9 +33,7 @@ function ActivityRegistered() {
 
 	return (
 		<Content className={styles.content}>
-            <ListRowActivityRegistered />
-            <ListRowRequireActivity />
-            <ListRowOtherActivity />
+            <ListActivityUser />
 		</Content>
 	);
 }
