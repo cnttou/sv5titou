@@ -39,7 +39,7 @@ export default function SlideShow() {
 			footer={null}
 			onCancel={handleCLick}
 		>
-			<Carousel autoplay={false} dotPosition="top" effect="fade">
+			<Carousel autoplay={true} dotPosition="top" effect="fade">
 				{slideShowItems.length &&
 					slideShowItems.map((c, index) => (
 						<Card

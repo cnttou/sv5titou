@@ -11,13 +11,10 @@ import InputUpload from '../components/InputUpload';
 import { DeleteOutlined, ExclamationCircleOutlined } from '@ant-design/icons';
 import styles from '../styles/ListRowActivityRegistered.module.css';
 import {
-	addConfirmActivityAction,
 	addUserDetailAction,
-	cancelMyConfirmProofAction,
 	deleteImageByFullPathAction,
 	editProofActivityAction,
 	getImageProofByActivityAction,
-	getUserDetailAction,
 	registerActivityAction,
 	removeRegisteredActivityAction,
 } from '../store/actions';

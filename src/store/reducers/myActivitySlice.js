@@ -59,6 +59,16 @@ export const myActivitySlice = createSlice({
 				handleSort(b, a)
 			);
 		},
+		syncMoreMyActivityAction: (state, action) => {
+            const lastData = action.payload;
+            state.value = state.value.map(activity=>{
+                const lastActivity = lastData.find(c=> c.id === activity.id)
+                if (lastActivity) return {...activity, ...lastActivity}
+                else return activity
+            }).sort((a, b) =>
+				handleSort(b, a)
+			);
+		},
 	},
 	extraReducers: (builder) => {
 		builder
@@ -159,7 +169,10 @@ export const myActivitySlice = createSlice({
 	},
 });
 
-export const { addImageToActivityAction, addMoreMyActivityAction } =
-	myActivitySlice.actions;
+export const {
+	addImageToActivityAction,
+	addMoreMyActivityAction,
+	syncMoreMyActivityAction,
+} = myActivitySlice.actions;
 
 export default myActivitySlice.reducer;

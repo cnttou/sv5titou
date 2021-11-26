@@ -22,7 +22,7 @@ import {
 	nameSex,
 	nameLevelRegister,
 } from '../config';
-import { addUserDetailAction, getUserDetailAction } from '../store/actions';
+import { addUserDetailAction } from '../store/actions';
 import styles from '../styles/Profile.module.css';
 import dayjs from 'dayjs';
 import { useState } from 'react';

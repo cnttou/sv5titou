@@ -18,20 +18,24 @@ import styles from '../styles/Home.module.css';
 import Loading from '../components/Loading';
 import useModel from '../hooks/useModel';
 import { getOtherActivitiesApi } from '../api/firestore';
-import { addMoreMyActivityAction } from '../store/reducers/myActivitySlice';
+import { addMoreMyActivityAction, syncMoreMyActivityAction } from '../store/reducers/myActivitySlice';
 
 const { Content } = Layout;
 
 function User() {
 	const listNews = useSelector((state) => state.activity.value);
-	const listActivity = useSelector((state) => state.myActivity.value);
+	const { value: listActivity, loading: loadingMyActivity } = useSelector((state) => state.myActivity);
 	const user = useSelector((state) => state.user.value);
     const { registering } = useSelector((s) => s.myActivity);
 
 	const dispatch = useDispatch();
 
 	useEffect(() => {
-		if (user.uid !== undefined && listNews.length === 0) {
+		if (
+			user.uid !== undefined &&
+			listNews.length === 0 &&
+			loadingMyActivity === 0
+		) {
 			dispatch(fetchRegisteredActivityAction()).then((res) => {
 				let listId = res.payload.map((c) => c.id);
 				getOtherActivitiesApi().then((data) => {
@@ -45,7 +49,9 @@ function User() {
 	}, [user]);
 
 	useEffect(() => {
-		if (listNews.length === 0) dispatch(fetchActivityAction(10));
+		dispatch(fetchActivityAction(100)).then(action=>{
+            dispatch(syncMoreMyActivityAction(action.payload));
+        });
 	}, []);
 
 	const checkRegister = (acId) => {

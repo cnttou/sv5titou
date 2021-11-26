@@ -2,11 +2,7 @@ import { GoogleOutlined } from '@ant-design/icons';
 import { Button, Layout, message } from 'antd';
 import { loginByGoogle, logoutApi } from '../api/authentication';
 import { useDispatch } from 'react-redux';
-import {
-	addUserDetailAction,
-	loginAction,
-	logoutAction,
-} from '../store/actions';
+import { logoutAction } from '../store/actions';
 import styles from '../styles/Login.module.css';
 import { useEffect } from 'react';
 import { useHistory } from 'react-router';
@@ -34,7 +30,6 @@ const Login = () => {
 				const user = result.user;
 				if (user.email.slice(-9) === 'ou.edu.vn') {
 					router.replace('/');
-					dispatch(addUserDetailAction({}));
 				} else if (user.email) {
 					message.warning('Vui lòng đăng nhập email trường cấp!');
 					logoutApi();
