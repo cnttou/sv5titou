@@ -30,10 +30,6 @@ const pointSort = {
 const handleSort = (activity1, activity2) => {
 	let point1 = pointSort.typeActivity[activity1.typeActivity];
 	let point2 = pointSort.typeActivity[activity2.typeActivity];
-
-	// if (activity1.target.length > 1) point1 = 5 - activity1.target.length;
-	// if (activity2.target.length > 1) point2 = 5 - activity2.target.length;
-	console.log(point1, point2);
 	return point1 - point2;
 };
 
@@ -81,7 +77,7 @@ export const myActivitySlice = createSlice({
 			.addCase(editProofActivityAction.fulfilled, (state, action) => {
 				const { number, acId } = action.payload;
 				state.value = state.value.map((c) =>
-					c.id === acId ? { ...c, proof: c.proof + number } : c
+					c.id === acId ? { ...c, proof: c.proof + number, confirm: false } : c
 				);
 			})
 			.addCase(deleteImageByFullPathAction.fulfilled, (state, action) => {

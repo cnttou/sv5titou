@@ -1,6 +1,7 @@
 import dayjs from 'dayjs';
 import { currentUser } from './authentication';
 import firebase from './firebase';
+import { deleteFolderImageActivityApi } from './firebaseStorage';
 
 const db = firebase.firestore();
 
@@ -110,7 +111,7 @@ export const registerActivityApi = (dataActivity) => {
 	let data = {
 		confirm: false,
 		proof: dataActivity.proof || 0,
-		studentCode: currentUser().email.slice(0, 10),
+		email: currentUser().email,
 		displayName: currentUser().displayName,
 	};
 	db.collection('news').doc(acId).collection('users').doc(uId).set(data);
@@ -124,6 +125,16 @@ export const registerActivityApi = (dataActivity) => {
 			return { ...data, ...dataActivity };
 		});
 };
+export const cleanCode =()=>{
+    return db.collection('news').get().then(querySnapshot=>{
+        querySnapshot.forEach(doc=>{
+            removeRegisterActivityApi(doc.id).then(()=> console.log('success clean'));
+            deleteFolderImageActivityApi(doc.id).then(() =>
+				console.log('success clean')
+			);
+        })
+    })
+}
 export const editProofActivityApi = (acId, number) => {
 	let uId = currentUser().uid;
 	db.collection('news')
@@ -243,7 +254,6 @@ export const addUserDetailApi = (data) => {
 		.doc(currentUser().uid)
 		.set(
 			{
-				studentCode: currentUser().email.slice(0, 10),
 				email: currentUser().email,
 				userId: currentUser().uid,
 				...data,
@@ -258,7 +268,11 @@ export const getUserDetailApi = () => {
 		.collection('register_activity')
 		.doc(currentUser().uid)
 		.get()
-		.then((res) => ({...res.data(), uid: res.id}))
+		.then((res) => ({
+			...res.data(),
+			uid: res.id,
+			displayName: currentUser().displayName,
+		}))
 		.catch((err) => console.log(err.message));
 };
 export const cancelConfirmMyProofApi = (acId) => {

@@ -107,7 +107,6 @@ function Profile(props) {
 	useEffect(async () => {
 		if (!user.uid) return;
 		else if (user.fullName === undefined) {
-			await dispatch(getUserDetailAction());
 			if (user.levelReview) setLevelReview(user.levelReview);
 			return;
 		}
@@ -121,7 +120,13 @@ function Profile(props) {
 		setLoading(true);
 		let birthday = dayjs(values.birthday).format('DD-MM-YYYY');
 		console.log({ ...values, birthday });
-		dispatch(addUserDetailAction({ ...values, birthday })).then(
+		dispatch(
+			addUserDetailAction({
+				...values,
+				birthday,
+				classUser: values.classUser.toUpperCase(),
+			})
+		).then(
 			(res) => {
 				setLoading(false);
 			},
@@ -134,7 +139,6 @@ function Profile(props) {
 	const saveMoreData = (value) => {
 		dispatch(addUserDetailAction({ levelReview: value })).then(
 			(res) => {
-				message.success('Thêm thành công');
 				setLevelReview(value);
 			},
 			() => {
@@ -146,7 +150,7 @@ function Profile(props) {
 		<Card bordered={true} className={styles.card}>
 			<Meta
 				avatar={<Avatar src={user.photoURL} />}
-				title={user.displayName}
+				title={user.fullName || user.displayName}
 				description={user.studentCode}
 			/>
 			<Divider plain></Divider>

@@ -11,7 +11,6 @@ import {
 	registerActivityApi,
 	removeRegisterActivityApi,
 	editProofActivityApi,
-	getOtherActivitiesApi,
 } from '../../api/firestore';
 
 export const fetchActivityAction = createAsyncThunk(

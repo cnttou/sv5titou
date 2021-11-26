@@ -23,16 +23,6 @@ function App() {
 
 	auth().onAuthStateChanged((user) => {
 		if (user && user.uid !== currentUser.uid) {
-			const usr = {
-				email: user.email,
-				photoURL: user.photoURL,
-				displayName: user.displayName,
-				uid: user.uid,
-				phoneNumber: user.phoneNumber,
-			};
-			let studentCode = usr.email.slice(0, 10);
-			let majorsCode = usr.email.slice(3, 6);
-
 			dispatch(getUserDetailAction());
 		}
 	});

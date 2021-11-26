@@ -181,8 +181,10 @@ function ListActivityUser() {
 		setIndexData(index);
 		setVisible(true);
 	};
-	const getStatusProof = (confirm, proof) => {
-		if (confirm === true || confirm === 'true')
+	const getStatusProof = (confirm, proof, typeActivity) => {
+		if (proof === 0 && typeActivity === 'require')
+			return null;
+		else if (confirm === true || confirm === 'true')
 			return <Text type="success">Đã xác nhận</Text>;
 		else if (proof === 0) return <Text>Chưa thêm minh chứng</Text>;
 		else if (confirm === 'false' || confirm === false)
@@ -275,7 +277,7 @@ function ListActivityUser() {
 						style={{ cursor: 'pointer', marginLeft: 20 }}
 					>
 						<Text ellipsis={true}>{item.name}</Text>
-						<Text>{getStatusProof(item.confirm, item.proof)}</Text>
+						<Text>{getStatusProof(item.confirm, item.proof, item.typeActivity)}</Text>
 					</List.Item>
 				) : null
 			}
