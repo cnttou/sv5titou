@@ -8,39 +8,62 @@ import pages from './routes/Routes';
 import { Suspense } from 'react';
 import Loading from './components/Loading';
 import { auth } from './api/authentication';
-import { useDispatch } from 'react-redux';
 import {
 	addUserDetailAction,
+	fetchActivityAction,
+	fetchRegisteredActivityAction,
 	getUserDetailAction,
-	loginAction,
 } from './store/actions';
-import { useSelector } from 'react-redux';
 import HeaderUser from './components/HeaderUser';
 import { lazy } from 'react';
 const FooterContent = lazy(() => import('./components/FooterContent'));
 import './App.css';
-import { useEffect, useState } from 'react';
+import {
+	addMoreMyActivityAction,
+	syncMoreMyActivityAction,
+} from './store/reducers/myActivitySlice';
+import { getOtherActivitiesApi, testAddDataApi, testDeteleProofApi, testUpdateDataApi, testUpdateProofApi } from './api/firestore';
+import { useDispatch, useSelector } from 'react-redux';
+import { useState, useEffect } from 'react';
 
 function App() {
 	const dispatch = useDispatch();
-    const [loading, setLoading] = useState(true)
-	const { value: currentUser } = useSelector((s) => s.user);
+	const [loading, setLoading] = useState(true);
+	const currentUser = useSelector((s) => s.user.value);
 
 	useEffect(() => {
-		const sub = auth().onAuthStateChanged((user) => {
-			if (user && user.uid !== currentUser.uid && loading) {
-				setLoading(false)
+		const unsubscribe = auth().onAuthStateChanged((user) => {
+			if (user && loading) {
+				// testDeteleProofApi();
+				setLoading(false);
 				dispatch(getUserDetailAction()).then((action) => {
-					setLoading(true)
+					setLoading(true);
 					const user = action.payload;
-					if (!user.displayName) dispatch(addUserDetailAction({}));
+					if (!user.email) dispatch(addUserDetailAction({}));
+
+					dispatch(fetchRegisteredActivityAction(user.uid)).then(
+						(action) => {
+							let listId = action.payload.map((c) => c.id);
+							getOtherActivitiesApi().then((data) => {
+								const addData = data.filter(
+									(d) => listId.includes(d.id) === false
+								);
+								dispatch(addMoreMyActivityAction(addData));
+							});
+						}
+					);
 				});
 			}
 		});
 
-		return () => {
-			return sub;
-		};
+		return unsubscribe;
+	}, []);
+
+	useEffect(() => {
+        console.log('run on auth');
+		dispatch(fetchActivityAction(100)).then((action) => {
+			dispatch(syncMoreMyActivityAction(action.payload));
+		});
 	}, []);
 
 	const showPage = (pages) => {

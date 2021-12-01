@@ -5,11 +5,9 @@ import {
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import {
 	getActivitiesApi,
-	deleteDataApi,
-	addDataApi,
 	getRegisterActivityApi,
 	registerActivityApi,
-	removeRegisterActivityApi,
+	deleteRegisterActivityApi,
 	editProofActivityApi,
 } from '../../api/firestore';
 
@@ -28,27 +26,10 @@ export const editProofActivityAction = createAsyncThunk(
 	}
 );
 
-export const addActivityAction = createAsyncThunk(
-	'news/addNews',
-	async ({ data, docId }) => {
-		let response = await addDataApi('news', data, docId);
-		console.log('response add activity: ', response);
-		return response;
-	}
-);
-
-export const deleteActivityAction = createAsyncThunk(
-	'news/deleteNews',
-	async (docId) => {
-		let response = await deleteDataApi('news', docId);
-		return response;
-	}
-);
-
 export const fetchRegisteredActivityAction = createAsyncThunk(
 	'registerActivity/fetchRegisterActivity',
-	async () => {
-		let response = await getRegisterActivityApi();
+	async (userId) => {
+		let response = getRegisterActivityApi(userId);
 		return response;
 	}
 );
@@ -72,7 +53,7 @@ export const addConfirmActivityAction = createAsyncThunk(
 export const removeRegisteredActivityAction = createAsyncThunk(
 	'registerActivity/removeRegisterActivity',
 	async (acId) => {
-		return await removeRegisterActivityApi(acId);
+		return await deleteRegisterActivityApi(acId);
 	}
 );
 

@@ -84,7 +84,7 @@ function ActivityFeed(props) {
 					image && (
 						<>
 							<img
-                                loading='lazy'
+                                loading={showFull ? 'null' : 'lazy'}
 								style={
 									showFull
 										? {

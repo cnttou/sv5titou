@@ -46,7 +46,7 @@ export default function SlideShow() {
 							key={index}
 							style={{ padding: 0 }}
 							bodyStyle={{
-								maxHeight: 560,
+								maxHeight: 664,
 								padding: 0,
 								maxWidth: 1000,
 							}}

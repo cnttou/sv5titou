@@ -17,19 +17,19 @@ function ActivityRegistered() {
 
 	const user = useSelector((state) => state.user.value);
 
-	useEffect(() => {
-		if (user.uid !== undefined && data.length === 0) {
-			dispatch(fetchRegisteredActivityAction()).then((res) => {
-				let listId = res.payload.map((c) => c.id);
-				getOtherActivitiesApi().then((data) => {
-					const addData = data.filter(
-						(d) => listId.includes(d.id) === false
-					);
-					dispatch(addMoreMyActivityAction(addData));
-				});
-			});
-		}
-	}, [user]);
+	// useEffect(() => {
+	// 	if (user.uid !== undefined && data.length === 0) {
+	// 		dispatch(fetchRegisteredActivityAction()).then((res) => {
+	// 			let listId = res.payload.map((c) => c.id);
+	// 			getOtherActivitiesApi().then((data) => {
+	// 				const addData = data.filter(
+	// 					(d) => listId.includes(d.id) === false
+	// 				);
+	// 				dispatch(addMoreMyActivityAction(addData));
+	// 			});
+	// 		});
+	// 	}
+	// }, [user]);
 
 	return (
 		<Content className={styles.content}>

@@ -1,60 +1,33 @@
 import { lazy } from 'react';
 import { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import {
-	fetchActivityAction,
-	fetchRegisteredActivityAction,
-	registerActivityAction,
-} from '../store/actions';
+import { fetchActivityAction, registerActivityAction } from '../store/actions';
 import { Layout, Button, BackTop, message } from 'antd';
-import {
-	PlusCircleOutlined,
-	UpOutlined,
-} from '@ant-design/icons';
+import { PlusCircleOutlined, UpOutlined } from '@ant-design/icons';
 import SlideShow from '../components/SlideShow';
 const ListActivityFeed = lazy(() => import('../components/ListActivityFeed'));
 const SiderContent = lazy(() => import('../components/SiderContent'));
 import styles from '../styles/Home.module.css';
 import Loading from '../components/Loading';
 import useModel from '../hooks/useModel';
-import { getOtherActivitiesApi } from '../api/firestore';
-import { addMoreMyActivityAction, syncMoreMyActivityAction } from '../store/reducers/myActivitySlice';
+import { testAddDataApi } from '../api/firestore';
 
 const { Content } = Layout;
 
 function User() {
 	const listNews = useSelector((state) => state.activity.value);
-	const { value: listActivity, loading: loadingMyActivity } = useSelector((state) => state.myActivity);
+	const listActivity = useSelector((state) => state.myActivity.value);
 	const user = useSelector((state) => state.user.value);
-    const { registering } = useSelector((s) => s.myActivity);
+	const { registering } = useSelector((s) => s.myActivity);
 
 	const dispatch = useDispatch();
-
-	useEffect(() => {
-		if (
-			user.uid !== undefined &&
-			listNews.length === 0 &&
-			loadingMyActivity === 0
-		) {
-			dispatch(fetchRegisteredActivityAction()).then((res) => {
-				let listId = res.payload.map((c) => c.id);
-				getOtherActivitiesApi().then((data) => {
-					const addData = data.filter(
-						(d) => listId.includes(d.id) === false
-					);
-					dispatch(addMoreMyActivityAction(addData));
-				});
-			});
-		}
-	}, [user]);
-
-	useEffect(() => {
-		dispatch(fetchActivityAction(100)).then(action=>{
-            dispatch(syncMoreMyActivityAction(action.payload));
-        });
-	}, []);
-
-	const checkRegister = (acId) => {
+    
+    useEffect(() => {
+        // if (user)
+        //     testAddDataApi();
+    }, [user])
+	
+    const checkRegister = (acId) => {
 		if (
 			listActivity.length !== 0 &&
 			listActivity.find((c) => c.id === acId)

@@ -32,15 +32,15 @@ const handleSort = (activity1, activity2) => {
 	let point2 = pointSort.typeActivity[activity2.typeActivity];
 	return point1 - point2;
 };
-
-export const myActivitySlice = createSlice({
-	name: 'myActivity',
-	initialState: {
+const initialState = {
 		value: [],
 		loading: 0,
 		unregistering: 0,
 		registering: 0,
-	},
+}
+export const myActivitySlice = createSlice({
+	name: 'myActivity',
+	initialState,
 	reducers: {
 		addImageToActivityAction: (state, action) => {
 			const { acId, image } = action.payload;
@@ -112,8 +112,11 @@ export const myActivitySlice = createSlice({
 					state.value = newState;
 				}
 			)
-			.addCase(logoutAction, (state) => {
+			.addCase(logoutAction, (state, action) => {
 				state.value = [];
+                state.unregistering = 0;
+                state.registering = 0;
+				state.loading = 0;
 			});
 		builder
 			.addCase(
@@ -135,7 +138,8 @@ export const myActivitySlice = createSlice({
 			.addCase(
 				fetchRegisteredActivityAction.fulfilled,
 				(state, action) => {
-					state.value = action.payload;
+                    if (action.payload)
+					    state.value = action.payload;
 					state.loading = state.loading - 1;
 				}
 			)

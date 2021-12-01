@@ -1,4 +1,4 @@
-import firebase from './firebase';
+import firebase, { app } from './firebase';
 
 
 export const checkLogin = () => {
@@ -8,7 +8,7 @@ export const checkLogin = () => {
 
 export const auth = () => firebase.auth();
 
-export const currentUser = () => firebase.auth()?.currentUser;
+export const currentUser = () => firebase.auth(app).currentUser;
 
 export const logoutApi = () => {
 	return firebase.auth().signOut();

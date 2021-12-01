@@ -4,34 +4,20 @@ import firebase from './firebase';
 import { deleteFolderImageActivityApi } from './firebaseStorage';
 
 const db = firebase.firestore();
+const { arrayRemove, arrayUnion, increment } = firebase.firestore.FieldValue;
+const { documentId } = firebase.firestore.FieldPath;
 
-export const addUrlImageApi = (fileName, acId = '') => {
-	let uId = firebase.auth().currentUser.uid;
+const genId = (userId, acId) => `${userId}_${acId}`;
+const USER = 'register_activity';
+const MY_ACTIVITY = 'activities';
+const ACTIVITY = 'news';
+const USER_REGISTER = 'users';
+
+export const getActivityByListId = (listId) => {
 	return db
-		.collection('register_activity')
-		.doc(uId)
-		.collection('activities')
-		.doc(acId)
-		.update({
-			images: firebase.firestore.FieldValue.arrayUnion(fileName),
-		});
-};
-export const removeUrlImageApi = (fileName, acId = '') => {
-	let uId = firebase.auth().currentUser.uid;
-	return db
-		.collection('register_activity')
-		.doc(uId)
-		.collection('activities')
-		.doc(acId)
-		.update({
-			images: firebase.firestore.FieldValue.arrayRemove(fileName),
-		});
-};
-const getActivityByListId = (listId) => {
-	return db
-		.collection('news')
+		.collection(ACTIVITY)
 		.where('active', '==', true) //.where('typeActivity', '==', 'register')
-		.where(firebase.firestore.FieldPath.documentId(), 'in', listId)
+		.where(documentId(), 'in', listId)
 		.get()
 		.then((querySnapshot) => {
 			let listData = [];
@@ -47,11 +33,11 @@ const getActivityByListId = (listId) => {
 export const getRegisterActivityApi = (userId) => {
 	let uId = userId || currentUser().uid;
 	return db
-		.collection('register_activity')
+		.collection(USER)
 		.doc(uId)
-		.collection('activities')
+		.collection(MY_ACTIVITY)
 		.get()
-		.then(async (querySnapshot) => {
+		.then((querySnapshot) => {
 			let dataUser = [];
 			querySnapshot.forEach((doc) => {
 				dataUser.push({
@@ -59,104 +45,21 @@ export const getRegisterActivityApi = (userId) => {
 					id: doc.id,
 				});
 			});
-
-			if (dataUser.length === 0) return dataUser;
-
-			let activities = await getActivityByListId(
-				dataUser.map((c) => c.id)
-			);
-
-			return activities.map((c) => ({
-				...dataUser.find((d) => d.id === c.id),
-				...c,
-			}));
+			return dataUser;
 		})
-		.catch((error) => console.log(error.message));
-};
-export const getAllRegisterActivityApi = (userId) => {
-	let uId = userId || currentUser().uid;
-
-	return db
-		.collection('register_activity')
-		.doc(uId)
-		.collection('activities')
-		.get()
-		.then((querySnapshot) => {
-			let data = [];
-			querySnapshot.forEach(async (doc) => {
-				data.push({
-					...doc.data(),
-					id: doc.id,
-				});
-			});
-			return data;
+		.then((dataUser) => {
+			if (dataUser.length)
+				return getActivityByListId(dataUser.map((c) => c.id)).then(
+					(activities) => {
+						return activities.map((c) => ({
+							...dataUser.find((d) => d.id === c.id),
+							...c,
+						}));
+					}
+				);
+			return dataUser;
 		})
-		.catch((error) => console.log(error.message));
-};
-export const removeRegisterActivityApi = (acId) => {
-	let uId = firebase.auth().currentUser.uid;
-	db.collection('news').doc(acId).collection('users').doc(uId).delete();
-	return db
-		.collection('register_activity')
-		.doc(uId)
-		.collection('activities')
-		.doc(acId)
-		.delete()
-		.then(() => acId);
-};
-export const registerActivityApi = (dataActivity) => {
-	let uId = currentUser().uid;
-	let acId = dataActivity.id;
-
-	let data = {
-		confirm: false,
-		proof: dataActivity.proof || 0,
-		email: currentUser().email,
-		displayName: currentUser().displayName,
-	};
-	db.collection('news').doc(acId).collection('users').doc(uId).set(data);
-	return db
-		.collection('register_activity')
-		.doc(uId)
-		.collection('activities')
-		.doc(acId)
-		.set(data)
-		.then(() => {
-			return { ...data, ...dataActivity };
-		});
-};
-export const cleanCode =()=>{
-    return db.collection('news').get().then(querySnapshot=>{
-        querySnapshot.forEach(doc=>{
-            removeRegisterActivityApi(doc.id).then(()=> console.log('success clean'));
-            deleteFolderImageActivityApi(doc.id).then(() =>
-				console.log('success clean')
-			);
-        })
-    })
-}
-export const editProofActivityApi = (acId, number) => {
-	let uId = currentUser().uid;
-	db.collection('news')
-		.doc(acId)
-		.collection('users')
-		.doc(uId)
-		.update({
-			confirm: false,
-			proof: firebase.firestore.FieldValue.increment(number),
-		});
-	return db
-		.collection('register_activity')
-		.doc(uId)
-		.collection('activities')
-		.doc(acId)
-		.update({
-			confirm: false,
-			proof: firebase.firestore.FieldValue.increment(number),
-		})
-		.then(() => {
-			return { number, acId };
-		});
+		.catch((error) => console.log('getRegisterActivityApi', error.message));
 };
 export const getImageSlideShowApi = () => {
 	return db
@@ -176,7 +79,7 @@ export const getImageSlideShowApi = () => {
 };
 export const getDetailActivityApi = (docId = '') => {
 	return db
-		.collection('news')
+		.collection(ACTIVITY)
 		.doc(docId)
 		.get()
 		.then((doc) => {
@@ -185,11 +88,12 @@ export const getDetailActivityApi = (docId = '') => {
 				id: doc.id,
 			};
 			return data;
-		});
+		})
+		.catch((error) => console.log(error.message));
 };
 export const getOtherActivitiesApi = () => {
 	return db
-		.collection('news')
+		.collection(ACTIVITY)
 		.where('active', '==', true)
 		.where('typeActivity', 'in', ['require', 'other'])
 		.get()
@@ -202,11 +106,12 @@ export const getOtherActivitiesApi = () => {
 				});
 			});
 			return data;
-		});
+		})
+		.catch((error) => console.log(error.message));
 };
 export const getActivitiesApi = (limit = 25) => {
 	return db
-		.collection('news')
+		.collection(ACTIVITY)
 		.where('active', '==', true)
 		.where('typeActivity', '==', 'register')
 		.limit(limit)
@@ -220,72 +125,96 @@ export const getActivitiesApi = (limit = 25) => {
 				});
 			});
 			return data;
-		});
-};
-export const deleteDataApi = (collection, docId) => {
-	return db
-		.collection(collection || 'news')
-		.doc(docId)
-		.delete()
-		.then(() => docId);
-};
-export const addDataApi = (collection = 'news', data, docId) => {
-	if (docId === null) {
-		return db
-			.collection(collection)
-			.add(data)
-			.then((doc) => ({ ...data, id: doc.id }));
-	} else {
-		return db
-			.collection(collection)
-			.doc(docId)
-			.set(data)
-			.then(() => ({ ...data, id: docId }));
-	}
-};
-export const addUserDetailApi = (data) => {
-	console.log('data add :', {
-		email: currentUser().email,
-		userId: currentUser().uid,
-		...data,
-	});
-	return db
-		.collection('register_activity')
-		.doc(currentUser().uid)
-		.set(
-			{
-				email: currentUser().email,
-				userId: currentUser().uid,
-				...data,
-			},
-			{ merge: true }
-		)
-		.then(() => ({ ...data }))
-		.catch((err) => console.log(err.message));
+		})
+		.catch((error) => console.log(error.message));
 };
 export const getUserDetailApi = () => {
 	return db
-		.collection('register_activity')
+		.collection(USER)
 		.doc(currentUser().uid)
 		.get()
 		.then((res) => ({
 			...res.data(),
 			uid: res.id,
-			displayName: currentUser().displayName,
 		}))
 		.catch((err) => console.log(err.message));
 };
-export const cancelConfirmMyProofApi = (acId) => {
+export const registerActivityApi = (dataActivity) => {
 	let uId = currentUser().uid;
-	db.collection('news')
+	let acId = dataActivity.id;
+
+	let data = {
+		userId: uId,
+		acId,
+		confirm: false,
+		proof: dataActivity.proof || 0,
+		email: currentUser().email,
+		displayName: currentUser().displayName,
+	};
+	db.collection(ACTIVITY).doc(acId).collection(USER_REGISTER).doc(uId).set(data);
+	return db
+		.collection(USER)
+		.doc(uId)
+		.collection(MY_ACTIVITY)
 		.doc(acId)
-		.collection('users')
+		.set(data)
+		.then(() => {
+			return { ...data, ...dataActivity };
+		});
+};
+export const addUserDetailApi = (data) => {
+	const baseInfo = {
+		email: currentUser().email,
+		displayName: currentUser().displayName,
+		userId: currentUser().uid,
+	};
+	return db
+		.collection(USER)
+		.doc(currentUser().uid)
+		.set(
+			{
+				...baseInfo,
+				...data,
+			},
+			{ merge: true }
+		)
+		.then(() => ({ ...data, ...baseInfo }))
+		.catch((err) => console.log(err.message));
+};
+export const editProofActivityApi = (acId, number) => {
+	let uId = currentUser().uid;
+	db.collection(ACTIVITY)
+		.doc(acId)
+		.collection(USER_REGISTER)
+		.doc(uId)
+		.update({
+			confirm: false,
+			proof: increment(number),
+		});
+	return db
+		.collection(USER)
+		.doc(uId)
+		.collection(MY_ACTIVITY)
+		.doc(acId)
+		.update({
+			confirm: false,
+			proof: increment(number),
+		})
+		.then(() => {
+			return { number, acId };
+		});
+};
+export const cancelConfirmMyActivityApi = (acId) => {
+	let uId = currentUser().uid;
+	db.collection(ACTIVITY)
+		.doc(acId)
+		.collection(USER_REGISTER)
 		.doc(uId)
 		.update({ confirm: false });
 	return db
-		.collection('register_activity')
+		.collection(USER)
 		.doc(uId)
-		.collection('activities')
+		.collection(MY_ACTIVITY)
 		.doc(acId)
 		.update({ confirm: false })
 		.then(() => {
@@ -293,5 +222,132 @@ export const cancelConfirmMyProofApi = (acId) => {
 		})
 		.catch((error) => {
 			console.log(error.message);
+		});
+};
+export const deleteRegisterActivityApi = (acId) => {
+	let uId = currentUser().uid;
+	// db.collection(USER)
+	// 	.doc(uId)
+	// 	.update({ activities: arrayRemove(acId) });
+	db.collection(ACTIVITY).doc(acId).collection(USER_REGISTER).doc(uId).delete();
+	return db
+		.collection(USER)
+		.doc(uId)
+		.collection(MY_ACTIVITY)
+		.doc(acId)
+		.delete()
+		.then(() => acId);
+};
+export const cleanCode = () => {
+	return db
+		.collection(ACTIVITY)
+		.get()
+		.then((querySnapshot) => {
+			querySnapshot.forEach((doc) => {
+				deleteRegisterActivityApi(doc.id).then(() =>
+					console.log('success clean')
+				);
+				deleteFolderImageActivityApi(doc.id).then(() =>
+					console.log('success clean')
+				);
+			});
+		});
+};
+export const testUpdateProofApi = () => {
+	const uid = currentUser().uid;
+	return db
+		.collection('register_activity')
+		.doc(uid)
+		.update({
+			'activities.ECxaXf0GA7SxyThq6vLv.proof': increment(1),
+			'activities.ECxaXf0GA7SxyThq6vLv.confirm': false,
+		})
+		.then(() => {
+			console.log('Success update proof');
+		})
+		.catch((error) => {
+			console.log('error', error.message);
+		});
+};
+export const testDeteleProofApi = () => {
+	const uid = currentUser().uid;
+	return db
+		.collection('register_activity')
+		.doc(uid)
+		.update({
+			'activities.ECxaXf0GA7SxyThq6vLv':
+				firebase.firestore.FieldValue.delete(),
+			activitiyId: arrayRemove('ECxaXf0GA7SxyThq6vLv'),
+		})
+		.then(() => {
+			console.log('Success delete activity');
+		})
+		.catch((error) => {
+			console.log('error', error.message);
+		});
+};
+
+export const testAddDataApi = () => {
+	const uid = currentUser().uid;
+	return db
+		.collection('register_activity')
+		.doc(uid)
+		.set(
+			{
+				activitiyId: ['27e08800782150cc8503', 'ECxaXf0GA7SxyThq6vLv'],
+				activities: {
+					'27e08800782150cc8503': {
+						id: '27e08800782150cc8503',
+						confirm: false,
+						proof: 1,
+					},
+					ECxaXf0GA7SxyThq6vLv: {
+						id: 'ECxaXf0GA7SxyThq6vLv',
+						confirm: true,
+						proof: 1,
+					},
+				},
+			},
+			{ merge: true }
+		)
+		.then(() => {
+			console.log('Success add');
+		})
+		.catch((error) => console.log('Error', error.message));
+};
+export const testUpdateDataApi = () => {
+	const uid = currentUser().uid;
+	return db
+		.collection('register_activity')
+		.doc(uid)
+		.update({
+			activitiyId: arrayUnion('ECxaXf0GA7SxyThq6vLv'),
+			'activities.ECxaXf0GA7SxyThq6vLv': {
+				id: 'ECxaXf0GA7SxyThq6vLv',
+				confirm: true,
+				proof: 1,
+			},
+		})
+		.then(() => {
+			console.log('Success update');
+		})
+		.catch((error) => console.log('Error', error.message));
+};
+export const testApi = () => {
+	const uid = currentUser().uid;
+	return db
+		.collection('register_activity')
+		.where(
+			'activities.27e08800782150cc8503.id',
+			'==',
+			'27e08800782150cc8503'
+		)
+		.get()
+		.then((querySnapshot) => {
+			const kq = {};
+			querySnapshot.forEach((doc) => {
+				kq[doc.id] = doc.data();
+			});
+			console.log('query test api', kq);
 		});
 };

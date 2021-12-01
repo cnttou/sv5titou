@@ -1,18 +1,14 @@
 import { createSlice } from '@reduxjs/toolkit';
 
-import {
-	addActivityAction,
-	deleteActivityAction,
-	fetchActivityAction,
-	logoutAction,
-} from '../actions';
+import { fetchActivityAction, logoutAction } from '../actions';
 
+const initialState = {
+	value: [],
+	loading: 0,
+};
 export const activity = createSlice({
 	name: 'myActivity',
-	initialState: {
-		value: [],
-		loading: 0,
-	},
+	initialState,
 	extraReducers: (builder) => {
 		builder
 			.addCase(fetchActivityAction.fulfilled, (state, action) => {
@@ -25,19 +21,9 @@ export const activity = createSlice({
 			.addCase(fetchActivityAction.rejected, (state) => {
 				state.loading = state.loading - 1;
 			})
-			.addCase(deleteActivityAction.fulfilled, (state, action) => {
-				state.value = state.value.filter((c) => c.id != action.payload);
-			})
-			.addCase(addActivityAction.fulfilled, (state, action) => {
-				let newValue = state.value.filter(
-					(c) => c.id !== action.payload.id
-				);
-				newValue.push(action.payload);
-
-				state.value = newValue;
-			})
-			.addCase(logoutAction, (state) => {
+			.addCase(logoutAction, (state, action) => {
 				state.value = [];
+				state.loading = 0;
 			});
 	},
 });

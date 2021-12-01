@@ -28,10 +28,9 @@ function InputUpload({ text, id, ...props }) {
 		const isLt5M = file.size / 1024 / 1024 < 5;
 		if (!isLt5M) {
 			message.error('Ảnh phải nhỏ hơn 5MB!');
-            return false;
+			return false;
 		}
-        if (props.handleBeforeUpload) 
-            return props.handleBeforeUpload(file);
+		if (props.handleBeforeUpload) return props.handleBeforeUpload(file);
 		return true;
 	};
 	const compressImage = async (file) => {
@@ -58,7 +57,11 @@ function InputUpload({ text, id, ...props }) {
 			});
 	};
 	const handleUpload = async (data) => {
-		const file = await compressImage(data.file);
+		console.log('data file is', data);
+		let file = null;
+		if (data.file.type.indexOf('image') !== -1)
+			file = await compressImage(data.file);
+		else file = data.file;
 		const task = upFileApi(id, file);
 		task.on(
 			taskEvent,
@@ -97,7 +100,11 @@ function InputUpload({ text, id, ...props }) {
 				multiple={false}
 				showUploadList={false}
 			>
-				<Button type="primary" icon={<UploadOutlined />} loading={inputUpload.onUploadStart}>
+				<Button
+					type="primary"
+					icon={<UploadOutlined />}
+					loading={inputUpload.onUploadStart}
+				>
 					{text || 'Thêm file'}
 				</Button>
 			</Upload>
