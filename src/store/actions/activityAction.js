@@ -1,71 +1,40 @@
 import {
 	deleteFileByFullPathApi,
+	deleteFolderImageActivityApi,
 	getFileFromAActivityApi,
 } from '../../api/firebaseStorage';
 import { createAsyncThunk } from '@reduxjs/toolkit';
-import {
-	getActivitiesApi,
-	getRegisterActivityApi,
-	registerActivityApi,
-	deleteRegisterActivityApi,
-	editProofActivityApi,
-} from '../../api/firestore';
+import { ActivityApi, UserApi } from '../../api/firestore';
 
-export const fetchActivityAction = createAsyncThunk(
-	'news/fetchNews',
-	async (limit) => {
-		let respone = await getActivitiesApi(limit);
-		return respone;
-	}
-);
-export const editProofActivityAction = createAsyncThunk(
-	'news/editProofActivity',
-	async ({ acId, number }) => {
-		let respone = await editProofActivityApi(acId, number);
-		return respone;
-	}
-);
+const thunk = (name, callbackApi) => createAsyncThunk(name, callbackApi);
 
-export const fetchRegisteredActivityAction = createAsyncThunk(
-	'registerActivity/fetchRegisterActivity',
-	async (userId) => {
-		let response = getRegisterActivityApi(userId);
-		return response;
-	}
+export const getOtherActivityAction = thunk('myActivity/getOther', () =>
+	ActivityApi.getOther()
 );
-
-export const registerActivityAction = createAsyncThunk(
-	'registerActivity/registerActivity',
-	async (data) => {
-		let response = await registerActivityApi(data);
-		return response;
-	}
+export const getRegisterActivityAction = thunk('activity/getRegister', () =>
+	ActivityApi.getRegister()
 );
-
-export const addConfirmActivityAction = createAsyncThunk(
-	'registerActivity/addConfirmActivity',
-	async (data) => {
-		let response = await registerActivityApi(data);
-		return response;
-	}
+export const registerActivityAction = thunk(
+	'activity/registerActivity',
+	({ id, proof, imageAdd, ...rest }) =>
+		UserApi.initMyActivity(id, proof, imageAdd, rest)
 );
-
-export const removeRegisteredActivityAction = createAsyncThunk(
+export const updateProofActivityAction = thunk(
+	'myActivity/editProof',
+	async ({ id, proof, imageAdd }) => UserApi.updateProof(id, proof, imageAdd)
+);
+export const deleteProofActivityAction = thunk(
+	'myActivity/deleteProof',
+	async ({ id, imageId }) => UserApi.deleteImageProof(id, imageId)
+);
+export const deleteRegisteredActivityAction = createAsyncThunk(
 	'registerActivity/removeRegisterActivity',
-	async (acId) => {
-		return await deleteRegisterActivityApi(acId);
+	(acId) => {
+		deleteFolderImageActivityApi(acId);
+		return UserApi.deleteRegisterActivity(acId);
 	}
 );
-
-export const getImageProofByActivityAction = createAsyncThunk(
-	'registerActivity/getImageProofByActivityAction',
-	async (acId, thunkAPI) => {
-		let response = await getFileFromAActivityApi(acId);
-		return { images: response, acId };
-	}
-);
-
-export const deleteImageByFullPathAction = createAsyncThunk(
+export const deleteImageByFullPathAction = thunk(
 	'registerActivity/deleteImageByFullPath',
 	async ({ path, acId }, thunkAPI) => {
 		await deleteFileByFullPathApi(path);

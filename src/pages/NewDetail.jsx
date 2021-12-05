@@ -7,7 +7,7 @@ import { getDetailActivityApi, getOtherActivitiesApi } from '../api/firestore';
 import ActivityFeed from '../components/ActivityFeed';
 import Loading from '../components/Loading';
 import {
-	fetchRegisteredActivityAction,
+	getRegisteredActivityAction,
 	registerActivityAction,
 } from '../store/actions';
 import { addMoreMyActivityAction } from '../store/reducers/myActivitySlice';
@@ -27,7 +27,7 @@ export default function NewDetail() {
 			getDetailActivityApi(id).then((data) => setNews(data));
 		}
 		if (user.uid !== undefined && listActivity.length === 0) {
-			dispatch(fetchRegisteredActivityAction()).then((res) => {
+			dispatch(getRegisteredActivityAction()).then((res) => {
 				let listId = res.payload.map((c) => c.id);
 				getOtherActivitiesApi().then((data) => {
 					const addData = data.filter(
@@ -77,7 +77,7 @@ export default function NewDetail() {
 		console.log('clicked register', news);
 	};
 
-	const colorCard = (id, confirm) => {
+	const getColorCard = (id, confirm) => {
 		if (confirm === false) return '#69c0ff';
 		else if (confirm === true) return '#73d13d';
 		return 'white';
@@ -86,7 +86,11 @@ export default function NewDetail() {
 	return (
 		<Content className={styles.content}>
 			{news?.name ? (
-				<ActivityFeed {...news} colorCard={colorCard} showFull={true} />
+				<ActivityFeed
+					{...news}
+					getColorCard={getColorCard}
+					showFull={true}
+				/>
 			) : (
 				<Loading />
 			)}

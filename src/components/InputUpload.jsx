@@ -52,9 +52,6 @@ function InputUpload({ text, id, ...props }) {
 
 				return compressedFile;
 			})
-			.catch(function (error) {
-				console.log(error.message);
-			});
 	};
 	const handleUpload = async (data) => {
 		console.log('data file is', data);
@@ -104,6 +101,7 @@ function InputUpload({ text, id, ...props }) {
 					type="primary"
 					icon={<UploadOutlined />}
 					loading={inputUpload.onUploadStart}
+					disabled={props.disabled}
 				>
 					{text || 'Thêm file'}
 				</Button>

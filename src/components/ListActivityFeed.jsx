@@ -26,18 +26,13 @@ const getOption = (nameList) =>
 	));
 
 function ListActivityFeed(props) {
-	const { data, checkRegister, handleClick } = props;
+	const { data, handleClick, getColorCard } = props;
 	const [sort, setSort] = useState();
 	const [resultSearch, setResultSearch] = useState([]);
 	const [resultSort, setResultSort] = useState([]);
 
 	const [filter, setFilter] = useState({ level: null, target: null });
-	const colorCard = (id, confirm) => {
-		if (confirm === true) return '#73d13d';
-		if ((checkRegister && checkRegister(id)) || confirm === false)
-			return '#69c0ff';
-		return 'white';
-	};
+
 	const handleSort = (value) => {
 		let rs = resultSearch.length !== 0 ? resultSearch : [...data];
 
@@ -107,7 +102,7 @@ function ListActivityFeed(props) {
 			<ActivityFeed
 				key={index}
 				{...c}
-				colorCard={colorCard}
+				getColorCard={getColorCard}
 				btnDetail={true}
 				hoverable={true}
 				bordered={true}

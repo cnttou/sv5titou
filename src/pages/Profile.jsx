@@ -22,7 +22,7 @@ import {
 	nameSex,
 	nameLevelRegister,
 } from '../config';
-import { addUserDetailAction } from '../store/actions';
+import { createOrUpdateUserAction } from '../store/actions';
 import styles from '../styles/Profile.module.css';
 import dayjs from 'dayjs';
 import { useState } from 'react';
@@ -105,15 +105,13 @@ function Profile(props) {
 	const user = useSelector((s) => s.user.value);
 
 	useEffect(async () => {
-		if (!user.uid) return;
-		else if (user.fullName === undefined) {
-			if (user.levelReview) setLevelReview(user.levelReview);
-			return;
-		}
-		let birthday = null;
+		if (!user.id) return;
+		
+        let birthday = null;
 		if (user.birthday) birthday = dayjs(user.birthday, 'DD-MM-YYYY');
 		form.setFieldsValue({ ...user, birthday });
-		if (user.levelReview) setLevelReview(user.levelReview);
+		
+        if (user.levelReview) setLevelReview(user.levelReview);
 	}, [user]);
 
 	const onFinish = (values) => {
@@ -121,7 +119,7 @@ function Profile(props) {
 		let birthday = dayjs(values.birthday).format('DD-MM-YYYY');
 		console.log({ ...values, birthday });
 		dispatch(
-			addUserDetailAction({
+			createOrUpdateUserAction({
 				...values,
 				birthday,
 				classUser: values.classUser.toUpperCase(),
@@ -137,7 +135,7 @@ function Profile(props) {
 		);
 	};
 	const saveMoreData = (value) => {
-		dispatch(addUserDetailAction({ levelReview: value })).then(
+		dispatch(createOrUpdateUserAction({ levelReview: value })).then(
 			(res) => {
 				setLevelReview(value);
 			},
@@ -206,12 +204,40 @@ function Profile(props) {
 					<Select placeholder="Chọn giới tính">{sexOption}</Select>
 				</Item>
 				<Item label="Khoa" name="department" rules={rules}>
-					<Select placeholder="Chọn khoa hiện tại">
+					<Select
+						placeholder="Chọn khoa hiện tại"
+						showSearch
+						optionFilterProp="children"
+						filterOption={(input, option) =>
+							option.children
+								.toLowerCase()
+								.indexOf(input.toLowerCase()) >= 0
+						}
+						filterSort={(optionA, optionB) =>
+							optionA.children
+								.toLowerCase()
+								.localeCompare(optionB.children.toLowerCase())
+						}
+					>
 						{optionDepartment}
 					</Select>
 				</Item>
 				<Item label="Chyên ngành" name="majors" rules={rules}>
-					<Select placeholder="Chọn chuyên ngành hiện tại">
+					<Select
+						placeholder="Chọn chuyên ngành hiện tại"
+						showSearch
+						optionFilterProp="children"
+						filterOption={(input, option) =>
+							option.children
+								.toLowerCase()
+								.indexOf(input.toLowerCase()) >= 0
+						}
+						filterSort={(optionA, optionB) =>
+							optionA.children
+								.toLowerCase()
+								.localeCompare(optionB.children.toLowerCase())
+						}
+					>
 						{majorsOption}
 					</Select>
 				</Item>
@@ -225,7 +251,7 @@ function Profile(props) {
 				<Item label="Số CMND" name="idCard" rules={rules}>
 					<Input placeholder="Nhập số CMND hoặc CCCD" />
 				</Item>
-				<Item label="Số ngân hàng" name="bankNumber" rules={rules}>
+				<Item label="Số ngân hàng Nam Á" name="bankNumber" rules={rules}>
 					<Input placeholder="Số tài khoản Nam Á bank" />
 				</Item>
 				<Item wrapperCol={{ span: 24 }}>

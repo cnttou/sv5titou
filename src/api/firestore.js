@@ -1,3 +1,4 @@
+import { message } from 'antd';
 import dayjs from 'dayjs';
 import { currentUser } from './authentication';
 import firebase from './firebase';
@@ -5,62 +6,191 @@ import { deleteFolderImageActivityApi } from './firebaseStorage';
 
 const db = firebase.firestore();
 const { arrayRemove, arrayUnion, increment } = firebase.firestore.FieldValue;
+const { FieldValue } = firebase.firestore;
 const { documentId } = firebase.firestore.FieldPath;
 
-const genId = (userId, acId) => `${userId}_${acId}`;
 const USER = 'register_activity';
 const MY_ACTIVITY = 'activities';
 const ACTIVITY = 'news';
 const USER_REGISTER = 'users';
 
-export const getActivityByListId = (listId) => {
-	return db
-		.collection(ACTIVITY)
-		.where('active', '==', true) //.where('typeActivity', '==', 'register')
-		.where(documentId(), 'in', listId)
-		.get()
-		.then((querySnapshot) => {
-			let listData = [];
-			querySnapshot.forEach(async (doc) => {
-				listData.push({
+const serializeDoc = (doc) =>
+	doc.exists
+		? {
+				...doc.data(),
+				id: doc.id,
+		  }
+		: {};
+
+const serializeQuery = (querySnapshot) => {
+	console.log('serializeQuery: ', querySnapshot.size);
+	const kq = {};
+	querySnapshot.forEach((doc) => {
+		kq[doc.id] = serializeDoc(doc);
+	});
+	return kq;
+};
+const catchErr = (err) => {
+    message.error('Lỗi vui lòng tải lại trang và thử lại')
+    console.error('ERROR: ', err.message)
+};
+
+export class UserApi {
+	static get() {
+		const uid = currentUser().uid;
+		return db
+			.doc(`${USER}/${uid}`)
+			.get()
+			.then(serializeDoc)
+			.catch(catchErr);
+	}
+	static setOrUpdate(user = {}) {
+		const uid = currentUser().uid;
+		return db
+			.doc(`${USER}/${uid}`)
+			.set(user, { merge: true })
+			.then(() => user)
+			.catch(catchErr);
+	}
+	static initMyActivity(id = '', proof = 0, imageAdd, restData) {
+		const uid = currentUser().uid;
+		const dataUpdate = {
+			id,
+			confirm: false,
+			images: {},
+			proof,
+		};
+		if (imageAdd) dataUpdate.images[imageAdd.name.split('.')[0]] = imageAdd;
+		return db
+			.doc(`${USER}/${uid}`)
+			.update({
+				activitiyId: arrayUnion(id),
+				[`activities.${id}`]: dataUpdate,
+			})
+			.then(() => ({ ...dataUpdate, ...restData }))
+			.catch(catchErr);
+	}
+	static updateProof(id, proof, imageAdd) {
+		let uid = currentUser().uid;
+		const dataUpdata = {
+			[`activities.${id}.confirm`]: false,
+			[`activities.${id}.proof`]: increment(proof),
+		};
+		if (imageAdd)
+			dataUpdata[
+				`activities.${id}.images.${imageAdd.name.split('.')[0]}`
+			] = imageAdd;
+		return db
+			.doc(`${USER}/${uid}`)
+			.update(dataUpdata)
+			.then(() => {
+				return { proof, id, imageAdd };
+			}).catch(catchErr);
+	}
+	static deleteImageProof(id, imageId) {
+		let uid = currentUser().uid;
+		const dataUpdata = {
+			[`activities.${id}.confirm`]: false,
+			[`activities.${id}.proof`]: increment(-1),
+			[`activities.${id}.images.${imageId}`]: FieldValue.delete(),
+		};
+		
+		return db
+			.doc(`${USER}/${uid}`)
+			.update(dataUpdata)
+			.then(() => {
+				return { id, imageId };
+			})
+			.catch(catchErr);
+	}
+	static deleteRegisterActivity(acId) {
+		const uid = currentUser().uid;
+		return db
+			.doc(`${USER}/${uid}`)
+			.update({
+				[`activities.${acId}`]: FieldValue.delete(),
+				activitiyId: arrayRemove(acId),
+			})
+			.then(() => acId)
+			.catch(catchErr);
+	}
+}
+
+export class ActivityApi {
+	static getRegister() {
+		return db
+			.collection(ACTIVITY)
+			.where('active', '==', true)
+			.where('typeActivity', '==', 'register')
+			.get()
+			.then(serializeQuery)
+			.catch(catchErr);
+	}
+	static getActivityByListId(listId) {
+		return db
+			.collection(ACTIVITY)
+			.where('active', '==', true)
+			.where(documentId(), 'in', listId)
+			.get()
+			.then(serializeQuery)
+			.catch(catchErr);
+	}
+	static getDetailActivityApi(docId = '') {
+		return db
+			.collection(ACTIVITY)
+			.doc(docId)
+			.get()
+			.then((doc) => {
+				let data = {
 					...doc.data(),
 					id: doc.id,
+				};
+				return data;
+			})
+			.catch(catchErr);
+	}
+	static getOther() {
+		return db
+			.collection(ACTIVITY)
+			.where('active', '==', true)
+			.where('typeActivity', 'in', ['require', 'other'])
+			.get()
+			.then((querySnapshot) => {
+				let data = {};
+				querySnapshot.forEach((doc) => {
+					data[doc.id] = { id: doc.id, ...doc.data() };
 				});
+				return data;
+			})
+			.catch(catchErr);
+	}
+
+	static editProofActivityApi(acId, number) {
+		let uid = currentUser().uid;
+		db.collection(ACTIVITY)
+			.doc(acId)
+			.collection(USER_REGISTER)
+			.doc(uid)
+			.update({
+				confirm: false,
+				proof: increment(number),
 			});
-			return listData;
-		});
-};
-export const getRegisterActivityApi = (userId) => {
-	let uId = userId || currentUser().uid;
-	return db
-		.collection(USER)
-		.doc(uId)
-		.collection(MY_ACTIVITY)
-		.get()
-		.then((querySnapshot) => {
-			let dataUser = [];
-			querySnapshot.forEach((doc) => {
-				dataUser.push({
-					...doc.data(),
-					id: doc.id,
-				});
-			});
-			return dataUser;
-		})
-		.then((dataUser) => {
-			if (dataUser.length)
-				return getActivityByListId(dataUser.map((c) => c.id)).then(
-					(activities) => {
-						return activities.map((c) => ({
-							...dataUser.find((d) => d.id === c.id),
-							...c,
-						}));
-					}
-				);
-			return dataUser;
-		})
-		.catch((error) => console.log('getRegisterActivityApi', error.message));
-};
+		return db
+			.collection(USER)
+			.doc(uid)
+			.collection(MY_ACTIVITY)
+			.doc(acId)
+			.update({
+				confirm: false,
+				proof: increment(number),
+			})
+			.then(() => {
+				return { number, acId };
+			})
+			.catch(catchErr);
+	}
+}
+
 export const getImageSlideShowApi = () => {
 	return db
 		.collection('slide_show')
@@ -75,169 +205,11 @@ export const getImageSlideShowApi = () => {
 				});
 			});
 			return data;
-		});
-};
-export const getDetailActivityApi = (docId = '') => {
-	return db
-		.collection(ACTIVITY)
-		.doc(docId)
-		.get()
-		.then((doc) => {
-			let data = {
-				...doc.data(),
-				id: doc.id,
-			};
-			return data;
 		})
-		.catch((error) => console.log(error.message));
+		.catch(catchErr);
 };
-export const getOtherActivitiesApi = () => {
-	return db
-		.collection(ACTIVITY)
-		.where('active', '==', true)
-		.where('typeActivity', 'in', ['require', 'other'])
-		.get()
-		.then((querySnapshot) => {
-			let data = [];
-			querySnapshot.forEach((doc) => {
-				data.push({
-					...doc.data(),
-					id: doc.id,
-				});
-			});
-			return data;
-		})
-		.catch((error) => console.log(error.message));
-};
-export const getActivitiesApi = (limit = 25) => {
-	return db
-		.collection(ACTIVITY)
-		.where('active', '==', true)
-		.where('typeActivity', '==', 'register')
-		.limit(limit)
-		.get()
-		.then((querySnapshot) => {
-			let data = [];
-			querySnapshot.forEach((doc) => {
-				data.push({
-					...doc.data(),
-					id: doc.id,
-				});
-			});
-			return data;
-		})
-		.catch((error) => console.log(error.message));
-};
-export const getUserDetailApi = () => {
-	return db
-		.collection(USER)
-		.doc(currentUser().uid)
-		.get()
-		.then((res) => ({
-			...res.data(),
-			uid: res.id,
-		}))
-		.catch((err) => console.log(err.message));
-};
-export const registerActivityApi = (dataActivity) => {
-	let uId = currentUser().uid;
-	let acId = dataActivity.id;
 
-	let data = {
-		userId: uId,
-		acId,
-		confirm: false,
-		proof: dataActivity.proof || 0,
-		email: currentUser().email,
-		displayName: currentUser().displayName,
-	};
-	db.collection(ACTIVITY).doc(acId).collection(USER_REGISTER).doc(uId).set(data);
-	return db
-		.collection(USER)
-		.doc(uId)
-		.collection(MY_ACTIVITY)
-		.doc(acId)
-		.set(data)
-		.then(() => {
-			return { ...data, ...dataActivity };
-		});
-};
-export const addUserDetailApi = (data) => {
-	const baseInfo = {
-		email: currentUser().email,
-		displayName: currentUser().displayName,
-		userId: currentUser().uid,
-	};
-	return db
-		.collection(USER)
-		.doc(currentUser().uid)
-		.set(
-			{
-				...baseInfo,
-				...data,
-			},
-			{ merge: true }
-		)
-		.then(() => ({ ...data, ...baseInfo }))
-		.catch((err) => console.log(err.message));
-};
-export const editProofActivityApi = (acId, number) => {
-	let uId = currentUser().uid;
-	db.collection(ACTIVITY)
-		.doc(acId)
-		.collection(USER_REGISTER)
-		.doc(uId)
-		.update({
-			confirm: false,
-			proof: increment(number),
-		});
-	return db
-		.collection(USER)
-		.doc(uId)
-		.collection(MY_ACTIVITY)
-		.doc(acId)
-		.update({
-			confirm: false,
-			proof: increment(number),
-		})
-		.then(() => {
-			return { number, acId };
-		});
-};
-export const cancelConfirmMyActivityApi = (acId) => {
-	let uId = currentUser().uid;
-	db.collection(ACTIVITY)
-		.doc(acId)
-		.collection(USER_REGISTER)
-		.doc(uId)
-		.update({ confirm: false });
-	return db
-		.collection(USER)
-		.doc(uId)
-		.collection(MY_ACTIVITY)
-		.doc(acId)
-		.update({ confirm: false })
-		.then(() => {
-			return { acId, confirm: false };
-		})
-		.catch((error) => {
-			console.log(error.message);
-		});
-};
-export const deleteRegisterActivityApi = (acId) => {
-	let uId = currentUser().uid;
-	// db.collection(USER)
-	// 	.doc(uId)
-	// 	.update({ activities: arrayRemove(acId) });
-	db.collection(ACTIVITY).doc(acId).collection(USER_REGISTER).doc(uId).delete();
-	return db
-		.collection(USER)
-		.doc(uId)
-		.collection(MY_ACTIVITY)
-		.doc(acId)
-		.delete()
-		.then(() => acId);
-};
+// test API
 export const cleanCode = () => {
 	return db
 		.collection(ACTIVITY)
@@ -251,7 +223,8 @@ export const cleanCode = () => {
 					console.log('success clean')
 				);
 			});
-		});
+		})
+		.catch(catchErr);
 };
 export const testUpdateProofApi = () => {
 	const uid = currentUser().uid;
@@ -265,9 +238,7 @@ export const testUpdateProofApi = () => {
 		.then(() => {
 			console.log('Success update proof');
 		})
-		.catch((error) => {
-			console.log('error', error.message);
-		});
+		.catch(catchErr);
 };
 export const testDeteleProofApi = () => {
 	const uid = currentUser().uid;
@@ -282,9 +253,7 @@ export const testDeteleProofApi = () => {
 		.then(() => {
 			console.log('Success delete activity');
 		})
-		.catch((error) => {
-			console.log('error', error.message);
-		});
+		.catch(catchErr);
 };
 
 export const testAddDataApi = () => {
@@ -313,7 +282,7 @@ export const testAddDataApi = () => {
 		.then(() => {
 			console.log('Success add');
 		})
-		.catch((error) => console.log('Error', error.message));
+		.catch(catchErr);
 };
 export const testUpdateDataApi = () => {
 	const uid = currentUser().uid;
@@ -331,7 +300,7 @@ export const testUpdateDataApi = () => {
 		.then(() => {
 			console.log('Success update');
 		})
-		.catch((error) => console.log('Error', error.message));
+		.catch(catchErr);
 };
 export const testApi = () => {
 	const uid = currentUser().uid;
@@ -349,5 +318,6 @@ export const testApi = () => {
 				kq[doc.id] = doc.data();
 			});
 			console.log('query test api', kq);
-		});
+		})
+		.catch(catchErr);
 };

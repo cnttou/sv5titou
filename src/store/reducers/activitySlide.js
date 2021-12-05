@@ -1,31 +1,31 @@
-import { createSlice } from '@reduxjs/toolkit';
-
-import { fetchActivityAction, logoutAction } from '../actions';
+import { createAction, createReducer, createSlice } from '@reduxjs/toolkit';
+import { compareStringDate } from '../../utils/compareFunction';
+import {
+	getRegisterActivityAction,
+	logoutAction,
+} from '../actions';
+import { pendingState, rejectedState } from './shareFunction';
 
 const initialState = {
 	value: [],
 	loading: 0,
 };
-export const activity = createSlice({
-	name: 'myActivity',
-	initialState,
-	extraReducers: (builder) => {
-		builder
-			.addCase(fetchActivityAction.fulfilled, (state, action) => {
-				state.value = action.payload;
-				state.loading = state.loading - 1;
-			})
-			.addCase(fetchActivityAction.pending, (state) => {
-				state.loading = state.loading + 1;
-			})
-			.addCase(fetchActivityAction.rejected, (state) => {
-				state.loading = state.loading - 1;
-			})
-			.addCase(logoutAction, (state, action) => {
-				state.value = [];
-				state.loading = 0;
-			});
-	},
+
+const activity = createReducer(initialState, (builder) => {
+	builder
+		.addCase(getRegisterActivityAction.fulfilled, (state, { payload }) => {
+			const data = Object.values(payload);
+			state.value = data.sort((a, b) => compareStringDate(b, a));
+			state.loading -= 1;
+		})
+		.addCase(getRegisterActivityAction.pending, pendingState)
+		.addCase(getRegisterActivityAction.rejected, rejectedState);
+	builder.addCase(logoutAction, (state) => {
+		state.value = [];
+		state.unregistering = 0;
+		state.registering = 0;
+		state.loading = 0;
+	});
 });
 
-export default activity.reducer;
+export default activity;

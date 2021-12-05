@@ -12,7 +12,7 @@ import { combineReducers } from 'redux';
 import storage from 'redux-persist/lib/storage';
 import activitySlide from './reducers/activitySlide';
 import myActivitySlice from './reducers/myActivitySlice';
-import userReducer from './reducers/UserSlide';
+import userReducer from './reducers/userSlide';
 import otherReducer from './reducers/otherSlide';
 
 export const rootReducer = combineReducers({
@@ -26,7 +26,7 @@ const persistConfig = {
 	key: 'root',
 	version: 1,
 	storage,
-	blacklist: ['other'],
+	blacklist: ['other', 'user', 'myActivity', 'activity'],
 };
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);

@@ -26,8 +26,8 @@ function ActivityFeed(props) {
 		hoverable,
 		bordered,
 		btnDetail,
-		colorCard,
-		...data
+		getColorCard,
+		...dataItem
 	} = props;
 	const {
 		location,
@@ -43,116 +43,108 @@ function ActivityFeed(props) {
 		confirm,
 		level,
 		image,
-	} = data;
+	} = dataItem;
 	const handleClick = () => {
-		if (handleClickDetail) handleClickDetail(props.index, data);
+		if (handleClickDetail) handleClickDetail(props.index, dataItem);
 	};
 	return (
-		<>
-			<Card
-				hoverable={hoverable || false}
-				bordered={bordered || false}
-				className={styles.card}
-				style={
-					showFull ? { maxHeight: '75vh', overflow: 'auto' } : null
-				}
-				headStyle={{
-					background: colorCard(id, confirm),
-				}}
-				bodyStyle={{ paddingBottom: 0 }}
-				title={
-					<>
-						<Title ellipsis={true} level={5}>
-							{name}
-						</Title>
-						<Text type="secondary">{nameLevelActivity[level]}</Text>
-					</>
-				}
-				size="small"
-				extra={
-					showFull && (
-						<Text
-							copyable={{
-								text: `https://sv5titou.web.app/news/${id}`,
-							}}
-						>
-							<LinkOutlined />
-						</Text>
-					)
-				}
-				cover={
-					image && (
-						<>
-							<img
-                                loading={showFull ? 'null' : 'lazy'}
-								style={
-									showFull
-										? {
-												objectFit: 'cover',
-										  }
-										: {
-												objectFit: 'cover',
-												maxHeight: 320,
-										  }
-								}
-								alt={""}
-								src={image}
-							/>
-						</>
-					)
-				}
-				onClick={handleClick}
-			>
-				{department && (
-					<p>
-						<strong>Khoa:</strong>{' '}
-						{nameDepartmentActivity[department]}
-					</p>
-				)}
-				{date && (
-					<p>
-						<strong>Thời gian:</strong> {date}
-					</p>
-				)}
-				{location && (
-					<p>
-						<strong>Địa điểm:</strong> {location}
-					</p>
-				)}
-				{showFull && numPeople && (
-					<p>
-						<strong>Số lượng tối đa:</strong> {numPeople}
-					</p>
-				)}
-				{target && (
-					<p>
-						<strong>Tiêu chí xét SV5T:</strong>{' '}
-						{target.map((c) => nameTarget[c]).join(', ')}
-					</p>
-				)}
-				{showFull && summary && (
-					<div style={{ marginBottom: 0 }}>
-						<strong>Thông tin chi tiết:</strong>
-						<ReactQuill
-							theme={null}
-							value={summary}
-							readOnly={true}
-							className={showFull ? '' : styles.editer}
-							style={{ height: '100%' }}
-						/>
-					</div>
-				)}
-				{images && (
-					<ShowProof
-						images={images}
-						handleRemoveImage={handleRemoveImage}
+		<Card
+			hoverable={hoverable || false}
+			bordered={bordered || false}
+			className={styles.card}
+			style={showFull ? { maxHeight: '75vh', overflow: 'auto' } : null}
+			headStyle={{
+				background: getColorCard(id, confirm),
+			}}
+			bodyStyle={{ paddingBottom: 0 }}
+			title={
+				<>
+					<Title ellipsis={true} level={5}>
+						{name}
+					</Title>
+					<Text type="secondary">{nameLevelActivity[level]}</Text>
+				</>
+			}
+			size="small"
+			extra={
+				showFull && (
+					<Text
+						copyable={{
+							text: `https://sv5titou.web.app/news/${id}`,
+						}}
+					>
+						<LinkOutlined />
+					</Text>
+				)
+			}
+			cover={
+				image && (
+					<img
+						style={
+							showFull
+								? {
+										objectFit: 'cover',
+								  }
+								: {
+										objectFit: 'cover',
+										maxHeight: 320,
+								  }
+						}
+						alt={''}
+						src={image}
 					/>
-				)}
-				{loading === true && images === undefined ? (
-					<Loading size="default" />
-				) : null}
-			</Card>
-		</>
+				)
+			}
+			onClick={handleClick}
+		>
+			{department && (
+				<p>
+					<strong>Khoa:</strong> {nameDepartmentActivity[department]}
+				</p>
+			)}
+			{date && (
+				<p>
+					<strong>Thời gian:</strong> {date}
+				</p>
+			)}
+			{location && (
+				<p>
+					<strong>Địa điểm:</strong> {location}
+				</p>
+			)}
+			{showFull && numPeople && (
+				<p>
+					<strong>Số lượng tối đa:</strong> {numPeople}
+				</p>
+			)}
+			{target && (
+				<p>
+					<strong>Tiêu chí xét SV5T:</strong>{' '}
+					{target.map((c) => nameTarget[c]).join(', ')}
+				</p>
+			)}
+			{showFull && summary && (
+				<div style={{ marginBottom: 0 }}>
+					<strong>Thông tin chi tiết:</strong>
+					<ReactQuill
+						theme={null}
+						value={summary}
+						readOnly={true}
+						className={showFull ? '' : styles.editer}
+						style={{ height: '100%' }}
+					/>
+				</div>
+			)}
+			{showFull && images && Object.values(images).length ? (
+				<ShowProof
+					images={Object.values(images)}
+					handleRemoveImage={handleRemoveImage}
+				/>
+			) : null}
+			{loading === true ? (
+				<Loading size="default" />
+			) : null}
+		</Card>
 	);
 }
 
@@ -160,17 +152,16 @@ export const ShowProof = ({ images, handleRemoveImage }) => (
 	<>
 		<div>
 			<strong>Minh chứng đã thêm:</strong>
-			<br />
 			<List
 				itemLayout="horizontal"
 				size="small"
-				bordered
+				bordered={false}
 				dataSource={images}
 				renderItem={(item) =>
 					typeFileimage.includes(
 						item.name.slice(item.name.lastIndexOf('.'))
 					) ? null : (
-						<List.Item>
+						<List.Item key={item.name}>
 							<List.Item.Meta
 								icon={<PaperClipOutlined />}
 								title={
@@ -193,9 +184,9 @@ export const ShowProof = ({ images, handleRemoveImage }) => (
 			/>
 		</div>
 		<Image.PreviewGroup>
-			{images.map((c, index) =>
+			{images.map((image, index) =>
 				typeFileimage.includes(
-					c.name.slice(c.name.lastIndexOf('.'))
+					image.name.slice(image.name.lastIndexOf('.'))
 				) ? (
 					<div
 						key={index}
@@ -206,7 +197,18 @@ export const ShowProof = ({ images, handleRemoveImage }) => (
 							position: 'relative',
 						}}
 					>
-						<Image width={'100%'} src={c.url} />
+						<Image
+							style={{
+								objectFit: 'cover',
+								objectPosition: 'center center',
+							}}
+							width={'100%'}
+							height={115}
+							src={image.url}
+						/>
+						<p style={{ textAlign: 'center' }}>
+							{nameTarget[image.target]}
+						</p>
 						{handleRemoveImage && (
 							<Button
 								style={{
@@ -219,7 +221,7 @@ export const ShowProof = ({ images, handleRemoveImage }) => (
 								size="large"
 								icon={<CloseCircleOutlined />}
 								onClick={() => {
-									handleRemoveImage(c);
+									handleRemoveImage(image);
 								}}
 							/>
 						)}
