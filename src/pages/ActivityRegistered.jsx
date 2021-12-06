@@ -186,9 +186,9 @@ function ActivityRegistered() {
 		else if (confirm === true)
 			return <Text type="success">Đã xác nhận</Text>;
 		else if (proof === 0 || target === false)
-			return <Text>Chưa thêm minh chứng</Text>;
+			return <Text type="secondary">Chưa thêm minh chứng</Text>;
 		else if (confirm === false)
-			return <Text>Minh chứng chưa xác nhận</Text>;
+			return <Text type='warning'>Minh chứng chưa xác nhận</Text>;
 		else return <Text type="danger">{confirm}</Text>;
 	};
 	const saveMoreData = (key, e) => {
@@ -237,7 +237,7 @@ function ActivityRegistered() {
 		const selectTargetImage = (
 			<Select
 				value={targetImage.choose}
-				placeholder="Chọn tiêu chí của MC"
+				placeholder="Loại minh chứng"
 				style={{ width: 150 }}
 				onChange={(value) =>
 					setTargetImage((pre) => ({ ...pre, choose: value }))

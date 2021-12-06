@@ -32,7 +32,13 @@ function App() {
                 await dispatch(getRegisterActivityAction());
 				dispatch(getUserAction()).then((action) => {
 					if (!action.payload.email)
-                    dispatch(createOrUpdateUserAction({}));
+                    dispatch(createOrUpdateUserAction({
+                        uid: user.uid,
+                        displayName: user.displayName,
+                        email: user.email,
+                        activities: {},
+                        activityId: []
+                    }));
 					setLoading(true);
 				});
 				dispatch(getOtherActivityAction());

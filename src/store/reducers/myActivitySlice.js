@@ -30,13 +30,14 @@ const myActivitySlice = createReducer(initialState, (builder) => {
 	builder
 		.addCase(getUserAction.fulfilled, (state, { payload }) => {
 			const { allActivitiy, activities } = payload;
-			Object.entries(activities).forEach(([id, value]) => {
-				state.value[id] = {
-					...state.value[id],
-					...value,
-					...allActivitiy.find((c) => c.id === id),
-				};
-			});
+            if (activities)
+				Object.entries(activities).forEach(([id, value]) => {
+					state.value[id] = {
+						...state.value[id],
+						...value,
+						...allActivitiy.find((c) => c.id === id),
+					};
+				});
 
 			state.loading -= 1;
 		})
@@ -99,7 +100,7 @@ const myActivitySlice = createReducer(initialState, (builder) => {
 			state.unregistering -= 1;
 		});
 	builder.addCase(logoutAction, (state) => {
-		state.value = [];
+		state.value = {};
 		state.unregistering = 0;
 		state.registering = 0;
 		state.loading = 0;

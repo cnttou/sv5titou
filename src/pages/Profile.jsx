@@ -105,13 +105,13 @@ function Profile(props) {
 	const user = useSelector((s) => s.user.value);
 
 	useEffect(async () => {
-		if (!user.id) return;
-		
-        let birthday = null;
+		if (!user.uid) return;
+
+		let birthday = null;
 		if (user.birthday) birthday = dayjs(user.birthday, 'DD-MM-YYYY');
 		form.setFieldsValue({ ...user, birthday });
-		
-        if (user.levelReview) setLevelReview(user.levelReview);
+
+		if (user.levelReview) setLevelReview(user.levelReview);
 	}, [user]);
 
 	const onFinish = (values) => {
@@ -251,7 +251,11 @@ function Profile(props) {
 				<Item label="Số CMND" name="idCard" rules={rules}>
 					<Input placeholder="Nhập số CMND hoặc CCCD" />
 				</Item>
-				<Item label="Số ngân hàng Nam Á" name="bankNumber" rules={rules}>
+				<Item
+					label="Số ngân hàng Nam Á"
+					name="bankNumber"
+					rules={rules}
+				>
 					<Input placeholder="Số tài khoản Nam Á bank" />
 				</Item>
 				<Item wrapperCol={{ span: 24 }}>

@@ -31,8 +31,8 @@ const serializeQuery = (querySnapshot) => {
 	return kq;
 };
 const catchErr = (err) => {
-    message.error('Lỗi vui lòng tải lại trang và thử lại')
-    console.error('ERROR: ', err.message)
+	message.error('Lỗi vui lòng tải lại trang và thử lại');
+	console.error('ERROR: ', err.message);
 };
 
 export class UserApi {
@@ -64,7 +64,7 @@ export class UserApi {
 		return db
 			.doc(`${USER}/${uid}`)
 			.update({
-				activitiyId: arrayUnion(id),
+				activityId: arrayUnion(id),
 				[`activities.${id}`]: dataUpdate,
 			})
 			.then(() => ({ ...dataUpdate, ...restData }))
@@ -85,7 +85,8 @@ export class UserApi {
 			.update(dataUpdata)
 			.then(() => {
 				return { proof, id, imageAdd };
-			}).catch(catchErr);
+			})
+			.catch(catchErr);
 	}
 	static deleteImageProof(id, imageId) {
 		let uid = currentUser().uid;
@@ -94,7 +95,7 @@ export class UserApi {
 			[`activities.${id}.proof`]: increment(-1),
 			[`activities.${id}.images.${imageId}`]: FieldValue.delete(),
 		};
-		
+
 		return db
 			.doc(`${USER}/${uid}`)
 			.update(dataUpdata)
@@ -109,7 +110,7 @@ export class UserApi {
 			.doc(`${USER}/${uid}`)
 			.update({
 				[`activities.${acId}`]: FieldValue.delete(),
-				activitiyId: arrayRemove(acId),
+				activityId: arrayRemove(acId),
 			})
 			.then(() => acId)
 			.catch(catchErr);
@@ -248,7 +249,7 @@ export const testDeteleProofApi = () => {
 		.update({
 			'activities.ECxaXf0GA7SxyThq6vLv':
 				firebase.firestore.FieldValue.delete(),
-			activitiyId: arrayRemove('ECxaXf0GA7SxyThq6vLv'),
+			activityId: arrayRemove('ECxaXf0GA7SxyThq6vLv'),
 		})
 		.then(() => {
 			console.log('Success delete activity');
@@ -263,7 +264,7 @@ export const testAddDataApi = () => {
 		.doc(uid)
 		.set(
 			{
-				activitiyId: ['27e08800782150cc8503', 'ECxaXf0GA7SxyThq6vLv'],
+				activityId: ['27e08800782150cc8503', 'ECxaXf0GA7SxyThq6vLv'],
 				activities: {
 					'27e08800782150cc8503': {
 						id: '27e08800782150cc8503',
@@ -290,7 +291,7 @@ export const testUpdateDataApi = () => {
 		.collection('register_activity')
 		.doc(uid)
 		.update({
-			activitiyId: arrayUnion('ECxaXf0GA7SxyThq6vLv'),
+			activityId: arrayUnion('ECxaXf0GA7SxyThq6vLv'),
 			'activities.ECxaXf0GA7SxyThq6vLv': {
 				id: 'ECxaXf0GA7SxyThq6vLv',
 				confirm: true,

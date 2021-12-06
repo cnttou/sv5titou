@@ -3,14 +3,9 @@ import { Button, Layout, message } from 'antd';
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useParams } from 'react-router';
-import { getDetailActivityApi, getOtherActivitiesApi } from '../api/firestore';
 import ActivityFeed from '../components/ActivityFeed';
 import Loading from '../components/Loading';
-import {
-	getRegisteredActivityAction,
-	registerActivityAction,
-} from '../store/actions';
-import { addMoreMyActivityAction } from '../store/reducers/myActivitySlice';
+import { registerActivityAction } from '../store/actions';
 import styles from '../styles/NewDetail.module.css';
 
 const { Content } = Layout;
@@ -19,40 +14,27 @@ export default function NewDetail() {
 	let { id } = useParams();
 	const dispatch = useDispatch();
 	const [news, setNews] = useState({});
-	const listActivity = useSelector((state) => state.myActivity.value);
+	const listActivity = useSelector((state) => state.activity.value);
+	const listMyActivity = useSelector((state) => state.myActivity.value);
 	const user = useSelector((state) => state.user.value);
 
 	useEffect(() => {
-		if (id !== '' && news.id === undefined) {
-			getDetailActivityApi(id).then((data) => setNews(data));
+		if (listActivity.length && id) {
+			const activity = listActivity.find((c) => c.id === id);
+			if (activity) setNews(activity);
 		}
-		if (user.uid !== undefined && listActivity.length === 0) {
-			dispatch(getRegisteredActivityAction()).then((res) => {
-				let listId = res.payload.map((c) => c.id);
-				getOtherActivitiesApi().then((data) => {
-					const addData = data.filter(
-						(d) => listId.includes(d.id) === false
-					);
-					dispatch(addMoreMyActivityAction(addData));
-				});
-			});
-		}
-	}, [id, user]);
+	}, [user]);
 
 	const checkRegister = (acId) => {
 		if (
-			listActivity.length !== 0 &&
-			listActivity.find((c) => c.id === acId)
+			listMyActivity.length !== 0 &&
+			Object.values(listMyActivity).find((c) => c.id === acId)
 		)
 			return true;
 
 		return false;
 	};
 	const handleRegister = () => {
-		if (checkRegister(news.id)) {
-			message.info('Hoạt động này đã đăng ký.');
-			return;
-		}
 		if (!user.uid) {
 			message.info('Vui lòng đăng nhập để đăng ký hoạt động.');
 			return;
@@ -62,18 +44,9 @@ export default function NewDetail() {
 				registerActivityAction({
 					...news,
 				})
-			)
-				.then(() => {
-					message.success('Đăng kí thành công.');
-				})
-				.catch((err) => {
-					message.warning('Đăng kí thất bại, vui lòng thử lại.');
-					console.log('Đăng ký lỗi: ', err);
-				});
-		} else
-			message.warning(
-				'Bạn phải đăng nhập để thực hiện được chức năng này'
 			);
+            setNews(pre=>({...pre, confirm: false, proof: 0}));
+		}
 		console.log('clicked register', news);
 	};
 
@@ -86,23 +59,30 @@ export default function NewDetail() {
 	return (
 		<Content className={styles.content}>
 			{news?.name ? (
-				<ActivityFeed
-					{...news}
-					getColorCard={getColorCard}
-					showFull={true}
-				/>
+				<>
+					<ActivityFeed
+						{...news}
+						maxHeight={'none'}
+						overflow={'hidden'}
+						getColorCard={getColorCard}
+						showFull={true}
+						bordered={true}
+					/>
+					{checkRegister(id) === false && (
+						<Button
+							key={'đăng ký'}
+							icon={<PlusCircleOutlined />}
+							type="primary"
+							onClick={news.id && handleRegister}
+							size="large"
+						>
+							Đăng ký
+						</Button>
+					)}
+				</>
 			) : (
 				<Loading />
 			)}
-			<Button
-				key={'đăng ký'}
-				icon={<PlusCircleOutlined />}
-				type="primary"
-				onClick={handleRegister}
-				size="large"
-			>
-				Đăng ký
-			</Button>
 		</Content>
 	);
 }

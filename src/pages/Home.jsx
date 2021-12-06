@@ -94,11 +94,11 @@ const DetailModal = ({
 	const activities = useSelector((state) => state.activity.value);
 
 	const handleRegister = () => {
-		if (!user.id) {
+		if (!user.uid) {
 			message.info('Vui lòng đăng nhập để đăng ký hoạt động.');
 			return;
 		}
-		dispatch(registerActivityAction({ ...activities[index] }))
+		dispatch(registerActivityAction({ ...activities[index] }));
 	};
 	return (
 		<Modal

@@ -27,6 +27,8 @@ function ActivityFeed(props) {
 		bordered,
 		btnDetail,
 		getColorCard,
+		maxHeight,
+		overflow,
 		...dataItem
 	} = props;
 	const {
@@ -52,7 +54,14 @@ function ActivityFeed(props) {
 			hoverable={hoverable || false}
 			bordered={bordered || false}
 			className={styles.card}
-			style={showFull ? { maxHeight: '75vh', overflow: 'auto' } : null}
+			style={
+				showFull
+					? {
+							maxHeight: maxHeight || '75vh',
+							overflow: overflow || 'auto',
+					  }
+					: null
+			}
 			headStyle={{
 				background: getColorCard(id, confirm),
 			}}
@@ -141,9 +150,7 @@ function ActivityFeed(props) {
 					handleRemoveImage={handleRemoveImage}
 				/>
 			) : null}
-			{loading === true ? (
-				<Loading size="default" />
-			) : null}
+			{loading === true ? <Loading size="default" /> : null}
 		</Card>
 	);
 }
@@ -166,7 +173,9 @@ export const ShowProof = ({ images, handleRemoveImage }) => (
 								icon={<PaperClipOutlined />}
 								title={
 									<a target="_blank" href={item.url}>
-										{item.name}
+										{`${item.name} - ${
+											nameTarget[item.target]
+										}`}
 									</a>
 								}
 							/>
