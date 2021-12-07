@@ -17,7 +17,7 @@ export default function SlideShow() {
 				if (res.length === 0) {
 					dispatch(hideSlideShow());
 				}
-			});
+			}).catch(error=> console.log(error.message));
 	}, []);
 
 	const handleCLick = (url) => {

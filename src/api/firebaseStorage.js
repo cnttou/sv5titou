@@ -43,5 +43,5 @@ export const getFileFromAActivityApi = (acId) => {
 		});
 		let images = await Promise.all(kq);
 		return extraRs.map((c, index) => ({ ...c, url: images[index] }));
-	});
+	}).catch(error=>console.log(error.message));
 };

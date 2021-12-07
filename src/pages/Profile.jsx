@@ -10,6 +10,7 @@ import {
 	Input,
 	message,
 	Tag,
+	Alert,
 } from 'antd';
 import DatePicker from '../components/DatePicker';
 import { useEffect } from 'react';
@@ -65,31 +66,14 @@ const colorOption = {
 	'hoi-nhap': '#40a9ff',
 };
 const rules = [{ required: true, message: 'Vui lòng điền thông tin' }];
-const rulesPointLearn = [
-	{
-		required: true,
-		message: 'Vui lòng điền thông tin',
-		type: 'string',
-		max: 2,
-		mix: 1,
-	},
-];
-const rulesPointTraing = [
-	{
-		required: true,
-		message: 'Vui lòng điền thông tin',
-		type: 'string',
-		max: 2,
-		mix: 1,
-	},
-];
+
 const rulesPhone = [
 	{
 		required: true,
-		message: 'Vui lòng điền thông tin',
-		type: 'string',
-		max: 11,
-		mix: 10,
+		message: 'Vui lòng nhập 10 chữ số điện thoại',
+		pattern: /[0-9]{10}/,
+        type: 'string',
+        len: 10
 	},
 ];
 const rulesStudentCode = [
@@ -98,7 +82,7 @@ const rulesStudentCode = [
 
 function Profile(props) {
 	const [levelReview, setLevelReview] = useState(null);
-	const [loading, setLoading] = useState(false);
+	const [loading, setLoading] = useState('');
 	const [form] = Form.useForm();
 
 	const dispatch = useDispatch();
@@ -114,33 +98,34 @@ function Profile(props) {
 		if (user.levelReview) setLevelReview(user.levelReview);
 	}, [user]);
 
-	const onFinish = (values) => {
+	const onFinish = (userProfile) => {
 		setLoading(true);
-		let birthday = dayjs(values.birthday).format('DD-MM-YYYY');
-		console.log({ ...values, birthday });
+		let birthday = dayjs(userProfile.birthday).format('DD-MM-YYYY');
+		console.log({ ...userProfile, birthday });
+		if (user.targetSuccess.length && user.fullName) {
+			userProfile.fullName = user.fullName;
+			userProfile.studentCode = user.studentCode;
+		}
 		dispatch(
 			createOrUpdateUserAction({
-				...values,
+				...userProfile,
 				birthday,
-				classUser: values.classUser.toUpperCase(),
+				classUser: userProfile.classUser.toUpperCase(),
 			})
-		).then(
-			(res) => {
-				setLoading(false);
-			},
-			() => {
-				setLoading(false);
-				message.warning('Thêm không thành công, vui lòng thử lại.');
-			}
-		);
+		).then(() => {
+			setLoading(false);
+		});
 	};
 	const saveMoreData = (value) => {
+		if (user.targetSuccess.length) {
+			message.error(
+				'Đã xét tiêu chí hoàn thành, để đổi lại vui lòng liên hệ Admin'
+			);
+			return;
+		}
 		dispatch(createOrUpdateUserAction({ levelReview: value })).then(
 			(res) => {
 				setLevelReview(value);
-			},
-			() => {
-				message.warning('Thêm không thành công, vui lòng thử lại.');
 			}
 		);
 	};
@@ -246,6 +231,13 @@ function Profile(props) {
 					name="phoneNumber"
 					rules={rulesPhone}
 				>
+					{/* <InputNumber
+                        style={{width: '100%'}}
+                        controls={false}
+						min={123456789}
+						max={9999999999}
+						placeholder="Thêm số đt liên lạc"
+					/> */}
 					<Input placeholder="Thêm số đt liên lạc" />
 				</Item>
 				<Item label="Số CMND" name="idCard" rules={rules}>
@@ -258,14 +250,19 @@ function Profile(props) {
 				>
 					<Input placeholder="Số tài khoản Nam Á bank" />
 				</Item>
+				<Alert
+					message="Vui lòng nhập chính xác vì trong quá trình xét SV5T bạn sẽ không thay đổi được họ tên và MSSV"
+					type="warning"
+				/>
 				<Item wrapperCol={{ span: 24 }}>
 					<Button
 						type="primary"
 						htmlType="submit"
 						block
-						loading={loading}
+						loading={loading === true}
+						disabled={loading === false}
 					>
-						Lưu
+						{loading === false ? 'Đã lưu' : 'Lưu'}
 					</Button>
 				</Item>
 			</Form>

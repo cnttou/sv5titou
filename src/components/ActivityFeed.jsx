@@ -54,6 +54,7 @@ function ActivityFeed(props) {
 			hoverable={hoverable || false}
 			bordered={bordered || false}
 			className={styles.card}
+            id={`activity_${id}`}
 			style={
 				showFull
 					? {

@@ -8,6 +8,7 @@ import {
 	InputNumber,
 	Layout,
 	Select,
+	Alert,
 } from 'antd';
 import InputUpload from '../components/InputUpload';
 import { DeleteOutlined, ExclamationCircleOutlined } from '@ant-design/icons';
@@ -62,7 +63,6 @@ const listLabel = [
 		target: ['tieu-bieu-khac'],
 	},
 ];
-const catchError = () => message.error('Vui lòng tải lại trang');
 function ActivityRegistered() {
 	const [visible, setVisible] = useState(false);
 	const [index, setIndex] = useState(0);
@@ -100,10 +100,11 @@ function ActivityRegistered() {
 			message.warning('Họat động đã được xác nhận nên không thể hủy.');
 			return;
 		}
-		return dispatch(deleteRegisteredActivityAction(data[index].id))
-			.then(() => {
+		return dispatch(deleteRegisteredActivityAction(data[index].id)).then(
+			() => {
 				setVisible(false);
-			})
+			}
+		);
 	};
 	const handleBeforeUpload = (file) => {
 		if (data[index].confirm === true) {
@@ -188,13 +189,13 @@ function ActivityRegistered() {
 		else if (proof === 0 || target === false)
 			return <Text type="secondary">Chưa thêm minh chứng</Text>;
 		else if (confirm === false)
-			return <Text type='warning'>Minh chứng chưa xác nhận</Text>;
+			return <Text type="warning">Minh chứng chưa xác nhận</Text>;
 		else return <Text type="danger">{confirm}</Text>;
 	};
 	const saveMoreData = (key, e) => {
 		const value = e.target.value;
 		if (value !== user[key])
-			dispatch(createOrUpdateUserAction({ [key]: value }))
+			dispatch(createOrUpdateUserAction({ [key]: value }));
 	};
 	const getActionModal = (activity) => {
 		const listBtn = [];
@@ -310,6 +311,12 @@ function ActivityRegistered() {
 
 	return (
 		<Content className={styles.content} key={'activity-register'}>
+			{user.fullName === undefined && (
+				<Alert
+					message="Vui lòng điền thông tin cá nhân để Admin xác nhận minh chứng"
+					type="warning"
+				/>
+			)}
 			<Space direction="vertical">
 				<List
 					header={
