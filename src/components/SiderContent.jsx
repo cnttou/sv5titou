@@ -18,7 +18,7 @@ function SiderContent(props) {
 			theme="light"
 			className={styles.siderBar}
 			width={300}
-            style={{maxHeight: 'calc(100vh - 109px)', overflowY: 'auto'}}
+            style={{maxHeight: 'calc(100vh - 115px)', overflowY: 'auto'}}
 			id="sticky"
 		>
 			<List

@@ -11,6 +11,7 @@ import {
 	message,
 	Tag,
 	Alert,
+	Modal,
 } from 'antd';
 import DatePicker from '../components/DatePicker';
 import { useEffect } from 'react';
@@ -29,6 +30,7 @@ import dayjs from 'dayjs';
 import { useState } from 'react';
 import { nameTarget } from '../config';
 
+const { confirm } = Modal;
 const { Content } = Layout;
 const { Meta } = Card;
 const { Item } = Form;
@@ -72,8 +74,8 @@ const rulesPhone = [
 		required: true,
 		message: 'Vui lòng nhập 10 chữ số điện thoại',
 		pattern: /[0-9]{10}/,
-        type: 'string',
-        len: 10
+		type: 'string',
+		len: 10,
 	},
 ];
 const rulesStudentCode = [
@@ -117,7 +119,7 @@ function Profile(props) {
 		});
 	};
 	const saveMoreData = (value) => {
-		if (user.targetSuccess.length) {
+		if (user.levelReview && user.targetSuccess.length) {
 			message.error(
 				'Đã xét tiêu chí hoàn thành, để đổi lại vui lòng liên hệ Admin'
 			);
@@ -231,13 +233,6 @@ function Profile(props) {
 					name="phoneNumber"
 					rules={rulesPhone}
 				>
-					{/* <InputNumber
-                        style={{width: '100%'}}
-                        controls={false}
-						min={123456789}
-						max={9999999999}
-						placeholder="Thêm số đt liên lạc"
-					/> */}
 					<Input placeholder="Thêm số đt liên lạc" />
 				</Item>
 				<Item label="Số CMND" name="idCard" rules={rules}>
@@ -251,7 +246,7 @@ function Profile(props) {
 					<Input placeholder="Số tài khoản Nam Á bank" />
 				</Item>
 				<Alert
-					message="Vui lòng nhập chính xác vì trong quá trình xét SV5T bạn sẽ không thay đổi được họ tên và MSSV"
+					message="Vui lòng nhập chính xác vì trong quá trình xét SV5T bạn sẽ không thay đổi được Họ & Tên, MSSV và cấp xét SV5T"
 					type="warning"
 				/>
 				<Item wrapperCol={{ span: 24 }}>

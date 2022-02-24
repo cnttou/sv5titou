@@ -30,9 +30,9 @@ const serializeQuery = (querySnapshot) => {
 	});
 	return kq;
 };
-const catchErr = (err) => {
-	message.error('Lỗi vui lòng tải lại trang và thử lại');
-	console.error('ERROR: ', err.message);
+const catchErr = (err, mess = '') => {
+	message.error('Vui lòng tải lại trang và thử lại');
+	console.error(`ERROR: ${mess}`, err.message);
 };
 
 export class UserApi {
@@ -42,7 +42,7 @@ export class UserApi {
 			.doc(`${USER}/${uid}`)
 			.get()
 			.then(serializeDoc)
-			.catch(catchErr);
+			.catch((err) => catchErr(err, 'UserApi.get'));
 	}
 	static setOrUpdate(user = {}) {
 		const uid = currentUser().uid;
@@ -50,13 +50,13 @@ export class UserApi {
 			.doc(`${USER}/${uid}`)
 			.set(user, { merge: true })
 			.then(() => user)
-			.catch(catchErr);
+			.catch((err) => catchErr(err, 'UserApi.setOrUpdate'));
 	}
 	static initMyActivity(id = '', proof = 0, imageAdd, restData) {
 		const uid = currentUser().uid;
 		const dataUpdate = {
 			id,
-			confirm: false,
+			confirm: proof ? true : false,
 			images: {},
 			proof,
 		};
@@ -68,7 +68,7 @@ export class UserApi {
 				[`activities.${id}`]: dataUpdate,
 			})
 			.then(() => ({ ...dataUpdate, ...restData }))
-			.catch(catchErr);
+			.catch((err) => catchErr(err, 'UserApi.initMyActivity'));
 	}
 	static updateProof(id, proof, imageAdd) {
 		let uid = currentUser().uid;
@@ -86,7 +86,7 @@ export class UserApi {
 			.then(() => {
 				return { proof, id, imageAdd };
 			})
-			.catch(catchErr);
+			.catch((err) => catchErr(err, 'UserApi.updateProof'));
 	}
 	static deleteImageProof(id, imageId) {
 		let uid = currentUser().uid;
@@ -102,7 +102,7 @@ export class UserApi {
 			.then(() => {
 				return { id, imageId };
 			})
-			.catch(catchErr);
+			.catch((err) => catchErr(err, 'UserApi.deleteImageProof'));
 	}
 	static deleteRegisterActivity(acId) {
 		const uid = currentUser().uid;
@@ -113,7 +113,7 @@ export class UserApi {
 				activityId: arrayRemove(acId),
 			})
 			.then(() => acId)
-			.catch(catchErr);
+			.catch((err) => catchErr(err, 'UserApi.deleteRegisterActivity'));
 	}
 }
 
@@ -125,7 +125,7 @@ export class ActivityApi {
 			.where('typeActivity', '==', 'register')
 			.get()
 			.then(serializeQuery)
-			.catch(catchErr);
+			.catch((err) => catchErr(err, 'AcitivityApi.getRegister'));
 	}
 	static getActivityByListId(listId) {
 		return db
@@ -134,7 +134,7 @@ export class ActivityApi {
 			.where(documentId(), 'in', listId)
 			.get()
 			.then(serializeQuery)
-			.catch(catchErr);
+			.catch((err) => catchErr(err, 'AcitivityApi.getActivityByListId'));
 	}
 	static getDetailActivityApi(docId = '') {
 		return db
@@ -148,7 +148,7 @@ export class ActivityApi {
 				};
 				return data;
 			})
-			.catch(catchErr);
+			.catch((err) => catchErr(err, 'AcitivityApi.getDetailActivityApi'));
 	}
 	static getOther() {
 		return db
@@ -163,19 +163,11 @@ export class ActivityApi {
 				});
 				return data;
 			})
-			.catch(catchErr);
+			.catch((err) => catchErr(err, 'AcitivityApi.getOther'));
 	}
 
 	static editProofActivityApi(acId, number) {
 		let uid = currentUser().uid;
-		db.collection(ACTIVITY)
-			.doc(acId)
-			.collection(USER_REGISTER)
-			.doc(uid)
-			.update({
-				confirm: false,
-				proof: increment(number),
-			});
 		return db
 			.collection(USER)
 			.doc(uid)
@@ -188,7 +180,7 @@ export class ActivityApi {
 			.then(() => {
 				return { number, acId };
 			})
-			.catch(catchErr);
+			.catch((err) => catchErr(err, 'AcitivityApi.editProofActivityApi'));
 	}
 }
 
@@ -207,5 +199,5 @@ export const getImageSlideShowApi = () => {
 			});
 			return data;
 		})
-		.catch(catchErr);
+		.catch((err) => catchErr(err, 'getImageSlideShowApi'));
 };
