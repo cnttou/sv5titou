@@ -4,7 +4,6 @@ import {
 	deleteRegisteredActivityAction,
 	getOtherActivityAction,
 	getRegisterActivityAction,
-	getUserAction,
 	logoutAction,
 	registerActivityAction,
 	updateProofActivityAction,
@@ -28,40 +27,8 @@ const myActivitySlice = createReducer(initialState, (builder) => {
 		.addCase(getOtherActivityAction.pending, pendingState)
 		.addCase(getOtherActivityAction.rejected, rejectedState);
 	builder
-		.addCase(getUserAction.fulfilled, (state, { payload }) => {
-			const { allActivitiy, activities } = payload;
-            if (activities)
-				Object.entries(activities).forEach(([id, value]) => {
-					state.value[id] = {
-						...state.value[id],
-						...value,
-						...allActivitiy.find((c) => c.id === id),
-					};
-				});
-
-			state.loading -= 1;
-		})
-		.addCase(getUserAction.pending, pendingState)
-		.addCase(getUserAction.rejected, rejectedState);
-	builder
-		.addCase(getRegisterActivityAction.fulfilled, (state, { payload }) => {
-			Object.entries(state.value).forEach(([id, activity]) => {
-				if (payload[id])
-					state.value[id] = {
-						...activity,
-						...payload[id],
-					};
-			});
-
-			state.loading -= 1;
-		})
-		.addCase(getRegisterActivityAction.pending, pendingState)
-		.addCase(getRegisterActivityAction.rejected, rejectedState);
-
-	builder
 		.addCase(registerActivityAction.fulfilled, (state, { payload }) => {
-			state.value[payload.id] = {
-				...state.value[payload.id],
+			state.value[payload.acId] = {
 				...payload,
 			};
 			state.registering -= 1;
@@ -74,16 +41,14 @@ const myActivitySlice = createReducer(initialState, (builder) => {
 		});
 	builder
 		.addCase(updateProofActivityAction.fulfilled, (state, { payload }) => {
-			const { proof, id, imageAdd } = payload;
-			state.value[id].proof += proof;
-			state.value[id].images[imageAdd.name.split('.')[0]] = imageAdd;
+			const { proof, acId } = payload;
+			state.value[acId].proof = { ...proof, ...state.value[acId].proof };
 		})
 	builder
 		.addCase(deleteProofActivityAction.fulfilled, (state, { payload }) => {
-			const { id, imageId } = payload;
-			state.value[id].proof -= 1;
-            state.value[id].confirm = false;
-			delete state.value[id].images[imageId];
+			const { acId, imageId } = payload;
+            state.value[acId].confirm = false;
+			delete state.value[acId].proof[imageId];
 		})
 	builder
 		.addCase(

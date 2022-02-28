@@ -8,24 +8,23 @@ import { ActivityApi, UserApi } from '../../api/firestore';
 
 const thunk = (name, callbackApi) => createAsyncThunk(name, callbackApi);
 
-export const getOtherActivityAction = thunk('myActivity/getOther', () =>
-	ActivityApi.getOther()
+export const getOtherActivityAction = thunk('myActivity/getMyActivity', () =>
+	ActivityApi.getMyActivity()
 );
-export const getRegisterActivityAction = thunk('activity/getRegister', () =>
+export const getRegisterActivityAction = thunk('activity/getActivity', () =>
 	ActivityApi.getRegister()
 );
 export const registerActivityAction = thunk(
 	'activity/registerActivity',
-	({ id, proof, imageAdd, ...rest }) =>
-		UserApi.initMyActivity(id, proof, imageAdd, rest)
+	({ id, imageAdd, ...rest }) => UserApi.initMyActivity(id, imageAdd, rest)
 );
 export const updateProofActivityAction = thunk(
 	'myActivity/editProof',
-	async ({ id, proof, imageAdd }) => UserApi.updateProof(id, proof, imageAdd)
+	async ({ id, proof, acId }) => UserApi.updateProof(id, proof, acId)
 );
 export const deleteProofActivityAction = thunk(
 	'myActivity/deleteProof',
-	async ({ id, imageId }) => UserApi.deleteImageProof(id, imageId)
+	async ({ id, imageId, acId }) => UserApi.deleteImageProof(id, imageId, acId)
 );
 export const deleteRegisteredActivityAction = createAsyncThunk(
 	'registerActivity/removeRegisterActivity',

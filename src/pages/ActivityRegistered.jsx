@@ -59,28 +59,22 @@ const listLabel = [
 		target: ['hoi-nhap', 've-ky-nang', 've-ngoai-ngu'],
 	},
 	{
-		label: '6. Các thành tích tiêu biểu khác:',
+		label: '6. Các thành tích tiêu biểu khác',
 		target: ['tieu-bieu-khac'],
 	},
 ];
 function ActivityRegistered() {
 	const [visible, setVisible] = useState(false);
-	const [index, setIndex] = useState(0);
+	const [dataModel, setDataModel] = useState({});
 	const [targetImage, setTargetImage] = useState({ list: [], choose: '' });
 
 	const dispatch = useDispatch();
-	const data = useSelector((s) =>
-		Object.values(s.myActivity.value).sort(handleSortActivity)
+	const activities = useSelector((state) =>
+		[...state.activity.value].sort(handleSortActivity)
 	);
+	const myActivity = useSelector((state) => state.myActivity.value);
 	const user = useSelector((s) => s.user.value);
 	const { loading, unregistering } = useSelector((s) => s.myActivity);
-
-	useEffect(() => {
-		if (visible === true) {
-			console.log('Target Image', targetImage);
-			console.log('Show model', data[index]);
-		}
-	}, [visible]);
 
 	const showBoxQuestion = () => {
 		confirm({
@@ -89,127 +83,137 @@ function ActivityRegistered() {
 			content:
 				'Tất cả những file minh chứng của hoạt động này cũng bị xóa theo.',
 			onOk() {
-				console.log('clicked unregister', data[index]);
 				return handleUnregister();
 			},
 			onCancel() {},
 		});
 	};
 	const handleUnregister = async () => {
-		if (data[index].confirm === true) {
+		if (dataModel.confirm === true) {
 			message.warning('Họat động đã được xác nhận nên không thể hủy.');
 			return;
 		}
-		return dispatch(deleteRegisteredActivityAction(data[index].id)).then(
+		return dispatch(deleteRegisteredActivityAction(dataModel.id)).then(
 			() => {
 				setVisible(false);
 			}
 		);
 	};
 	const handleBeforeUpload = (file) => {
-		if (data[index].confirm === true) {
+		if (dataModel.confirm === true) {
 			message.warning('Không thể thêm khi hoạt động đã được xác nhận');
 			return false;
 		}
 		return true;
 	};
 	const handleAfterUpload = (url, snapshot) => {
+		const fullNameFile = snapshot.ref.name
+			.replace(regSpecialChar, '')
+			.split('.').slice(-2);
 		const imageAdd = {
 			url,
 			fullPath: snapshot.ref.fullPath,
-			name: snapshot.ref.name.replace(regSpecialChar, ''),
-			target: targetImage.choose || targetImage.list[0],
+			name: fullNameFile[0] + '_' + fullNameFile[1],
+			typeFile: fullNameFile[1],
+			target: targetImage.choose || dataModel.target[0],
 		};
-		console.log('image upload is: ', imageAdd);
-		if (data[index].images) {
-			if (data[index].images[imageAdd.name.split('.')[0]])
+		const proof = { ...dataModel.proof, [imageAdd.name]: imageAdd };
+		if (dataModel.proof) {
+			dataModel.proof[imageAdd.name] &&
 				message.warning('Ảnh trùng tên nên thay thế ảnh cũ');
 			dispatch(
 				updateProofActivityAction({
-					proof: data[index].images[imageAdd.name.split('.')[0]]
-						? 0
-						: 1,
-					id: data[index].id,
-					imageAdd,
+					proof,
+					id: dataModel.id,
+					acId: dataModel.acId,
 				})
 			);
 		} else
 			dispatch(
 				registerActivityAction({
-					id: data[index].id,
-					proof: 1,
+					id: dataModel.id,
 					imageAdd,
 				})
 			);
+		setDataModel((pre) => ({
+			...pre,
+			proof,
+		}));
 	};
 	const handleRemoveImage = (image) => {
-		if (data[index].confirm === true) {
+		if (dataModel.confirm === true) {
 			message.warning('Họat động đã xác nhận, xóa ảnh không thành công');
 			return;
 		}
-		let id = data[index]['id'];
+		const {acId, id} = dataModel;
 
-		console.log('remove image: ', image);
-		if (id && image.fullPath) {
+		if (acId && image.fullPath) {
 			dispatch(
-				deleteImageByFullPathAction({ path: image.fullPath, acId: id })
+				deleteImageByFullPathAction({ path: image.fullPath, acId })
 			).then(() => {
 				dispatch(
 					deleteProofActivityAction({
-						imageId: image.name.split('.')[0],
-						id,
+						imageId: image.name,
+						acId, 
+                        id,
 					})
 				);
+                const proof ={...dataModel.proof};
+                delete proof[image.name];
+                setDataModel((pre) => ({
+					...pre,
+					proof,
+				}));
 			});
 		}
 	};
-	const handleClickActivityFeed = (indexData, obj, target) => {
-		if (indexData === null || indexData === undefined) {
-			Modal.error({
-				title: 'Lỗi',
-				content: 'Vui lòng tải lại trang và thử lại',
-			});
-			return;
-		}
-		const targetImages = data[indexData].target.filter((targetActivity) =>
-			target.includes(targetActivity)
-		);
-
-		setTargetImage({
-			list: targetImages,
-			choose: targetImages.length > 1 ? null : targetImages[0],
-		});
-		setIndex(indexData);
+	const handleClickActivityFeed = (obj) => {
+		console.log('Click activity: ', obj);
+		setDataModel(obj);
 		setVisible(true);
 	};
-	const getStatusProof = (confirm, proof, typeActivity, target) => {
-		if (!proof && ['require', 'other'].includes(typeActivity)) return null;
-		else if (confirm === true)
-			return <Text type="success">Đã xác nhận</Text>;
-		else if (proof === 0 || target === false)
+	const getStatusProof = (confirm, proof, typeActivity) => {
+		if (confirm === true) return <Text type="success">Đã xác nhận</Text>;
+		else if (typeof confirm !== 'boolean')
+			return <Text type="danger">{confirm}</Text>;
+		else if (
+			Object.keys(proof).length === 0 &&
+			['require', 'other'].includes(typeActivity)
+		)
+			return null;
+		else if (Object.keys(proof).length === 0)
 			return <Text type="secondary">Chưa thêm minh chứng</Text>;
-		else if (confirm === false)
-			return <Text type="warning">Minh chứng chưa xác nhận</Text>;
-		else return <Text type="danger">{confirm}</Text>;
+		else return <Text type="warning">Minh chứng chưa xác nhận</Text>;
 	};
 	const saveMoreData = (key, e) => {
-		const value = e.target.value;
+		const value = parseFloat(e.target.value);
+		if (isNaN(value)) {
+			message.error('Vui lòng nhập số');
+			return;
+		}
 		if (value !== user[key])
 			dispatch(createOrUpdateUserAction({ [key]: value }));
+		message.success('Đã lưu thành công');
 	};
-	const getActionModal = (activity) => {
+	const getActionModal = () => {
 		const listBtn = [];
-		const { typeActivity, confirm, proof, id, target } = activity;
+		const { typeActivity, confirm, proof, id, target } = dataModel;
+		if (!id) return;
 
-		const inputPointLearning = (
+        const inputPointLearning = (
 			<InputNumber
 				key={'input-gpa'}
 				defaultValue={parseInt(user.gpa)}
 				style={{ width: '140px' }}
-				min={0}
-				max={10}
+				controls={false}
 				placeholder="Điểm TB học kỳ"
-				onBlur={(e) => saveMoreData('gpa', e)}
+				onBlur={(e) =>
+					/^(10|[0-9]{1}|[0-9]{1}\.[1-9]{1,2})$/.test(e.target.value)
+						? saveMoreData('gpa', e)
+						: message.error(
+								'Vui lòng nhập từ 0-10 và làm tròn 2 chữ số'
+						  )
+				}
 			/>
 		);
 		const inputPointTraing = (
@@ -217,19 +221,26 @@ function ActivityRegistered() {
 				key={'input-pointtraing'}
 				defaultValue={parseInt(user.pointTraining)}
 				style={{ width: '140px' }}
-				step={10}
-				min={0}
-				max={100}
+				controls={false}
 				placeholder="Điểm rèn luyện"
-				onBlur={(e) => saveMoreData('pointTraining', e)}
+				onBlur={(e) =>
+					/^(100|[0-9]{2})$/.test(e.target.value)
+						? saveMoreData('pointTraining', e)
+						: message.error('Vui lòng nhập từ 10-100')
+				}
 			/>
 		);
-		const btnUnregister = (
+
+        const btnUnregister = (
 			<Button
 				key={'Hủy đăng ký'}
 				icon={<DeleteOutlined />}
 				type="danger"
-				onClick={proof ? showBoxQuestion : handleUnregister}
+				onClick={
+					proof && Object.keys(proof).length
+						? showBoxQuestion
+						: handleUnregister
+				}
 				loading={unregistering !== 0}
 			>
 				Hủy đăng ký
@@ -256,14 +267,13 @@ function ActivityRegistered() {
 				text="Thêm minh chứng"
 				key={'proof'}
 				id={id}
-				disabled={targetImage.choose ? false : true}
 				handleAfterUpload={handleAfterUpload}
 				handleBeforeUpload={handleBeforeUpload}
 			/>
 		);
-		if (confirm === true) return null;
 
-		if (targetImage.list.length > 1) listBtn.push(selectTargetImage);
+        if (confirm === true) return null;
+		if (target.length > 1) listBtn.push(selectTargetImage);
 		if (typeActivity === 'require' && target.includes('hoc-tap'))
 			listBtn.push(inputPointLearning);
 		if (typeActivity === 'require' && target.includes('dao-duc'))
@@ -279,14 +289,16 @@ function ActivityRegistered() {
 			size="small"
 			bordered={false}
 			className={styles.list}
-			dataSource={data}
+			dataSource={activities
+				.filter(
+					(c) => myActivity[c.id] || c.typeActivity !== 'register'
+				)
+				.map((c) => ({ ...c, ...myActivity[c.id] }))}
 			renderItem={(item, index) =>
 				item.target && target.some((c) => item.target.includes(c)) ? (
 					<List.Item
 						key={index}
-						onClick={() =>
-							handleClickActivityFeed(index, item, target)
-						}
+						onClick={() => handleClickActivityFeed(item)}
 						className={styles.listItem}
 						style={{ cursor: 'pointer', marginLeft: 20 }}
 					>
@@ -295,12 +307,7 @@ function ActivityRegistered() {
 							{getStatusProof(
 								item.confirm,
 								item.proof,
-								item.typeActivity,
-								item.images
-									? Object.values(item.images).some((e) =>
-											target.includes(e.target)
-									  )
-									: false
+								item.typeActivity
 							)}
 						</Text>
 					</List.Item>
@@ -313,7 +320,7 @@ function ActivityRegistered() {
 		<Content className={styles.content} key={'activity-register'}>
 			{user.fullName === undefined && (
 				<Alert
-					message="Vui lòng điền thông tin cá nhân để Admin xác nhận minh chứng"
+					message="Vui lòng điền thông tin cá nhân để Admin xác nhận minh chứng cho bạn"
 					type="warning"
 				/>
 			)}
@@ -343,21 +350,19 @@ function ActivityRegistered() {
 				bodyStyle={{ padding: 0 }}
 				visible={visible}
 				title="Chi tiết"
-				footer={
-					visible && data[index] ? getActionModal(data[index]) : null
-				}
+				footer={visible ? getActionModal() : null}
 				centered={true}
 				onCancel={() => setVisible(false)}
 			>
-				{visible && data[index] ? (
+				{visible && dataModel ? (
 					<ActivityFeed
-						{...data[index]}
+						{...dataModel}
 						showFull={true}
 						getColorCard={getColorCard}
 						btnDetail={false}
 						loading={loading || false}
 						handleRemoveImage={
-							data[index].confirm !== true
+							dataModel.confirm !== true
 								? handleRemoveImage
 								: null
 						}

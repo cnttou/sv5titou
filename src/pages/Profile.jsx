@@ -103,7 +103,6 @@ function Profile(props) {
 	const onFinish = (userProfile) => {
 		setLoading(true);
 		let birthday = dayjs(userProfile.birthday).format('DD-MM-YYYY');
-		console.log({ ...userProfile, birthday });
 		if (user.targetSuccess.length && user.fullName) {
 			userProfile.fullName = user.fullName;
 			userProfile.studentCode = user.studentCode;

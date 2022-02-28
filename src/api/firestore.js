@@ -3,18 +3,19 @@ import dayjs from 'dayjs';
 import { currentUser } from './authentication';
 import firebase from './firebase';
 import { deleteFolderImageActivityApi } from './firebaseStorage';
+import { uid as genId } from 'uid';
 
 const db = firebase.firestore();
 const { arrayRemove, arrayUnion, increment } = firebase.firestore.FieldValue;
 const { FieldValue } = firebase.firestore;
 const { documentId } = firebase.firestore.FieldPath;
 
-const USER = 'register_activity';
+const USER = 'user';
 const MY_ACTIVITY = 'activities';
 const ACTIVITY = 'news';
-const USER_REGISTER = 'users';
+const USER_ACTIVITY = 'user_activity';
 
-const serializeDoc = (doc) =>
+export const serializeDoc = (doc) =>
 	doc.exists
 		? {
 				...doc.data(),
@@ -22,18 +23,32 @@ const serializeDoc = (doc) =>
 		  }
 		: {};
 
-const serializeQuery = (querySnapshot) => {
-	console.log('serializeQuery: ', querySnapshot.size);
+export const serializeToArray = (querySnapshot) => {
+	const kq = [];
+	querySnapshot.forEach((doc) => {
+        kq.push({
+            id: doc.id,
+            ...doc.data()
+        })
+		kq[doc.id] = serializeDoc(doc);
+	});
+	return kq;
+};
+export const serializeToObject = (querySnapshot) => {
 	const kq = {};
 	querySnapshot.forEach((doc) => {
 		kq[doc.id] = serializeDoc(doc);
 	});
 	return kq;
 };
+
 const catchErr = (err, mess = '') => {
 	message.error('Vui lòng tải lại trang và thử lại');
 	console.error(`ERROR: ${mess}`, err.message);
 };
+export const getActivities = () =>db.collection(ACTIVITY).where('active', '==', true)
+			.where('typeActivity', '==', 'register').get();
+
 
 export class UserApi {
 	static get() {
@@ -52,67 +67,49 @@ export class UserApi {
 			.then(() => user)
 			.catch((err) => catchErr(err, 'UserApi.setOrUpdate'));
 	}
-	static initMyActivity(id = '', proof = 0, imageAdd, restData) {
+	static initMyActivity(acId, imageAdd) {
 		const uid = currentUser().uid;
+        const id = genId(20);
 		const dataUpdate = {
-			id,
-			confirm: proof ? true : false,
-			images: {},
-			proof,
+			acId,
+			uid,
+			confirm: false,
+			createAt: new Date().getTime(),
+			proof: {},
 		};
-		if (imageAdd) dataUpdate.images[imageAdd.name.split('.')[0]] = imageAdd;
+		if (imageAdd) dataUpdate.proof[imageAdd.name] = imageAdd;
 		return db
-			.doc(`${USER}/${uid}`)
-			.update({
-				activityId: arrayUnion(id),
-				[`activities.${id}`]: dataUpdate,
-			})
-			.then(() => ({ ...dataUpdate, ...restData }))
+			.doc(`${USER_ACTIVITY}/${id}`)
+			.set(dataUpdate)
+			.then(() => ({ ...dataUpdate, id }))
 			.catch((err) => catchErr(err, 'UserApi.initMyActivity'));
 	}
-	static updateProof(id, proof, imageAdd) {
-		let uid = currentUser().uid;
-		const dataUpdata = {
-			[`activities.${id}.confirm`]: false,
-			[`activities.${id}.proof`]: increment(proof),
-		};
-		if (imageAdd)
-			dataUpdata[
-				`activities.${id}.images.${imageAdd.name.split('.')[0]}`
-			] = imageAdd;
+	static updateProof(id, proof, acId) {
+        const dataUpdate = { confirm: false, proof };
 		return db
-			.doc(`${USER}/${uid}`)
-			.update(dataUpdata)
-			.then(() => {
-				return { proof, id, imageAdd };
-			})
+			.doc(`${USER_ACTIVITY}/${id}`)
+			.update(dataUpdate)
+			.then(() => ({ proof, id, acId }))
 			.catch((err) => catchErr(err, 'UserApi.updateProof'));
 	}
-	static deleteImageProof(id, imageId) {
-		let uid = currentUser().uid;
+	static deleteImageProof(id, imageId, acId) {
 		const dataUpdata = {
-			[`activities.${id}.confirm`]: false,
-			[`activities.${id}.proof`]: increment(-1),
-			[`activities.${id}.images.${imageId}`]: FieldValue.delete(),
+			[`proof.${imageId}`]: FieldValue.delete(),
 		};
 
 		return db
-			.doc(`${USER}/${uid}`)
+			.doc(`${USER_ACTIVITY}/${id}`)
 			.update(dataUpdata)
 			.then(() => {
-				return { id, imageId };
+				return { id, imageId, acId };
 			})
 			.catch((err) => catchErr(err, 'UserApi.deleteImageProof'));
 	}
-	static deleteRegisterActivity(acId) {
-		const uid = currentUser().uid;
+	static deleteRegisterActivity(id) {
 		return db
-			.doc(`${USER}/${uid}`)
-			.update({
-				[`activities.${acId}`]: FieldValue.delete(),
-				activityId: arrayRemove(acId),
-			})
-			.then(() => acId)
+			.doc(`${USER_ACTIVITY}/${id}`)
+			.delete()
+			.then(() => id)
 			.catch((err) => catchErr(err, 'UserApi.deleteRegisterActivity'));
 	}
 }
@@ -122,65 +119,24 @@ export class ActivityApi {
 		return db
 			.collection(ACTIVITY)
 			.where('active', '==', true)
-			.where('typeActivity', '==', 'register')
 			.get()
-			.then(serializeQuery)
+			.then(serializeToObject)
 			.catch((err) => catchErr(err, 'AcitivityApi.getRegister'));
 	}
-	static getActivityByListId(listId) {
+	static getMyActivity() {
+        const uid = currentUser().uid;
 		return db
-			.collection(ACTIVITY)
-			.where('active', '==', true)
-			.where(documentId(), 'in', listId)
-			.get()
-			.then(serializeQuery)
-			.catch((err) => catchErr(err, 'AcitivityApi.getActivityByListId'));
-	}
-	static getDetailActivityApi(docId = '') {
-		return db
-			.collection(ACTIVITY)
-			.doc(docId)
-			.get()
-			.then((doc) => {
-				let data = {
-					...doc.data(),
-					id: doc.id,
-				};
-				return data;
-			})
-			.catch((err) => catchErr(err, 'AcitivityApi.getDetailActivityApi'));
-	}
-	static getOther() {
-		return db
-			.collection(ACTIVITY)
-			.where('active', '==', true)
-			.where('typeActivity', 'in', ['require', 'other'])
+			.collection(USER_ACTIVITY)
+			.where('uid', '==', uid)
 			.get()
 			.then((querySnapshot) => {
-				let data = {};
+				const kq = {};
 				querySnapshot.forEach((doc) => {
-					data[doc.id] = { id: doc.id, ...doc.data() };
+					kq[doc.data().acId] = serializeDoc(doc);
 				});
-				return data;
+				return kq;
 			})
 			.catch((err) => catchErr(err, 'AcitivityApi.getOther'));
-	}
-
-	static editProofActivityApi(acId, number) {
-		let uid = currentUser().uid;
-		return db
-			.collection(USER)
-			.doc(uid)
-			.collection(MY_ACTIVITY)
-			.doc(acId)
-			.update({
-				confirm: false,
-				proof: increment(number),
-			})
-			.then(() => {
-				return { number, acId };
-			})
-			.catch((err) => catchErr(err, 'AcitivityApi.editProofActivityApi'));
 	}
 }
 

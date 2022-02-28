@@ -9,10 +9,8 @@ export const logoutAction = createAction('LOGOUT');
 
 export const getUserAction = createAsyncThunk(
 	'user/getUserDetail',
-	async (data, thunkApi) => {
-		const userResponese = await UserApi.get();
-		const state = thunkApi.getState();
-		return { ...userResponese, allActivitiy: state.activity.value };
+	async (data) => {
+		return await UserApi.get();
 	}
 );
 export const createOrUpdateUserAction = thunk(

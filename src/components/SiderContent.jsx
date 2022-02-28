@@ -1,4 +1,5 @@
 import { Layout, List, Typography } from 'antd';
+import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import styles from '../styles/Sider.module.css';
 
@@ -6,25 +7,25 @@ const { Title } = Typography;
 const { Sider } = Layout;
 
 function SiderContent(props) {
-	const listActivity = useSelector((state) =>
-		Object.values(state.myActivity.value).filter(
-			(c) => c.typeActivity === 'register'
-		)
+    const activities = useSelector((state) =>
+		state.activity.value.filter((c) => c.typeActivity === 'register')
 	);
-	const { slideShowItems } = useSelector((state) => state.other);
+	const myActivity = useSelector((state) => state.myActivity.value);
 
+	const { slideShowItems } = useSelector((state) => state.other);
+    
 	return (
 		<Sider
 			theme="light"
 			className={styles.siderBar}
 			width={300}
-            style={{maxHeight: 'calc(100vh - 115px)', overflowY: 'auto'}}
+			style={{ maxHeight: 'calc(100vh - 115px)', overflowY: 'auto' }}
 			id="sticky"
 		>
 			<List
 				header={<Title level={5}>Các hoạt động đã đăng ký</Title>}
 				bordered
-				dataSource={listActivity}
+				dataSource={activities.filter((c) => myActivity[c.id])}
 				renderItem={(item) => (
 					<List.Item key={item.id}>
 						<a href={`#activity_${item.id}`}>{item.name}</a>

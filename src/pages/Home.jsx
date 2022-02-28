@@ -13,38 +13,32 @@ import ActivityFeed from '../components/ActivityFeed';
 
 const { Content } = Layout;
 
-function getAction(isRegistered, onClick, loading) {
-	return isRegistered
-		? null
-		: [
-				<Button
-					key={'đăng ký'}
-					icon={<PlusCircleOutlined />}
-					type="primary"
-					onClick={onClick}
-					size="large"
-					loading={loading}
-				>
-					Đăng ký
-				</Button>,
-		  ];
-}
-
 function User() {
-	const [visible, setVisible] = useState(false);
-	const [index, setIndex] = useState(0);
-	const activities = useSelector((state) => state.activity.value);
+	const activities = useSelector((state) =>
+		state.activity.value.filter((c) => c.typeActivity === 'register')
+	);
 	const myActivity = useSelector((state) => state.myActivity.value);
+    const dispatch = useDispatch();
+	const [loading, setLoading] = useState(false);
+	const [visible, setVisible] = useState(false);
+	const [indexSelected, setIndexSelected] = useState(null);
 
-	const checkRegister = (id) => (myActivity[id] ? true : false);
+	const getColorCard = (id, confirm) =>{
+		return myActivity[id] ? '#69c0ff' : 'white';
+    }
 
-	const getColorCard = (id, confirm) =>
-		checkRegister(id) ? '#69c0ff' : 'white';
+	const handleRegister = async () => {
+		setLoading(true);
+		await dispatch(
+			registerActivityAction({ id: activities[indexSelected].id })
+		);
+		setLoading(false);
+	};
 
 	const handleClickActivityFeed = (index, activityClicked) => {
 		activities.forEach((c, index) => {
 			if (c.id === activityClicked.id) {
-				setIndex(index);
+				setIndexSelected(index);
 			}
 		});
 		setVisible(true);
@@ -54,9 +48,9 @@ function User() {
 		<Layout>
 			<SlideShow />
 			<Content className={styles.content}>
-				{activities.length !== 0 ? (
+				{activities?.length ? (
 					<ListActivityFeed
-						data={activities || []}
+						data={activities}
 						handleClick={handleClickActivityFeed}
 						getColorCard={getColorCard}
 					/>
@@ -70,62 +64,37 @@ function User() {
 					<UpOutlined size="30" style={{ color: 'white' }} />
 				</div>
 			</BackTop>
-			<DetailModal
-				index={index}
+			<Modal
+				className="modeUseModel"
+				bodyStyle={{ padding: 0 }}
 				visible={visible}
-				setVisible={setVisible}
-				getColorCard={getColorCard}
-				checkRegister={checkRegister}
-			/>
+				title={'Chi tiết'}
+				footer={
+					visible && !myActivity[activities[indexSelected].id] ? (
+						<Button
+							key={'đăng ký'}
+							icon={<PlusCircleOutlined />}
+							type="primary"
+							onClick={handleRegister}
+							size="large"
+							loading={loading}
+						>
+							Đăng ký
+						</Button>
+					) : null
+				}
+				centered={true}
+				onCancel={() => setVisible(false)}
+			>
+				<ActivityFeed
+					{...activities[indexSelected]}
+					showFull={true}
+					getColorCard={getColorCard}
+					btnDetail={false}
+				/>
+			</Modal>
 		</Layout>
 	);
 }
-
-const DetailModal = ({
-	index,
-	visible,
-	setVisible,
-	getColorCard,
-	checkRegister,
-}) => {
-	const { registering } = useSelector((s) => s.myActivity);
-	const dispatch = useDispatch();
-	const user = useSelector((s) => s.user.value);
-	const activities = useSelector((state) => state.activity.value);
-
-	const handleRegister = () => {
-		if (!user.uid) {
-			message.info('Vui lòng đăng nhập để đăng ký hoạt động.');
-			return;
-		}
-		dispatch(registerActivityAction({ ...activities[index] }));
-	};
-	return (
-		<Modal
-			className="modeUseModel"
-			bodyStyle={{ padding: 0 }}
-			visible={visible}
-			title={'Chi tiết'}
-			footer={
-				visible
-					? getAction(
-							checkRegister(activities[index].id),
-							handleRegister,
-							registering !== 0
-					  )
-					: null
-			}
-			centered={true}
-			onCancel={() => setVisible(false)}
-		>
-			<ActivityFeed
-				{...activities[index]}
-				showFull={true}
-				getColorCard={getColorCard}
-				btnDetail={false}
-			/>
-		</Modal>
-	);
-};
 
 export default User;

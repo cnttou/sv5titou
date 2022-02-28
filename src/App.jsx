@@ -28,20 +28,18 @@ function App() {
 	useEffect(() => {
 		const unsubscribe = auth().onAuthStateChanged(async (user) => {
 			if (user && loading) {
-                setLoading(false);
-                await dispatch(getRegisterActivityAction());
+				setLoading(false);
+				await dispatch(getRegisterActivityAction());
 				dispatch(getUserAction()).then((action) => {
 					if (!action.payload.email)
-                    dispatch(
-						createOrUpdateUserAction({
-							uid: user.uid,
-							displayName: user.displayName,
-							email: user.email,
-							activities: {},
-							activityId: [],
-							targetSuccess: [],
-						})
-					);
+						dispatch(
+							createOrUpdateUserAction({
+								displayName: user.displayName,
+								email: user.email,
+								targetSuccess: [],
+								createAt: new Date().getTime(),
+							})
+						);
 					setLoading(true);
 				});
 				dispatch(getOtherActivityAction());

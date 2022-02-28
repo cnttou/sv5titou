@@ -20,7 +20,8 @@ const activity = createReducer(initialState, (builder) => {
 		})
 		.addCase(getRegisterActivityAction.pending, pendingState)
 		.addCase(getRegisterActivityAction.rejected, rejectedState);
-	builder.addCase(logoutAction, (state) => {
+	
+    builder.addCase(logoutAction, (state) => {
 		state.value = [];
 		state.unregistering = 0;
 		state.registering = 0;

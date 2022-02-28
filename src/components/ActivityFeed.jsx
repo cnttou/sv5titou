@@ -15,7 +15,7 @@ import { nameDepartmentActivity } from '../config';
 
 const { Text, Title } = Typography;
 
-export const typeFileimage = ['.jpeg', '.jpg', '.png'];
+export const typeFileimage = ['jpeg', 'jpg', 'png'];
 
 function ActivityFeed(props) {
 	const {
@@ -41,7 +41,6 @@ function ActivityFeed(props) {
 		name,
 		id,
 		proof,
-		images,
 		confirm,
 		level,
 		image,
@@ -54,7 +53,7 @@ function ActivityFeed(props) {
 			hoverable={hoverable || false}
 			bordered={bordered || false}
 			className={styles.card}
-            id={`activity_${id}`}
+			id={`activity_${id}`}
 			style={
 				showFull
 					? {
@@ -145,9 +144,9 @@ function ActivityFeed(props) {
 					/>
 				</div>
 			)}
-			{showFull && images && Object.values(images).length ? (
+			{showFull && proof && Object.keys(proof).length ? (
 				<ShowProof
-					images={Object.values(images)}
+					proof={Object.values(proof)}
 					handleRemoveImage={handleRemoveImage}
 				/>
 			) : null}
@@ -156,7 +155,7 @@ function ActivityFeed(props) {
 	);
 }
 
-export const ShowProof = ({ images, handleRemoveImage }) => (
+export const ShowProof = ({ proof, handleRemoveImage }) => (
 	<>
 		<div>
 			<strong>Minh chứng đã thêm:</strong>
@@ -164,18 +163,16 @@ export const ShowProof = ({ images, handleRemoveImage }) => (
 				itemLayout="horizontal"
 				size="small"
 				bordered={false}
-				dataSource={images}
-				renderItem={(item) =>
-					typeFileimage.includes(
-						item.name.slice(item.name.lastIndexOf('.'))
-					) ? null : (
-						<List.Item key={item.name}>
+				dataSource={proof}
+				renderItem={(image) =>
+					typeFileimage.includes(image.typeFile) ? null : (
+						<List.Item key={image.name}>
 							<List.Item.Meta
 								icon={<PaperClipOutlined />}
 								title={
-									<a target="_blank" href={item.url}>
-										{`${item.name} - ${
-											nameTarget[item.target]
+									<a target="_blank" href={image.url}>
+										{`${image.name} - ${
+											nameTarget[image.target]
 										}`}
 									</a>
 								}
@@ -184,7 +181,7 @@ export const ShowProof = ({ images, handleRemoveImage }) => (
 								<DeleteOutlined
 									style={{ color: 'red' }}
 									onClick={() => {
-										handleRemoveImage(item);
+										handleRemoveImage(image);
 									}}
 								/>
 							)}
@@ -194,10 +191,8 @@ export const ShowProof = ({ images, handleRemoveImage }) => (
 			/>
 		</div>
 		<Image.PreviewGroup>
-			{images.map((image, index) =>
-				typeFileimage.includes(
-					image.name.slice(image.name.lastIndexOf('.'))
-				) ? (
+			{proof.map((image, index) =>
+				typeFileimage.includes(image.typeFile) ? (
 					<div
 						key={index}
 						style={{
