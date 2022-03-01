@@ -26,10 +26,10 @@ export const serializeDoc = (doc) =>
 export const serializeToArray = (querySnapshot) => {
 	const kq = [];
 	querySnapshot.forEach((doc) => {
-        kq.push({
-            id: doc.id,
-            ...doc.data()
-        })
+		kq.push({
+			id: doc.id,
+			...doc.data(),
+		});
 		kq[doc.id] = serializeDoc(doc);
 	});
 	return kq;
@@ -46,9 +46,12 @@ const catchErr = (err, mess = '') => {
 	message.error('Vui lòng tải lại trang và thử lại');
 	console.error(`ERROR: ${mess}`, err.message);
 };
-export const getActivities = () =>db.collection(ACTIVITY).where('active', '==', true)
-			.where('typeActivity', '==', 'register').get();
-
+export const getActivities = () =>
+	db
+		.collection(ACTIVITY)
+		.where('active', '==', true)
+		.where('typeActivity', '==', 'register')
+		.get();
 
 export class UserApi {
 	static get() {
@@ -69,7 +72,7 @@ export class UserApi {
 	}
 	static initMyActivity(acId, imageAdd) {
 		const uid = currentUser().uid;
-        const id = genId(20);
+		const id = genId(20);
 		const dataUpdate = {
 			acId,
 			uid,
@@ -85,7 +88,7 @@ export class UserApi {
 			.catch((err) => catchErr(err, 'UserApi.initMyActivity'));
 	}
 	static updateProof(id, proof, acId) {
-        const dataUpdate = { confirm: false, proof };
+		const dataUpdate = { confirm: false, proof };
 		return db
 			.doc(`${USER_ACTIVITY}/${id}`)
 			.update(dataUpdate)
@@ -105,11 +108,11 @@ export class UserApi {
 			})
 			.catch((err) => catchErr(err, 'UserApi.deleteImageProof'));
 	}
-	static deleteRegisterActivity(id) {
+	static deleteRegisterActivity(id, acId) {
 		return db
 			.doc(`${USER_ACTIVITY}/${id}`)
 			.delete()
-			.then(() => id)
+			.then(() => ({ acId, id }))
 			.catch((err) => catchErr(err, 'UserApi.deleteRegisterActivity'));
 	}
 }
@@ -124,7 +127,7 @@ export class ActivityApi {
 			.catch((err) => catchErr(err, 'AcitivityApi.getRegister'));
 	}
 	static getMyActivity() {
-        const uid = currentUser().uid;
+		const uid = currentUser().uid;
 		return db
 			.collection(USER_ACTIVITY)
 			.where('uid', '==', uid)

@@ -75,8 +75,8 @@ function ActivityRegistered() {
 	const myActivity = useSelector((state) => state.myActivity.value);
 	const user = useSelector((s) => s.user.value);
 	const { loading, unregistering } = useSelector((s) => s.myActivity);
-
-	const showBoxQuestion = () => {
+	
+    const showBoxQuestion = () => {
 		confirm({
 			title: 'Bạn có chắc muốn hủy hoạt động?',
 			icon: <ExclamationCircleOutlined />,
@@ -93,11 +93,11 @@ function ActivityRegistered() {
 			message.warning('Họat động đã được xác nhận nên không thể hủy.');
 			return;
 		}
-		return dispatch(deleteRegisteredActivityAction(dataModel.id)).then(
-			() => {
-				setVisible(false);
-			}
-		);
+		return dispatch(
+			deleteRegisteredActivityAction({id: dataModel.id, acId: dataModel.acId})
+		).then(() => {
+			setVisible(false);
+		});
 	};
 	const handleBeforeUpload = (file) => {
 		if (dataModel.confirm === true) {
@@ -109,13 +109,14 @@ function ActivityRegistered() {
 	const handleAfterUpload = (url, snapshot) => {
 		const fullNameFile = snapshot.ref.name
 			.replace(regSpecialChar, '')
-			.split('.').slice(-2);
+			.split('.')
+			.slice(-2);
 		const imageAdd = {
 			url,
 			fullPath: snapshot.ref.fullPath,
 			name: fullNameFile[0] + '_' + fullNameFile[1],
 			typeFile: fullNameFile[1],
-			target: targetImage.choose || dataModel.target[0],
+			target: targetImage.choose || targetImage.list[0] || dataModel.target[0],
 		};
 		const proof = { ...dataModel.proof, [imageAdd.name]: imageAdd };
 		if (dataModel.proof) {
@@ -145,7 +146,7 @@ function ActivityRegistered() {
 			message.warning('Họat động đã xác nhận, xóa ảnh không thành công');
 			return;
 		}
-		const {acId, id} = dataModel;
+		const { acId, id } = dataModel;
 
 		if (acId && image.fullPath) {
 			dispatch(
@@ -154,21 +155,22 @@ function ActivityRegistered() {
 				dispatch(
 					deleteProofActivityAction({
 						imageId: image.name,
-						acId, 
-                        id,
+						acId,
+						id,
 					})
 				);
-                const proof ={...dataModel.proof};
-                delete proof[image.name];
-                setDataModel((pre) => ({
+				const proof = { ...dataModel.proof };
+				delete proof[image.name];
+				setDataModel((pre) => ({
 					...pre,
 					proof,
 				}));
 			});
 		}
 	};
-	const handleClickActivityFeed = (obj) => {
-		console.log('Click activity: ', obj);
+	const handleClickActivityFeed = (obj, targets) => {
+		console.log('activity choose: ', obj);
+		setTargetImage({ list: targets, choose: ""});
 		setDataModel(obj);
 		setVisible(true);
 	};
@@ -200,7 +202,7 @@ function ActivityRegistered() {
 		const { typeActivity, confirm, proof, id, target } = dataModel;
 		if (!id) return;
 
-        const inputPointLearning = (
+		const inputPointLearning = (
 			<InputNumber
 				key={'input-gpa'}
 				defaultValue={parseInt(user.gpa)}
@@ -231,7 +233,7 @@ function ActivityRegistered() {
 			/>
 		);
 
-        const btnUnregister = (
+		const btnUnregister = (
 			<Button
 				key={'Hủy đăng ký'}
 				icon={<DeleteOutlined />}
@@ -267,13 +269,14 @@ function ActivityRegistered() {
 				text="Thêm minh chứng"
 				key={'proof'}
 				id={id}
+                disabled={!targetImage.choose && targetImage.list.length > 1}
 				handleAfterUpload={handleAfterUpload}
 				handleBeforeUpload={handleBeforeUpload}
 			/>
 		);
 
         if (confirm === true) return null;
-		if (target.length > 1) listBtn.push(selectTargetImage);
+		if (targetImage?.list.length > 1) listBtn.push(selectTargetImage);
 		if (typeActivity === 'require' && target.includes('hoc-tap'))
 			listBtn.push(inputPointLearning);
 		if (typeActivity === 'require' && target.includes('dao-duc'))
@@ -294,11 +297,16 @@ function ActivityRegistered() {
 					(c) => myActivity[c.id] || c.typeActivity !== 'register'
 				)
 				.map((c) => ({ ...c, ...myActivity[c.id] }))}
-			renderItem={(item, index) =>
-				item.target && target.some((c) => item.target.includes(c)) ? (
+			renderItem={(item, index) => {
+				const currentTarget = target.filter((c) =>
+					item.target.includes(c)
+				);
+				return item.target && currentTarget.length ? (
 					<List.Item
 						key={index}
-						onClick={() => handleClickActivityFeed(item)}
+						onClick={() =>
+							handleClickActivityFeed(item, currentTarget)
+						}
 						className={styles.listItem}
 						style={{ cursor: 'pointer', marginLeft: 20 }}
 					>
@@ -311,8 +319,8 @@ function ActivityRegistered() {
 							)}
 						</Text>
 					</List.Item>
-				) : null
-			}
+				) : null;
+			}}
 		/>
 	);
 

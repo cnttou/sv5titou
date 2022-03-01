@@ -1,6 +1,6 @@
 import { createReducer } from '@reduxjs/toolkit';
 import {
-    deleteProofActivityAction,
+	deleteProofActivityAction,
 	deleteRegisteredActivityAction,
 	getOtherActivityAction,
 	getRegisterActivityAction,
@@ -39,22 +39,26 @@ const myActivitySlice = createReducer(initialState, (builder) => {
 		.addCase(registerActivityAction.rejected, (state) => {
 			state.registering -= 1;
 		});
-	builder
-		.addCase(updateProofActivityAction.fulfilled, (state, { payload }) => {
+	builder.addCase(
+		updateProofActivityAction.fulfilled,
+		(state, { payload }) => {
 			const { proof, acId } = payload;
 			state.value[acId].proof = { ...proof, ...state.value[acId].proof };
-		})
-	builder
-		.addCase(deleteProofActivityAction.fulfilled, (state, { payload }) => {
+		}
+	);
+	builder.addCase(
+		deleteProofActivityAction.fulfilled,
+		(state, { payload }) => {
 			const { acId, imageId } = payload;
-            state.value[acId].confirm = false;
+			state.value[acId].confirm = false;
 			delete state.value[acId].proof[imageId];
-		})
+		}
+	);
 	builder
 		.addCase(
 			deleteRegisteredActivityAction.fulfilled,
-			(state, { payload: id }) => {
-				delete state.value[id];
+			(state, { payload }) => {
+				delete state.value[payload.acId];
 				state.unregistering -= 1;
 			}
 		)

@@ -28,9 +28,9 @@ export const deleteProofActivityAction = thunk(
 );
 export const deleteRegisteredActivityAction = createAsyncThunk(
 	'registerActivity/removeRegisterActivity',
-	(acId) => {
-		deleteFolderImageActivityApi(acId);
-		return UserApi.deleteRegisterActivity(acId);
+	({id, acId}) => {
+		deleteFolderImageActivityApi(id);
+		return UserApi.deleteRegisterActivity(id, acId);
 	}
 );
 export const deleteImageByFullPathAction = thunk(
